@@ -1,0 +1,1593 @@
+{
+  "institution": {
+    "id": "bilasipara-college",
+    "name": "Bilasipara College",
+    "state": "AS",
+    "type": "child",
+    "category": "Collegiate / Undergraduate",
+    "academicYear": "2025-2026",
+    "term": "Odd Semester",
+    "inheritsFrom": "institutions/IN/AS/gauhati-university.json"
+  },
+  "holidays": [],
+  "classes": [
+    {
+      "id": "cls-bilasipara-college-1",
+      "name": "EDUCATION",
+      "batch": "HS-1",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        1,
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-2",
+      "name": "ENGLISH",
+      "batch": "HS-1",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-3",
+      "name": "MIL (Assamese)",
+      "batch": "HS-1",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-4",
+      "name": "MIL (Bengali)",
+      "batch": "HS-1",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-5",
+      "name": "ECONOMICS",
+      "batch": "HS-1",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        1,
+        7
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-6",
+      "name": "POL. SCIENCE",
+      "batch": "HS-1",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-7",
+      "name": "ADV. ASM",
+      "batch": "HS-1",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        1,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-8",
+      "name": "HISTORY",
+      "batch": "HS-1",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        1,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-9",
+      "name": "EDUCATION",
+      "batch": "HS-2",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-10",
+      "name": "POL. SCIENCE",
+      "batch": "HS-2",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-11",
+      "name": "ENGLISH",
+      "batch": "HS-2",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-12",
+      "name": "MIL (Assamese)",
+      "batch": "HS-2",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-13",
+      "name": "MIL (Bengali)",
+      "batch": "HS-2",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-14",
+      "name": "ECONOMICS",
+      "batch": "HS-2",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-15",
+      "name": "HISTORY",
+      "batch": "HS-2",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        1,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-16",
+      "name": "LOGIC & PHIL",
+      "batch": "HS-2",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-17",
+      "name": "Pol. Science",
+      "batch": "B.A. 1st Sem",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        1,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-18",
+      "name": "Math",
+      "batch": "B.A. 1st Sem",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        1,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-19",
+      "name": "ENGLISH",
+      "batch": "B.A. 1st Sem",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-20",
+      "name": "HISTORY",
+      "batch": "B.A. 1st Sem",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        1,
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-21",
+      "name": "PHILOSOPHY",
+      "batch": "B.A. 1st Sem",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-22",
+      "name": "Activity/Class Test",
+      "batch": "B.A. 1st Sem",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        1,
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-23",
+      "name": "MDC Arts",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        1,
+        3,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-24",
+      "name": "MDC Science",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        1,
+        3,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-25",
+      "name": "Tutorial Eng",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-26",
+      "name": "ENVS. STUDIES",
+      "batch": "HS-1",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        2,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-27",
+      "name": "LOGIC & PHIL",
+      "batch": "HS-2",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-28",
+      "name": "ENGLISH",
+      "batch": "B.A. 1st Sem",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-29",
+      "name": "ADV. ASM",
+      "batch": "HS-2",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-30",
+      "name": "Philosophy",
+      "batch": "B.A. 1st Sem",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        2,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-31",
+      "name": "POL. SCIENCE",
+      "batch": "HS-1",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-32",
+      "name": "ECONOMICS",
+      "batch": "HS-2",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        2,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-33",
+      "name": "MIL (Assamese)",
+      "batch": "HS-1",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-34",
+      "name": "MIL (Bengali)",
+      "batch": "HS-1",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        2,
+        3,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-35",
+      "name": "ENGLISH",
+      "batch": "HS-2",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-36",
+      "name": "Assamese",
+      "batch": "B.A. 1st Sem",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        2,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-37",
+      "name": "Bengali",
+      "batch": "B.A. 1st Sem",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        2,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-38",
+      "name": "ECONOMICS",
+      "batch": "HS-1",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-39",
+      "name": "MIL (Assamese)",
+      "batch": "HS-2",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-40",
+      "name": "MIL (Bengali)",
+      "batch": "HS-2",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-41",
+      "name": "Economics",
+      "batch": "B.A. 1st Sem",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        2,
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-42",
+      "name": "LOGIC & PHIL",
+      "batch": "HS-1",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-43",
+      "name": "EDUCATION",
+      "batch": "HS-2",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-44",
+      "name": "SEC (POL)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-45",
+      "name": "SEC (PHI)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-46",
+      "name": "SEC (HIS)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-47",
+      "name": "SEC (ASM)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-48",
+      "name": "SEC (ENG)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-49",
+      "name": "SEC (EDU)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-50",
+      "name": "SEC (ECO)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-51",
+      "name": "SEC (MATH)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-52",
+      "name": "SEC (BEN)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-53",
+      "name": "EDUCATION",
+      "batch": "HS-1",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        2,
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-54",
+      "name": "HISTORY",
+      "batch": "HS-2",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        2,
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-55",
+      "name": "AEC (Assamese)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        2,
+        4,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-56",
+      "name": "AEC (Alt. Eng)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        2,
+        4,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-57",
+      "name": "AEC (Bengali)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        2,
+        4,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-58",
+      "name": "Tutorial Economics",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-59",
+      "name": "HISTORY",
+      "batch": "HS-1",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-60",
+      "name": "ADV. ASM",
+      "batch": "HS-2",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-61",
+      "name": "HISTORY",
+      "batch": "B.A. 1st Sem",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-62",
+      "name": "ECONOMICS",
+      "batch": "HS-2",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-63",
+      "name": "Economics",
+      "batch": "B.A. 1st Sem",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-64",
+      "name": "LOGIC & PHIL",
+      "batch": "HS-1",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        3,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-65",
+      "name": "POL. SCIENCE",
+      "batch": "HS-2",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        3,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-66",
+      "name": "Pol. Science",
+      "batch": "B.A. 1st Sem",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-67",
+      "name": "ADV. ASM",
+      "batch": "HS-1",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-68",
+      "name": "LOGIC & PHIL",
+      "batch": "HS-2",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        3,
+        5,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-69",
+      "name": "MIL (Assamese)",
+      "batch": "HS-1",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-70",
+      "name": "ENGLISH",
+      "batch": "HS-2",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-71",
+      "name": "Math",
+      "batch": "B.A. 1st Sem",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        3,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-72",
+      "name": "Education",
+      "batch": "B.A. 1st Sem",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        3,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-73",
+      "name": "ECONOMICS",
+      "batch": "HS-1",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-74",
+      "name": "MIL (Assamese)",
+      "batch": "HS-2",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        3,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-75",
+      "name": "MIL (Bengali)",
+      "batch": "HS-2",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        3,
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-76",
+      "name": "VAC",
+      "batch": "B.A. 1st Sem",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-77",
+      "name": "Tutorial Assamese",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-78",
+      "name": "Tutorial Bengali",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        3
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-79",
+      "name": "HISTORY",
+      "batch": "HS-1",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-80",
+      "name": "ADV. ASSAMESE",
+      "batch": "HS-1",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-81",
+      "name": "LOGIC & PHILOSOPHY",
+      "batch": "HS-1",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-82",
+      "name": "ASS (MIL)",
+      "batch": "HS-1",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-83",
+      "name": "POL. SCIENCE",
+      "batch": "HS-1",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-84",
+      "name": "HISTORY",
+      "batch": "HS-2",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-85",
+      "name": "PHILOSOPHY",
+      "batch": "B.A. 1st Sem",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-86",
+      "name": "ECONOMICS",
+      "batch": "HS-2",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-87",
+      "name": "Assamese",
+      "batch": "B.A. 1st Sem",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-88",
+      "name": "Bengali",
+      "batch": "B.A. 1st Sem",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-89",
+      "name": "EDUCATION",
+      "batch": "HS-2",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-90",
+      "name": "EDUCATION",
+      "batch": "B.A. 1st Sem",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-91",
+      "name": "POL SCIENCE",
+      "batch": "HS-2",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-92",
+      "name": "Pol Science",
+      "batch": "B.A. 1st Sem",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-93",
+      "name": "ADV. ASSAMESE",
+      "batch": "HS-2",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-94",
+      "name": "ENGLISH",
+      "batch": "HS-2",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-95",
+      "name": "ASM (MIL)",
+      "batch": "HS-2",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-96",
+      "name": "BEN (MIL)",
+      "batch": "HS-2",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-97",
+      "name": "Tutorial Philosophy",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-98",
+      "name": "Tutorial History",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        4
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-99",
+      "name": "POL. SCIENCE",
+      "batch": "HS-1",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-100",
+      "name": "ADV. ASSAMESE",
+      "batch": "HS-2",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-101",
+      "name": "HISTORY",
+      "batch": "HS-1",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-102",
+      "name": "ECONOMICS",
+      "batch": "HS-1",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-103",
+      "name": "POL SCIENCE",
+      "batch": "HS-2",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-104",
+      "name": "Economics",
+      "batch": "B.A. 1st Sem",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-105",
+      "name": "Assamese",
+      "batch": "B.A. 1st Sem",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-106",
+      "name": "Bengali",
+      "batch": "B.A. 1st Sem",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-107",
+      "name": "English",
+      "batch": "B.A. 1st Sem",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-108",
+      "name": "Tutorial EDUCATON",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        5
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-109",
+      "name": "ADV. ASSAMESE",
+      "batch": "HS-1",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-110",
+      "name": "POL SCIENCE",
+      "batch": "HS-1",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-111",
+      "name": "EDUCATION",
+      "batch": "HS-2",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-112",
+      "name": "EDUCATION",
+      "batch": "HS-1",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-113",
+      "name": "LOGIC & PHIL",
+      "batch": "HS-1",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-114",
+      "name": "ENGLISH",
+      "batch": "HS-2",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-115",
+      "name": "History",
+      "batch": "B.A. 1st Sem",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-116",
+      "name": "English",
+      "batch": "B.A. 1st Sem",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-117",
+      "name": "AEC (ASM)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-118",
+      "name": "AEC (ALT. ENG)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-119",
+      "name": "AEC (BEN)",
+      "batch": "B.A. 1st Sem",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-120",
+      "name": "Education",
+      "batch": "B.A. 1st Sem",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-121",
+      "name": "Bengali",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-122",
+      "name": "Political Science",
+      "batch": "B.A. 1st Sem",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "days": [
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-123",
+      "name": "VAC",
+      "batch": "B.A. 3rd Sem",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "days": [
+        1,
+        2
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-124",
+      "name": "VAC",
+      "batch": "B.A. 3rd Sem",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "days": [
+        1
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-125",
+      "name": "MDC (Arts)",
+      "batch": "B.A. 3rd Sem",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    },
+    {
+      "id": "cls-bilasipara-college-126",
+      "name": "MDC (Sc)",
+      "batch": "B.A. 3rd Sem",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "days": [
+        2,
+        4,
+        6
+      ],
+      "location": "Campus",
+      "date": null
+    }
+  ]
+}

@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Classline — Guided Database Registry Studio</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-soft: #21262d;
+      --surface-muted: #30363d;
+      --border: #30363d;
+      --border-focus: #58a6ff;
+      --text: #c9d1d9;
+      --text-bright: #f0f6fc;
+      --muted: #8b949e;
+      --accent: #238636;
+      --accent-hover: #2ea043;
+      --accent-blue: #1f6feb;
+      --accent-blue-hover: #388bfd;
+      --red: #da3633;
+      --red-hover: #f85149;
+      --amber: #d29922;
+      --purple: #bc8cff;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --radius: 8px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .studio-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-repo {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 2px 7px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--purple);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 120ms ease;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-default {
+      background: var(--surface-soft);
+      color: var(--text-bright);
+      border-color: var(--border);
+    }
+    .btn-default:hover {
+      background: var(--surface-muted);
+      border-color: var(--muted);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-blue {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+    .btn-blue:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: #ffffff;
+    }
+    .btn-danger:hover {
+      background: var(--red-hover);
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 11.5px;
+    }
+
+    .stepper-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .stepper-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .step-indicator-btn {
+      background: transparent;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+      transition: all 140ms ease;
+    }
+    .step-indicator-btn:hover {
+      background: var(--surface-soft);
+      color: var(--text-bright);
+    }
+    .step-indicator-btn.active {
+      color: var(--text-bright);
+      background: var(--surface-soft);
+      box-shadow: inset 0 0 0 1px var(--border-focus);
+    }
+    .step-indicator-btn.completed .step-circle {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .step-circle {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--surface-muted);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      flex-shrink: 0;
+      transition: all 140ms ease;
+    }
+    .step-indicator-btn.active .step-circle {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+    }
+
+    .step-divider {
+      color: var(--border);
+      font-size: 14px;
+      user-select: none;
+    }
+
+    .studio-main {
+      flex: 1;
+      padding: 20px;
+      max-width: 1120px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 150ms ease;
+    }
+    .step-card.active-step {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 1px var(--border-focus);
+    }
+
+    .step-card-header {
+      padding: 16px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .step-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-card-header .step-circle-lg {
+      width: 32px;
+      height: 32px;
+      font-size: 13px;
+    }
+    .step-title-text h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+    .step-title-text p {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .step-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .step-card.collapsed .step-card-body {
+      display: none;
+    }
+    .step-card.collapsed .step-card-header {
+      border-bottom: none;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin: 4px 0 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      color: var(--text-bright);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--border-focus);
+    }
+
+    textarea.code-font {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.45;
+      tab-size: 2;
+      white-space: pre;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .form-grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    @media (max-width: 768px) {
+      .form-grid-2, .form-grid-3, .form-grid-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .terminal-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-bright);
+      line-height: 1.5;
+    }
+    .terminal-box pre {
+      overflow-x: auto;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+    }
+    th, td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .step-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    dialog {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: auto;
+      max-width: 600px;
+      width: calc(100% - 32px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+    }
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(2px);
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-status.ready {
+      background: rgba(35, 134, 54, 0.2);
+      color: #3fb950;
+    }
+    .badge-status.optional {
+      background: var(--surface-muted);
+      color: var(--muted);
+    }
+
+    .badge-type {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .badge-type.parent {
+      background: rgba(188, 140, 255, 0.15);
+      color: var(--purple);
+      border: 1px solid rgba(188, 140, 255, 0.4);
+    }
+    .badge-type.child {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--border-focus);
+      border: 1px solid rgba(88, 166, 255, 0.4);
+    }
+
+    .diag-item {
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .diag-item.error {
+      background: rgba(218, 54, 51, 0.15);
+      border: 1px solid rgba(218, 54, 51, 0.4);
+      color: #f85149;
+    }
+    .diag-item.warning {
+      background: rgba(210, 153, 34, 0.15);
+      border: 1px solid rgba(210, 153, 34, 0.4);
+      color: #e3b341;
+    }
+    .diag-item.clean {
+      background: rgba(35, 134, 54, 0.15);
+      border: 1px solid rgba(35, 134, 54, 0.4);
+      color: #3fb950;
+    }
+
+    .file-export-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .editor-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+    .editor-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .editor-tab-btn.active {
+      color: var(--text-bright);
+      background: var(--surface-muted);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="studio-header">
+    <div class="brand-group">
+      <span class="brand-title">
+        <span>⚡ Classline Studio</span>
+        <span class="badge-repo">classline/db</span>
+      </span>
+      <span id="header-file-counter" class="badge-repo" style="color:var(--text)">0 files loaded</span>
+      <span id="base-status-tag" class="badge-repo" style="color:var(--amber)">Standalone (No Base)</span>
+    </div>
+
+    <div class="header-actions">
+      <input type="file" id="input-dir" webkitdirectory directory multiple hidden>
+      <input type="file" id="input-zip" accept=".zip" hidden>
+
+      <button type="button" class="btn btn-default btn-sm" id="btn-mount-folder" title="Mount local workspace">
+        📂 Mount Existing db/
+      </button>
+      <button type="button" class="btn btn-default btn-sm" id="btn-mount-zip" title="Mount from backup ZIP">
+        📦 Mount db.zip
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" id="btn-global-export">
+        💾 Export db.zip
+      </button>
+    </div>
+  </header>
+
+  <nav class="stepper-nav" aria-label="Database Workflow Steps">
+    <button type="button" class="step-indicator-btn active" data-step="1">
+      <span class="step-circle">1</span>
+      <span>Workspace Setup</span>
+    </button>
+    <span class="step-divider">›</span>
+    <button type="button" class="step-indicator-btn" data-step="2">
+      <span class="step-circle">2</span>
+      <span>Prompt & Hierarchy</span>
+    </button>
+    <span class="step-divider">›</span>
+    <button type="button" class="step-indicator-btn" data-step="3">
+      <span class="step-circle">3</span>
+      <span>AI Ingest & Patch</span>
+    </button>
+    <span class="step-divider">›</span>
+    <button type="button" class="step-indicator-btn" data-step="4">
+      <span class="step-circle">4</span>
+      <span>Inspect, Edit & Export</span>
+    </button>
+  </nav>
+
+  <main class="studio-main">
+
+    <!-- STEP 1: Workspace Setup -->
+    <section class="step-card active-step" id="step-1-card">
+      <div class="step-card-header" onclick="toggleStep(1)">
+        <div class="step-title-group">
+          <span class="step-circle step-circle-lg">1</span>
+          <div class="step-title-text">
+            <h2>Initialize Workspace (Optional Base DB)</h2>
+            <p>Mount your existing repository database or start fresh.</p>
+          </div>
+        </div>
+        <span class="badge-status optional">Optional</span>
+      </div>
+
+      <div class="step-card-body">
+        <p style="color:var(--muted); font-size:12px;">
+          Mount your existing <code>classline/db</code> directory or ZIP archive so new institutions are cleanly merged. If you skip this, exporting will prompt a safety confirmation before replacing the whole database.
+        </p>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-default" onclick="document.getElementById('input-dir').click()">
+            📂 Mount Local db/ Directory
+          </button>
+          <button type="button" class="btn btn-default" onclick="document.getElementById('input-zip').click()">
+            📦 Load Existing db.zip Archive
+          </button>
+          <button type="button" class="btn btn-default" id="btn-reset-db">
+            ✨ Clear to Blank Workspace
+          </button>
+        </div>
+
+        <div class="terminal-box" id="workspace-status-box">
+          Workspace Mode: <strong>Fresh Blank State</strong>. No previous repository mounted yet.
+        </div>
+
+        <div class="step-actions">
+          <span></span>
+          <button type="button" class="btn btn-blue" onclick="goToStep(2)">
+            Continue to Step 2 ›
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: Configure Prompt & Hierarchy -->
+    <section class="step-card collapsed" id="step-2-card">
+      <div class="step-card-header" onclick="toggleStep(2)">
+        <div class="step-title-group">
+          <span class="step-circle step-circle-lg">2</span>
+          <div class="step-title-text">
+            <h2>Configure Prompt & Entity Hierarchy</h2>
+            <p>Define entity relations: parent board/university or affiliated college/school.</p>
+          </div>
+        </div>
+        <span class="badge-status ready">Hierarchy & Prompt</span>
+      </div>
+
+      <div class="step-card-body">
+        <div class="form-grid-3">
+          <div>
+            <label for="ai-target-state">State / Region</label>
+            <select id="ai-target-state"></select>
+          </div>
+          <div>
+            <label for="ai-entity-type">Entity Type</label>
+            <select id="ai-entity-type">
+              <option value="parent">Parent Body (University / School Board / Trust)</option>
+              <option value="child" selected>Child Entity (Affiliated College / School Wing)</option>
+            </select>
+          </div>
+          <div id="wrapper-parent-select">
+            <label for="ai-parent-institution">Inherit Holidays From</label>
+            <select id="ai-parent-institution">
+              <option value="">None / Autonomous (Direct)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div>
+            <label for="ai-target-name">Institution Name</label>
+            <input type="text" id="ai-target-name" placeholder="e.g. Bilasipara College">
+          </div>
+          <div>
+            <label for="ai-target-category">Academic Category</label>
+            <input type="text" id="ai-target-category" value="Collegiate / Undergraduate" placeholder="e.g. Higher Secondary">
+          </div>
+        </div>
+
+        <div>
+          <label for="ai-raw-notes">Paste Raw Timetable / Circular / Syllabus Text</label>
+          <textarea id="ai-raw-notes" rows="5" placeholder="Paste unformatted syllabus, routine periods, or academic calendar here..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-blue" id="btn-build-prompt">Compile Prompt</button>
+          <button type="button" class="btn btn-default" id="btn-copy-prompt">Copy Prompt</button>
+          <button type="button" class="btn btn-default" id="btn-share-prompt">Share Prompt</button>
+        </div>
+
+        <div>
+          <label for="ai-compiled-prompt">System Prompt (Editable)</label>
+          <textarea id="ai-compiled-prompt" class="code-font" rows="11"></textarea>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-default" onclick="goToStep(1)">‹ Back</button>
+          <button type="button" class="btn btn-blue" onclick="goToStep(3)">
+            Continue to Step 3 ›
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: Ingest AI JSON -->
+    <section class="step-card collapsed" id="step-3-card">
+      <div class="step-card-header" onclick="toggleStep(3)">
+        <div class="step-title-group">
+          <span class="step-circle step-circle-lg">3</span>
+          <div class="step-title-text">
+            <h2>Ingest AI JSON & Mutate Database</h2>
+            <p>Paste the response from your AI model to auto-patch institutions and recalculate registry.json.</p>
+          </div>
+        </div>
+        <span class="badge-status ready">Auto-Patch</span>
+      </div>
+
+      <div class="step-card-body">
+        <label for="ai-response-payload">AI JSON Response</label>
+        <textarea id="ai-response-payload" class="code-font" rows="12" placeholder="Paste raw JSON here (markdown ```json blocks are stripped automatically)..."></textarea>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-primary" id="btn-dry-run">
+            Apply & Auto-Sync Registry
+          </button>
+          <button type="button" class="btn btn-default" id="btn-clear-payload">Clear Input</button>
+        </div>
+
+        <div id="dry-run-preview" class="hidden">
+          <label>Mutation Result</label>
+          <div class="terminal-box" id="dry-run-log"></div>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-default" onclick="goToStep(2)">‹ Back</button>
+          <button type="button" class="btn btn-blue" onclick="goToStep(4)">
+            Continue to Step 4 ›
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: Inspect, Edit & Export -->
+    <section class="step-card collapsed" id="step-4-card">
+      <div class="step-card-header" onclick="toggleStep(4)">
+        <div class="step-title-group">
+          <span class="step-circle step-circle-lg">4</span>
+          <div class="step-title-text">
+            <h2>Inspect, Edit & Export</h2>
+            <p>Validate integrity, modify packages with forms or JSON, and export single files or the complete db.zip bundle.</p>
+          </div>
+        </div>
+        <span class="badge-status ready">Integrity & Export</span>
+      </div>
+
+      <div class="step-card-body">
+
+        <!-- Integrity Diagnostic Panel -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label style="margin:0;">Database Integrity & Validation Checks</label>
+            <button type="button" class="btn btn-default btn-sm" id="btn-run-diagnostics">Re-check Integrity</button>
+          </div>
+          <div id="integrity-report-box"></div>
+        </div>
+
+        <!-- Loaded Packages Table -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+          <h3 style="color:var(--text-bright); font-size:13px;">Loaded Institution Packages</h3>
+          <button type="button" class="btn btn-default btn-sm" id="btn-add-inst-modal">+ New Manual Package</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th>Type</th>
+                <th>ID (Slug)</th>
+                <th>Institution Name</th>
+                <th>Inherits From</th>
+                <th>Classes</th>
+                <th>Holidays</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inst-table-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Combined GUI & Raw JSON Editor Panel -->
+        <div id="panel-inst-editor" class="hidden" style="margin-top: 14px; border: 1px solid var(--border); padding: 14px; border-radius: var(--radius); background: var(--surface-soft);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <h3 id="inst-editor-title" style="font-size:13px; color:var(--text-bright);">Editing Package</h3>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-primary btn-sm" id="btn-save-inst-unified">Save & Sync</button>
+              <button type="button" class="btn btn-default btn-sm" id="btn-close-inst-editor">Close</button>
+            </div>
+          </div>
+
+          <div class="editor-tabs">
+            <button type="button" class="editor-tab-btn active" id="btn-tab-gui" onclick="switchEditorMode('gui')">Visual Form Editor</button>
+            <button type="button" class="editor-tab-btn" id="btn-tab-raw" onclick="switchEditorMode('raw')">Raw JSON Editor</button>
+          </div>
+
+          <!-- Mode A: Visual Form Editor -->
+          <div id="editor-gui-container">
+            <div class="form-grid-3">
+              <div>
+                <label>Institution Name</label>
+                <input type="text" id="gui-inst-name">
+              </div>
+              <div>
+                <label>State Code</label>
+                <input type="text" id="gui-inst-state" maxlength="2">
+              </div>
+              <div>
+                <label>Category</label>
+                <input type="text" id="gui-inst-cat">
+              </div>
+            </div>
+
+            <div class="form-grid-3" style="margin-top:8px;">
+              <div>
+                <label>Entity Type</label>
+                <select id="gui-inst-type">
+                  <option value="parent">Parent</option>
+                  <option value="child">Child</option>
+                </select>
+              </div>
+              <div>
+                <label>Inherits From (Relative Path)</label>
+                <input type="text" id="gui-inst-inherits" placeholder="e.g. institutions/IN/AS/gauhati-university.json">
+              </div>
+              <div>
+                <label>Term / Academic Year</label>
+                <input type="text" id="gui-inst-term" placeholder="Odd Semester / 2026-2027">
+              </div>
+            </div>
+
+            <div style="margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label style="margin:0;">Holidays List (<span id="gui-holidays-count">0</span>)</label>
+                <button type="button" class="btn btn-default btn-sm" id="btn-gui-add-holiday">+ Add Holiday</button>
+              </div>
+              <div id="gui-holidays-list" style="max-height: 180px; overflow-y:auto; display:grid; gap:6px;"></div>
+            </div>
+
+            <div style="margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label style="margin:0;">Classes / Timetable List (<span id="gui-classes-count">0</span>)</label>
+                <button type="button" class="btn btn-default btn-sm" id="btn-gui-add-class">+ Add Class</button>
+              </div>
+              <div id="gui-classes-list" style="max-height: 240px; overflow-y:auto; display:grid; gap:6px;"></div>
+            </div>
+          </div>
+
+          <!-- Mode B: Raw JSON Editor -->
+          <div id="editor-raw-container" class="hidden">
+            <textarea id="inst-raw-json" class="code-font" rows="18"></textarea>
+          </div>
+        </div>
+
+        <!-- Registry & Single File Downloads -->
+        <div style="margin-top: 10px;">
+          <label>Granular Single-File Downloads & Relative Paths</label>
+          <div id="single-files-download-list"></div>
+        </div>
+
+        <div style="margin-top: 10px;">
+          <label>Auto-Synchronized db/registry.json Preview</label>
+          <textarea id="registry-raw-json" class="code-font" rows="8" readonly></textarea>
+        </div>
+
+        <div class="terminal-box" style="margin-top: 6px;">
+          <pre># Unpack into classline repository root
+unzip -o classline-db-*.zip -d ./
+git status db/
+git add db/ && git commit -m "feat(db): update academic schedules and parent-child registry" && git push</pre>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-default" onclick="goToStep(3)">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="btn-export-all-step4">
+            💾 Download db.zip Bundle
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Create Manual Institution Dialog -->
+  <dialog id="modal-new-inst">
+    <form id="form-new-inst" method="dialog">
+      <h3 style="color:var(--text-bright); margin-bottom: 8px;">Create Institution Package</h3>
+      
+      <div class="form-grid-2">
+        <div>
+          <label for="new-inst-state">State / Region</label>
+          <select id="new-inst-state" required></select>
+        </div>
+        <div>
+          <label for="new-inst-type">Entity Type</label>
+          <select id="new-inst-type">
+            <option value="parent">Parent Body (University / Board)</option>
+            <option value="child" selected>Child (Affiliated College / School)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="new-inst-parent-wrap">
+        <label for="new-inst-parent">Parent Organization</label>
+        <select id="new-inst-parent"></select>
+      </div>
+
+      <label for="new-inst-id">Unique ID (Slug)</label>
+      <input type="text" id="new-inst-id" required placeholder="e.g. bilasipara-college">
+
+      <label for="new-inst-name">Institution Name</label>
+      <input type="text" id="new-inst-name" required placeholder="e.g. Bilasipara College">
+
+      <label for="new-inst-cat">Category</label>
+      <input type="text" id="new-inst-cat" value="Collegiate / Undergraduate" required>
+
+      <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-default" onclick="this.closest('dialog').close()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create File</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Dangerous Overwrite Alert Dialog -->
+  <dialog id="modal-danger-export">
+    <div style="display:flex; align-items:flex-start; gap:12px;">
+      <span style="font-size:24px;">⚠️</span>
+      <div>
+        <h3 style="color:var(--red-hover); margin-bottom: 6px;">Warning: No Previous Database Mounted</h3>
+        <p style="color:var(--text); font-size: 12.5px; line-height: 1.5; margin-bottom: 12px;">
+          You did not mount your repository's existing <code>db/</code> folder or <code>db.zip</code>. 
+          Exporting now will produce a <strong>fresh database that will completely replace and wipe</strong> any unmounted colleges in your repository when extracted.
+        </p>
+        <p style="color:var(--muted); font-size: 12px; margin-bottom: 16px;">
+          <strong>Recommended:</strong> Cancel and mount your existing <code>db/</code> first so Studio patches both together.
+        </p>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+      <button type="button" class="btn btn-default" id="btn-cancel-danger-export">Mount Base DB First</button>
+      <button type="button" class="btn btn-danger" id="btn-confirm-danger-export">Continue Dangerously & Replace</button>
+    </div>
+  </dialog>
+
+  <script>
+    "use strict";
+
+    const INDIA_SUBDIVISIONS = {
+      states: [
+        { code: "AP", name: "Andhra Pradesh" }, { code: "AR", name: "Arunachal Pradesh" },
+        { code: "AS", name: "Assam" }, { code: "BR", name: "Bihar" },
+        { code: "CG", name: "Chhattisgarh" }, { code: "GA", name: "Goa" },
+        { code: "GJ", name: "Gujarat" }, { code: "HR", name: "Haryana" },
+        { code: "HP", name: "Himachal Pradesh" }, { code: "JH", name: "Jharkhand" },
+        { code: "KA", name: "Karnataka" }, { code: "KL", name: "Kerala" },
+        { code: "MP", name: "Madhya Pradesh" }, { code: "MH", name: "Maharashtra" },
+        { code: "MN", name: "Manipur" }, { code: "ML", name: "Meghalaya" },
+        { code: "MZ", name: "Mizoram" }, { code: "NL", name: "Nagaland" },
+        { code: "OD", name: "Odisha" }, { code: "PB", name: "Punjab" },
+        { code: "RJ", name: "Rajasthan" }, { code: "SK", name: "Sikkim" },
+        { code: "TN", name: "Tamil Nadu" }, { code: "TS", name: "Telangana" },
+        { code: "TR", name: "Tripura" }, { code: "UP", name: "Uttar Pradesh" },
+        { code: "UK", name: "Uttarakhand" }, { code: "WB", name: "West Bengal" }
+      ],
+      unionTerritories: [
+        { code: "AN", name: "Andaman & Nicobar Islands" }, { code: "CH", name: "Chandigarh" },
+        { code: "DN", name: "Dadra & Nagar Haveli and Daman & Diu" }, { code: "DL", name: "Delhi (NCT)" },
+        { code: "JK", name: "Jammu & Kashmir" }, { code: "LA", name: "Ladakh" },
+        { code: "LD", name: "Lakshadweep" }, { code: "PY", name: "Puducherry" }
+      ]
+    };
+    const ALL_REGIONS = [...INDIA_SUBDIVISIONS.states, ...INDIA_SUBDIVISIONS.unionTerritories];
+
+    let dbFiles = {}; 
+    let hasMountedBaseDb = false;
+    let currentEditingFile = null;
+    let currentEditorMode = "gui"; // 'gui' or 'raw'
+
+    function goToStep(stepNumber) {
+      for (let i = 1; i <= 4; i++) {
+        const card = document.getElementById(`step-${i}-card`);
+        const navBtn = document.querySelector(`.step-indicator-btn[data-step="${i}"]`);
+        
+        if (i === stepNumber) {
+          card.classList.remove("collapsed");
+          card.classList.add("active-step");
+          navBtn.classList.add("active");
+          card.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          card.classList.add("collapsed");
+          card.classList.remove("active-step");
+          navBtn.classList.remove("active");
+          if (i < stepNumber) {
+            navBtn.classList.add("completed");
+          }
+        }
+      }
+      if (stepNumber === 4) {
+        runIntegrityDiagnostics();
+        renderSingleFilesList();
+      }
+    }
+
+    function toggleStep(stepNumber) {
+      goToStep(stepNumber);
+    }
+
+    document.querySelectorAll(".step-indicator-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        goToStep(Number(btn.dataset.step));
+      });
+    });
+
+    function initRegionSelects() {
+      const selects = [document.getElementById("ai-target-state"), document.getElementById("new-inst-state")];
+      selects.forEach(sel => {
+        sel.replaceChildren();
+        ALL_REGIONS.forEach(reg => {
+          const opt = document.createElement("option");
+          opt.value = reg.code;
+          opt.textContent = `${reg.name} (${reg.code})`;
+          sel.appendChild(opt);
+        });
+      });
+      document.getElementById("ai-target-state").value = "AS";
+      updateParentSelects();
+    }
+
+    function updateParentSelects() {
+      const parentSelects = [document.getElementById("ai-parent-institution"), document.getElementById("new-inst-parent")];
+      const parents = [];
+
+      Object.keys(dbFiles).forEach(path => {
+        const data = dbFiles[path];
+        if (data && data.institution && data.institution.type === "parent") {
+          parents.push({
+            id: data.institution.id,
+            name: data.institution.name,
+            file: path.replace(/^db\//, "")
+          });
+        }
+      });
+
+      parentSelects.forEach(sel => {
+        if (!sel) return;
+        sel.replaceChildren();
+        const def = document.createElement("option");
+        def.value = "";
+        def.textContent = "None / Autonomous (Direct)";
+        sel.appendChild(def);
+
+        parents.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.file;
+          opt.dataset.parentId = p.id;
+          opt.textContent = `${p.name} (${p.file})`;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    document.getElementById("ai-entity-type").addEventListener("change", (e) => {
+      const wrap = document.getElementById("wrapper-parent-select");
+      if (e.target.value === "parent") {
+        wrap.classList.add("hidden");
+      } else {
+        wrap.classList.remove("hidden");
+      }
+      buildPrompt();
+    });
+
+    document.getElementById("new-inst-type").addEventListener("change", (e) => {
+      const wrap = document.getElementById("new-inst-parent-wrap");
+      if (e.target.value === "parent") {
+        wrap.classList.add("hidden");
+      } else {
+        wrap.classList.remove("hidden");
+      }
+    });
+
+    /* Improved Context-Aware System Prompt Generator */
+    function buildPrompt() {
+      const state = document.getElementById("ai-target-state").value;
+      const type = document.getElementById("ai-entity-type").value;
+      const parentFile = document.getElementById("ai-parent-institution").value;
+      const name = document.getElementById("ai-target-name").value.trim();
+      const category = document.getElementById("ai-target-category").value.trim();
+      const notes = document.getElementById("ai-raw-notes").value.trim();
+
+      // Collect known parent institutions for registry context
+      const knownParents = [];
+      Object.keys(dbFiles).forEach(path => {
+        const d = dbFiles[path];
+        if (d?.institution?.type === "parent") {
+          knownParents.push({
+            name: d.institution.name,
+            state: d.institution.state,
+            file: path.replace(/^db\//, "")
+          });
+        }
+      });
+
+      const parentContextText = knownParents.length
+        ? `KNOWN PARENT BODIES IN REPOSITORY:
+${knownParents.map(p => `- "${p.name}" (State: ${p.state}) -> inheritsFrom path: "${p.file}"`).join('\n')}`
+        : "No existing parent bodies are mounted in this workspace yet.";
+
+      const prompt = `OUTPUT SPECIFICATION:
+Return strictly valid, raw JSON without markdown formatting (do not wrap in \`\`\`json or code fences).
+
+DATABASE STRUCTURE & LINKING RULES:
+1. File paths for institutions follow: "institutions/IN/{STATE}/{slug}.json".
+2. "type": Must be "parent" (for university/school board defining general academic breaks) OR "child" (for colleges/high schools).
+3. "inheritsFrom":
+   - If "type" is "child" and affiliated to a university, "inheritsFrom" MUST be the exact relative file path to the parent JSON (e.g. "institutions/IN/AS/gauhati-university.json").
+   - If autonomous or unaffiliated, omit "inheritsFrom" or set it to null.
+4. "batch": Must classify student groups for selective checklist filtering in the student app (e.g., "HS-1", "HS-2", "B.A. 1st Sem", "B.Sc Physics").
+
+${parentContextText}
+
+TARGET SCHEMA & FIELD DEFINITIONS:
+{
+  "institution": {
+    "id": string (unique slug formatted as lowercase alphanumeric with hyphens, e.g., "bilasipara-college"),
+    "name": string (full official name of the institution)${name ? ` [Target: "${name}"]` : ""},
+    "state": string (two-letter Indian state/UT ISO code, e.g., "AS", "DL", "MH") [Target: "${state}"],
+    "type": "parent" | "child" [Target: "${type}"],
+    ${type === 'child' ? `"inheritsFrom": string | null (exact file path of parent, e.g., "${parentFile || 'institutions/IN/' + state + '/parent-slug.json'}", or null if autonomous),` : ''}
+    "category": string (e.g., "Collegiate / Undergraduate", "Higher Secondary", "University")${category ? ` [Target: "${category}"]` : ""},
+    "academicYear": string (format: "YYYY-YYYY", e.g., "2026-2027"),
+    "term": string (e.g., "Odd Semester", "Even Semester", "Annual")
+  },
+  "holidays": [
+    {
+      "id": string (unique identifier, e.g., "hol-1"),
+      "name": string (title of the holiday or event),
+      "date": string (strict ISO format: "YYYY-MM-DD"),
+      "category": "national" | "state" | "academic" | "cultural" | "institutional",
+      "note": string (closure details or empty string)
+    }
+  ],
+  "classes": [
+    {
+      "id": string (unique identifier, e.g., "cls-1"),
+      "code": string (course code, e.g., "ENG101", or empty string),
+      "name": string (course or subject title),
+      "department": string (department or stream name),
+      "batch": string (academic group/stream identifier used for filtering, e.g., "HS-1", "B.A. 1st Sem"),
+      "startTime": string (strict 24-hour format: "HH:MM", e.g., "09:00", "14:30"),
+      "endTime": string (strict 24-hour format: "HH:MM", e.g., "10:00", "15:30"),
+      "location": string (room, hall, or campus block),
+      "days": array of integers (zero-indexed weekdays: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat),
+      "date": string | null (ISO "YYYY-MM-DD" if single-session lecture, otherwise null)
+    }
+  ]
+}
+
+SOURCE DATA TO MAP:
+${notes}`;
+
+      document.getElementById("ai-compiled-prompt").value = prompt;
+    }
+
+    function rebuildRegistry() {
+      const defaultRegistry = {
+        version: 1,
+        updatedAt: new Date().toISOString().split("T")[0],
+        regions: {}
+      };
+
+      const registry = dbFiles["db/registry.json"] || defaultRegistry;
+      const regionsMap = registry.regions || {};
+
+      Object.keys(regionsMap).forEach(k => {
+        regionsMap[k].institutions = [];
+      });
+
+      Object.keys(dbFiles).forEach(filePath => {
+        const match = filePath.match(/^db\/institutions\/IN\/([A-Z]{2})\/([^/]+)\.json$/);
+        if (!match) return;
+
+        const [, stateCode, fileSlug] = match;
+        const data = dbFiles[filePath];
+        if (!data || !data.institution) return;
+
+        if (!regionsMap[stateCode]) {
+          const rObj = ALL_REGIONS.find(r => r.code === stateCode);
+          regionsMap[stateCode] = {
+            name: rObj ? rObj.name : stateCode,
+            hasRegionalHolidays: true,
+            institutions: []
+          };
+        }
+
+        const instMeta = {
+          id: data.institution.id || fileSlug,
+          name: data.institution.name || fileSlug,
+          type: data.institution.type || "child",
+          category: data.institution.category || "General",
+          file: `institutions/IN/${stateCode}/${fileSlug}.json`
+        };
+
+        if (data.institution.inheritsFrom) {
+          instMeta.inheritsFrom = data.institution.inheritsFrom;
+        }
+
+        regionsMap[stateCode].institutions.push(instMeta);
+      });
+
+      Object.keys(regionsMap).forEach(k => {
+        regionsMap[k].institutions.sort((a, b) => a.name.localeCompare(b.name));
+      });
+
+      dbFiles["db/registry.json"] = {
+        ...registry,
+        updatedAt: new Date().toISOString().split("T")[0],
+        regions: regionsMap
+      };
+
+      document.getElementById("registry-raw-json").value = JSON.stringify(dbFiles["db/registry.json"], null, 2);
+      renderTable();
+      updateCounter();
+      updateParentSelects();
+      runIntegrityDiagnostics();
+      renderSingleFilesList();
+    }
+
+    function updateCounter() {
+      const count = Object.keys(dbFiles).length;
+      document.getElementById("header-file-counter").textContent = `${count} files loaded`;
+      const baseTag = document.getElementById("base-status-tag");
+      if (hasMountedBaseDb) {
+        baseTag.textContent = "Base Mounted (Safe Patch Mode)";
+        baseTag.style.color = "var(--accent)";
+      } else {
+        baseTag.textContent = "Standalone (No Base DB)";
+        baseTag.style.color = "var(--amber)";
+      }
+      const statusBox = document.getElementById("workspace-status-box");
+      if (statusBox) {
+        statusBox.innerHTML = hasMountedBaseDb 
+          ? `Workspace Mode: <strong>Base DB Loaded</strong> (${count} files in memory). New inputs will cleanly patch your repo.` 
+          : `Workspace Mode: <strong>Fresh Blank State</strong> (No base mounted). Exporting will warn before replacing repository.`;
+      }
+    }
+
+    function applyAiMutation() {
+      const raw = document.getElementById("ai-response-payload").value.trim();
+      if (!raw) {
+        alert("Please paste the AI JSON output first.");
+        return;
+      }
+
+      let clean = raw;
+      if (clean.startsWith("```")) {
+        clean = clean.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "").trim();
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(clean);
+      } catch (err) {
+        alert("JSON Parse Error: " + err.message);
+        return;
+      }
+
+      if (!parsed.institution || !parsed.institution.id || !parsed.institution.state) {
+        alert("Invalid format: Root object must include 'institution' with 'id' and 'state'.");
+        return;
+      }
+
+      const stateCode = parsed.institution.state.toUpperCase();
+      const slug = parsed.institution.id.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const targetPath = `db/institutions/IN/${stateCode}/${slug}.json`;
+
+      const normalizedClasses = (parsed.classes || []).map((c, i) => ({
+        id: c.id || `cls-${slug}-${i+1}`,
+        code: String(c.code || "").trim(),
+        name: String(c.name || "Lecture").trim(),
+        department: String(c.department || "").trim(),
+        batch: String(c.batch || "General").trim(),
+        startTime: c.startTime,
+        endTime: c.endTime,
+        location: String(c.location || "").trim(),
+        days: Array.isArray(c.days) ? c.days : [],
+        date: c.date || null
+      }));
+
+      const normalizedHolidays = (parsed.holidays || []).map((h, i) => ({
+        id: h.id || `hol-${slug}-${i+1}`,
+        name: String(h.name || "Holiday").trim(),
+        date: h.date,
+        category: ["national", "state", "academic", "cultural", "institutional"].includes(h.category) ? h.category : "institutional",
+        note: String(h.note || "").trim()
+      }));
+
+      dbFiles[targetPath] = {
+        institution: parsed.institution,
+        holidays: normalizedHolidays,
+        classes: normalizedClasses
+      };
+
+      rebuildRegistry();
+
+      const log = document.getElementById("dry-run-log");
+      log.textContent = `[SUCCESS] Mutated: ${targetPath}\nEntity Type: ${parsed.institution.type || 'child'}\nAdded/Updated ${normalizedClasses.length} classes and ${normalizedHolidays.length} holidays.\ndb/registry.json auto-synchronized.`;
+      document.getElementById("dry-run-preview").classList.remove("hidden");
+      document.querySelector('.step-indicator-btn[data-step="3"]').classList.add("completed");
+    }
+
+    /* Diagnostics & Integrity Verification Engine */
+    function runIntegrityDiagnostics() {
+      const box = document.getElementById("integrity-report-box");
+      if (!box) return;
+      box.replaceChildren();
+
+      const issues = [];
+      const instPaths = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/"));
+
+      if (!instPaths.length) {
+        box.innerHTML = `<div class="diag-item warning">No institution files loaded to validate.</div>`;
+        return;
+      }
+
+      instPaths.forEach(path => {
+        const pkg = dbFiles[path];
+        const inst = pkg?.institution || {};
+        const filename = path.split("/").pop();
+
+        // 1. Verify inheritsFrom consistency
+        if (inst.type === "child" && inst.inheritsFrom) {
+          const parentDbPath = `db/${inst.inheritsFrom.replace(/^\//, '')}`;
+          if (!dbFiles[parentDbPath]) {
+            issues.push({
+              level: "error",
+              text: `[${filename}] Points to parent "${inst.inheritsFrom}" which does not exist in workspace.`
+            });
+          }
+        }
+
+        // 2. Warn if child has no inheritsFrom
+        if (inst.type === "child" && !inst.inheritsFrom) {
+          issues.push({
+            level: "warning",
+            text: `[${filename}] Child institution has no "inheritsFrom" link (will operate autonomously).`
+          });
+        }
+
+        // 3. Time bounds & format checks on classes
+        (pkg.classes || []).forEach((c, idx) => {
+          if (!c.batch) {
+            issues.push({ level: "warning", text: `[${filename}] Class "${c.name || idx}" is missing a "batch" group.` });
+          }
+          if (c.startTime && c.endTime && c.startTime >= c.endTime) {
+            issues.push({ level: "error", text: `[${filename}] Class "${c.name}" has invalid times (${c.startTime} >= ${c.endTime}).` });
+          }
+        });
+
+        // 4. ISO Date format checks on holidays
+        (pkg.holidays || []).forEach(h => {
+          if (!h.date || !/^\d{4}-\d{2}-\d{2}$/.test(h.date)) {
+            issues.push({ level: "error", text: `[${filename}] Holiday "${h.name}" has invalid date format "${h.date}". Must be YYYY-MM-DD.` });
+          }
+        });
+      });
+
+      if (!issues.length) {
+        box.innerHTML = `<div class="diag-item clean">✅ All files pass integrity checks. Schema and links are fully verified!</div>`;
+      } else {
+        issues.forEach(iss => {
+          const div = document.createElement("div");
+          div.className = `diag-item ${iss.level}`;
+          div.textContent = iss.text;
+          box.appendChild(div);
+        });
+      }
+    }
+
+    /* Granular Single-File Downloader */
+    function renderSingleFilesList() {
+      const list = document.getElementById("single-files-download-list");
+      if (!list) return;
+      list.replaceChildren();
+
+      const allPaths = Object.keys(dbFiles).sort();
+      if (!allPaths.length) {
+        list.innerHTML = `<p class="muted" style="font-size:12px;">No files available to download yet.</p>`;
+        return;
+      }
+
+      allPaths.forEach(path => {
+        const row = document.createElement("div");
+        row.className = "file-export-row";
+
+        const label = document.createElement("div");
+        label.style.fontFamily = "var(--font-mono)";
+        label.style.fontSize = "12px";
+        label.textContent = `/${path}`;
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btn-default btn-sm";
+        btn.textContent = "Download JSON";
+        btn.onclick = () => downloadSingleJsonFile(path);
+
+        row.append(label, btn);
+        list.appendChild(row);
+      });
+    }
+
+    function downloadSingleJsonFile(filePath) {
+      const data = dbFiles[filePath];
+      if (!data) return;
+      const str = JSON.stringify(data, null, 2);
+      const blob = new Blob([str], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filePath.split("/").pop();
+      a.click();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("inst-table-body");
+      tbody.replaceChildren();
+
+      const paths = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/"));
+      if (!paths.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="8" style="text-align:center; color:var(--muted); padding:20px;">No institutions loaded yet. Use Step 2 & 3 or create one manually below.</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      paths.sort().forEach(path => {
+        const item = dbFiles[path];
+        const match = path.match(/^db\/institutions\/IN\/([A-Z]{2})\/([^/]+)\.json$/);
+        const state = match ? match[1] : "--";
+        const id = item.institution?.id || "--";
+        const name = item.institution?.name || "--";
+        const type = item.institution?.type || "child";
+        const inherits = item.institution?.inheritsFrom ? item.institution.inheritsFrom.split('/').pop() : "--";
+        const classCount = (item.classes || []).length;
+        const holCount = (item.holidays || []).length;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="badge-repo">${state}</span></td>
+          <td><span class="badge-type ${type}">${type}</span></td>
+          <td><code>${id}</code></td>
+          <td><strong>${name}</strong></td>
+          <td><code style="font-size:11px;">${inherits}</code></td>
+          <td>${classCount}</td>
+          <td>${holCount}</td>
+          <td>
+            <button type="button" class="btn btn-default btn-sm edit-btn">Edit</button>
+            <button type="button" class="btn btn-danger btn-sm del-btn" style="padding:4px 8px;">Delete</button>
+          </td>
+        `;
+
+        tr.querySelector(".edit-btn").addEventListener("click", () => openEditor(path));
+        tr.querySelector(".del-btn").addEventListener("click", () => {
+          if (confirm(`Remove ${name} (${path}) from database?`)) {
+            delete dbFiles[path];
+            rebuildRegistry();
+          }
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    /* Dual-Mode Visual / Raw JSON Editor */
+    function openEditor(filePath) {
+      currentEditingFile = filePath;
+      document.getElementById("inst-editor-title").textContent = `Editing: ${filePath}`;
+      document.getElementById("panel-inst-editor").classList.remove("hidden");
+
+      populateGuiEditor(dbFiles[filePath]);
+      document.getElementById("inst-raw-json").value = JSON.stringify(dbFiles[filePath], null, 2);
+      document.getElementById("panel-inst-editor").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function switchEditorMode(mode) {
+      currentEditorMode = mode;
+      document.querySelectorAll(".editor-tab-btn").forEach(b => b.classList.remove("active"));
+      if (mode === "gui") {
+        document.getElementById("btn-tab-gui").classList.add("active");
+        document.getElementById("editor-gui-container").classList.remove("hidden");
+        document.getElementById("editor-raw-container").classList.add("hidden");
+        // Sync back from raw textarea if valid
+        try {
+          const parsed = JSON.parse(document.getElementById("inst-raw-json").value);
+          populateGuiEditor(parsed);
+        } catch (e) {}
+      } else {
+        document.getElementById("btn-tab-raw").classList.add("active");
+        document.getElementById("editor-gui-container").classList.add("hidden");
+        document.getElementById("editor-raw-container").classList.remove("hidden");
+        // Sync from GUI fields
+        const curr = gatherGuiEditorData();
+        document.getElementById("inst-raw-json").value = JSON.stringify(curr, null, 2);
+      }
+    }
+
+    function populateGuiEditor(pkg) {
+      const inst = pkg?.institution || {};
+      document.getElementById("gui-inst-name").value = inst.name || "";
+      document.getElementById("gui-inst-state").value = inst.state || "";
+      document.getElementById("gui-inst-cat").value = inst.category || "";
+      document.getElementById("gui-inst-type").value = inst.type || "child";
+      document.getElementById("gui-inst-inherits").value = inst.inheritsFrom || "";
+      document.getElementById("gui-inst-term").value = inst.term || "";
+
+      renderGuiHolidays(pkg?.holidays || []);
+      renderGuiClasses(pkg?.classes || []);
+    }
+
+    function renderGuiHolidays(holidays) {
+      const container = document.getElementById("gui-holidays-list");
+      container.replaceChildren();
+      document.getElementById("gui-holidays-count").textContent = holidays.length;
+
+      holidays.forEach((h, idx) => {
+        const row = document.createElement("div");
+        row.className = "form-grid-4";
+        row.style.alignItems = "center";
+        row.innerHTML = `
+          <input type="text" class="gui-hol-name" value="${h.name || ''}" placeholder="Holiday Name">
+          <input type="text" class="gui-hol-date" value="${h.date || ''}" placeholder="YYYY-MM-DD">
+          <select class="gui-hol-cat">
+            <option value="national" ${h.category === 'national' ? 'selected' : ''}>National</option>
+            <option value="state" ${h.category === 'state' ? 'selected' : ''}>State</option>
+            <option value="academic" ${h.category === 'academic' ? 'selected' : ''}>Academic</option>
+            <option value="cultural" ${h.category === 'cultural' ? 'selected' : ''}>Cultural</option>
+            <option value="institutional" ${h.category === 'institutional' ? 'selected' : ''}>Institutional</option>
+          </select>
+          <button type="button" class="btn btn-default btn-sm gui-del-hol-btn" style="color:var(--red);">✕</button>
+        `;
+        row.querySelector(".gui-del-hol-btn").onclick = () => {
+          row.remove();
+          document.getElementById("gui-holidays-count").textContent = container.children.length;
+        };
+        container.appendChild(row);
+      });
+    }
+
+    function renderGuiClasses(classes) {
+      const container = document.getElementById("gui-classes-list");
+      container.replaceChildren();
+      document.getElementById("gui-classes-count").textContent = classes.length;
+
+      classes.forEach((c, idx) => {
+        const row = document.createElement("div");
+        row.style.cssText = "display:grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 40px; gap:6px; align-items:center;";
+        row.innerHTML = `
+          <input type="text" class="gui-cls-name" value="${c.name || ''}" placeholder="Class / Subject">
+          <input type="text" class="gui-cls-batch" value="${c.batch || 'General'}" placeholder="Batch (e.g. HS-1)">
+          <input type="text" class="gui-cls-start" value="${c.startTime || '09:00'}" placeholder="09:00">
+          <input type="text" class="gui-cls-end" value="${c.endTime || '10:00'}" placeholder="10:00">
+          <input type="text" class="gui-cls-days" value="${(c.days || []).join(',')}" placeholder="Days (e.g. 1,3,5)">
+          <button type="button" class="btn btn-default btn-sm gui-del-cls-btn" style="color:var(--red);">✕</button>
+        `;
+        row.querySelector(".gui-del-cls-btn").onclick = () => {
+          row.remove();
+          document.getElementById("gui-classes-count").textContent = container.children.length;
+        };
+        container.appendChild(row);
+      });
+    }
+
+    function gatherGuiEditorData() {
+      const base = dbFiles[currentEditingFile] || { institution: {}, holidays: [], classes: [] };
+      const inst = {
+        id: base.institution.id,
+        name: document.getElementById("gui-inst-name").value.trim(),
+        state: document.getElementById("gui-inst-state").value.trim().toUpperCase(),
+        type: document.getElementById("gui-inst-type").value,
+        category: document.getElementById("gui-inst-cat").value.trim(),
+        academicYear: base.institution.academicYear || "2026-2027",
+        term: document.getElementById("gui-inst-term").value.trim()
+      };
+
+      const inherits = document.getElementById("gui-inst-inherits").value.trim();
+      if (inst.type === "child" && inherits) {
+        inst.inheritsFrom = inherits;
+      } else {
+        delete inst.inheritsFrom;
+      }
+
+      // Gather holidays
+      const holRows = document.querySelectorAll("#gui-holidays-list > div");
+      const holidays = Array.from(holRows).map((r, i) => ({
+        id: `hol-${inst.id}-${i+1}`,
+        name: r.querySelector(".gui-hol-name").value.trim(),
+        date: r.querySelector(".gui-hol-date").value.trim(),
+        category: r.querySelector(".gui-hol-cat").value,
+        note: "Classes suspended"
+      })).filter(h => h.name && h.date);
+
+      // Gather classes
+      const clsRows = document.querySelectorAll("#gui-classes-list > div");
+      const classes = Array.from(clsRows).map((r, i) => {
+        const rawDays = r.querySelector(".gui-cls-days").value.split(",").map(s => Number(s.trim())).filter(n => !isNaN(n));
+        return {
+          id: `cls-${inst.id}-${i+1}`,
+          name: r.querySelector(".gui-cls-name").value.trim(),
+          batch: r.querySelector(".gui-cls-batch").value.trim() || "General",
+          startTime: r.querySelector(".gui-cls-start").value.trim(),
+          endTime: r.querySelector(".gui-cls-end").value.trim(),
+          days: rawDays,
+          location: "Campus",
+          date: null
+        };
+      }).filter(c => c.name);
+
+      return { institution: inst, holidays, classes };
+    }
+
+    document.getElementById("btn-gui-add-holiday").onclick = () => {
+      const container = document.getElementById("gui-holidays-list");
+      const row = document.createElement("div");
+      row.className = "form-grid-4";
+      row.style.alignItems = "center";
+      row.innerHTML = `
+        <input type="text" class="gui-hol-name" placeholder="Holiday Title">
+        <input type="text" class="gui-hol-date" placeholder="YYYY-MM-DD">
+        <select class="gui-hol-cat">
+          <option value="national">National</option>
+          <option value="state">State</option>
+          <option value="academic">Academic</option>
+          <option value="cultural">Cultural</option>
+          <option value="institutional" selected>Institutional</option>
+        </select>
+        <button type="button" class="btn btn-default btn-sm gui-del-hol-btn" style="color:var(--red);">✕</button>
+      `;
+      row.querySelector(".gui-del-hol-btn").onclick = () => {
+        row.remove();
+        document.getElementById("gui-holidays-count").textContent = container.children.length;
+      };
+      container.appendChild(row);
+      document.getElementById("gui-holidays-count").textContent = container.children.length;
+    };
+
+    document.getElementById("btn-gui-add-class").onclick = () => {
+      const container = document.getElementById("gui-classes-list");
+      const row = document.createElement("div");
+      row.style.cssText = "display:grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 40px; gap:6px; align-items:center;";
+      row.innerHTML = `
+        <input type="text" class="gui-cls-name" placeholder="Subject Name">
+        <input type="text" class="gui-cls-batch" value="General" placeholder="Batch (e.g. HS-1)">
+        <input type="text" class="gui-cls-start" value="09:00" placeholder="09:00">
+        <input type="text" class="gui-cls-end" value="10:00" placeholder="10:00">
+        <input type="text" class="gui-cls-days" value="1" placeholder="Days (e.g. 1,3)">
+        <button type="button" class="btn btn-default btn-sm gui-del-cls-btn" style="color:var(--red);">✕</button>
+      `;
+      row.querySelector(".gui-del-cls-btn").onclick = () => {
+        row.remove();
+        document.getElementById("gui-classes-count").textContent = container.children.length;
+      };
+      container.appendChild(row);
+      document.getElementById("gui-classes-count").textContent = container.children.length;
+    };
+
+    document.getElementById("btn-save-inst-unified").addEventListener("click", () => {
+      try {
+        let finalData;
+        if (currentEditorMode === "gui") {
+          finalData = gatherGuiEditorData();
+        } else {
+          finalData = JSON.parse(document.getElementById("inst-raw-json").value);
+        }
+        dbFiles[currentEditingFile] = finalData;
+        rebuildRegistry();
+        alert("Package successfully saved and registry synchronized!");
+      } catch (err) {
+        alert("Save Error: " + err.message);
+      }
+    });
+
+    document.getElementById("btn-close-inst-editor").addEventListener("click", () => {
+      document.getElementById("panel-inst-editor").classList.add("hidden");
+    });
+
+    document.getElementById("btn-run-diagnostics").addEventListener("click", () => {
+      runIntegrityDiagnostics();
+      alert("Integrity re-check completed!");
+    });
+
+    /* Archive & ZIP Helpers */
+    async function executeZipExport() {
+      const zip = new JSZip();
+      if (!dbFiles["db/registry.json"]) {
+        rebuildRegistry();
+      }
+
+      Object.keys(dbFiles).forEach(path => {
+        zip.file(path, JSON.stringify(dbFiles[path], null, 2) + "\n");
+      });
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `classline-db-${new Date().toISOString().split("T")[0]}.zip`;
+      a.click();
+    }
+
+    function handleExportRequest() {
+      if (!hasMountedBaseDb) {
+        document.getElementById("modal-danger-export").showModal();
+      } else {
+        executeZipExport();
+      }
+    }
+
+    document.getElementById("btn-cancel-danger-export").addEventListener("click", () => {
+      document.getElementById("modal-danger-export").close();
+      goToStep(1);
+    });
+
+    document.getElementById("btn-confirm-danger-export").addEventListener("click", () => {
+      document.getElementById("modal-danger-export").close();
+      executeZipExport();
+    });
+
+    document.getElementById("btn-mount-folder").addEventListener("click", () => document.getElementById("input-dir").click());
+    document.getElementById("btn-mount-zip").addEventListener("click", () => document.getElementById("input-zip").click());
+
+    document.getElementById("input-dir").addEventListener("change", async (e) => {
+      const files = Array.from(e.target.files).filter(f => f.name.endsWith(".json"));
+      if (!files.length) return;
+      dbFiles = {};
+
+      for (const file of files) {
+        const text = await file.text();
+        try {
+          let path = file.webkitRelativePath.replace(/^[^/]+\//, "");
+          if (!path.startsWith("db/")) path = "db/" + path;
+          dbFiles[path] = JSON.parse(text);
+        } catch (err) {
+          console.error("Parse fail: " + file.name, err);
+        }
+      }
+      hasMountedBaseDb = true;
+      rebuildRegistry();
+      alert(`Mounted base database with ${Object.keys(dbFiles).length} JSON files. Safe patch mode active!`);
+    });
+
+    document.getElementById("input-zip").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const zip = await JSZip.loadAsync(file);
+      dbFiles = {};
+
+      for (const [relativePath, zipEntry] of Object.entries(zip.files)) {
+        if (!zipEntry.dir && relativePath.endsWith(".json")) {
+          const text = await zipEntry.async("text");
+          try {
+            let path = relativePath;
+            if (!path.startsWith("db/")) path = "db/" + path;
+            dbFiles[path] = JSON.parse(text);
+          } catch (err) {
+            console.error("Parse fail: " + relativePath, err);
+          }
+        }
+      }
+      hasMountedBaseDb = true;
+      rebuildRegistry();
+      alert(`Mounted base database with ${Object.keys(dbFiles).length} files from archive. Safe patch mode active!`);
+    });
+
+    document.getElementById("btn-reset-db").addEventListener("click", () => {
+      if (confirm("Reset to clean empty workspace?")) {
+        dbFiles = {};
+        hasMountedBaseDb = false;
+        rebuildRegistry();
+      }
+    });
+
+    document.getElementById("btn-build-prompt").addEventListener("click", buildPrompt);
+    document.getElementById("btn-copy-prompt").addEventListener("click", () => {
+      const val = document.getElementById("ai-compiled-prompt").value;
+      if (!val) return;
+      navigator.clipboard.writeText(val);
+      alert("Prompt copied to clipboard.");
+    });
+    document.getElementById("btn-share-prompt").addEventListener("click", () => {
+      const val = document.getElementById("ai-compiled-prompt").value;
+      if (navigator.share && val) navigator.share({ title: "Classline DB Prompt", text: val });
+    });
+    document.getElementById("btn-dry-run").addEventListener("click", applyAiMutation);
+    document.getElementById("btn-clear-payload").addEventListener("click", () => {
+      document.getElementById("ai-response-payload").value = "";
+    });
+    document.getElementById("btn-global-export").addEventListener("click", handleExportRequest);
+    document.getElementById("btn-export-all-step4").addEventListener("click", handleExportRequest);
+
+    document.getElementById("btn-add-inst-modal").addEventListener("click", () => {
+      document.getElementById("modal-new-inst").showModal();
+    });
+
+    document.getElementById("form-new-inst").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const state = document.getElementById("new-inst-state").value;
+      const type = document.getElementById("new-inst-type").value;
+      const parentFile = document.getElementById("new-inst-parent").value;
+      const id = document.getElementById("new-inst-id").value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const name = document.getElementById("new-inst-name").value.trim();
+      const cat = document.getElementById("new-inst-cat").value.trim();
+      const path = `db/institutions/IN/${state}/${id}.json`;
+
+      const instMeta = {
+        id,
+        name,
+        state,
+        type,
+        category: cat,
+        academicYear: "2026-2027",
+        term: "Current"
+      };
+
+      if (type === "child" && parentFile) {
+        instMeta.inheritsFrom = parentFile;
+      }
+
+      dbFiles[path] = {
+        institution: instMeta,
+        holidays: [],
+        classes: []
+      };
+
+      rebuildRegistry();
+      document.getElementById("modal-new-inst").close();
+      openEditor(path);
+    });
+
+    initRegionSelects();
+    buildPrompt();
+    rebuildRegistry();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Classline — Guided Database Registry Studio</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-soft: #21262d;
+      --surface-muted: #30363d;
+      --border: #30363d;
+      --border-focus: #58a6ff;
+      --text: #c9d1d9;
+      --text-bright: #f0f6fc;
+      --muted: #8b949e;
+      --accent: #238636;
+      --accent-hover: #2ea043;
+      --accent-blue: #1f6feb;
+      --accent-blue-hover: #388bfd;
+      --red: #da3633;
+      --amber: #d29922;
+      --purple: #bc8cff;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --radius: 8px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .studio-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-repo {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 2px 7px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--purple);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 120ms ease;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-default {
+      background: var(--surface-soft);
+      color: var(--text-bright);
+      border-color: var(--border);
+    }
+    .btn-default:hover {
+      background: var(--surface-muted);
+      border-color: var(--muted);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-blue {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+    .btn-blue:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border-color: var(--border);
+    }
+    .btn-danger:hover {
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 11.5px;
+    }
+
+    .stepper-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .stepper-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .step-indicator-btn {
+      background: transparent;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+      transition: all 140ms ease;
+    }
+    .step-indicator-btn:hover {
+      background: var(--surface-soft);
+      color: var(--text-bright);
+    }
+    .step-indicator-btn.active {
+      color: var(--text-bright);
+      background: var(--surface-soft);
+      box-shadow: inset 0 0 0 1px var(--border-focus);
+    }
+    .step-indicator-btn.completed .step-circle {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .step-circle {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--surface-muted);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      flex-shrink: 0;
+      transition: all 140ms ease;
+    }
+    .step-indicator-btn.active .step-circle {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+    }
+
+    .step-divider {
+      color: var(--border);
+      font-size: 14px;
+      user-select: none;
+    }
+
+    .studio-main {
+      flex: 1;
+      padding: 20px;
+      max-width: 1080px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 150ms ease;
+    }
+    .step-card.active-step {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 1px var(--border-focus);
+    }
+
+    .step-card-header {
+      padding: 16px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .step-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-card-header .step-circle-lg {
+      width: 32px;
+      height: 32px;
+      font-size: 13px;
+    }
+    .step-title-text h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+    .step-title-text p {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .step-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .step-card.collapsed .step-card-body {
+      display: none;
+    }
+    .step-card.collapsed .step-card-header {
+      border-bottom: none;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin: 4px 0 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      color: var(--text-bright);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--border-focus);
+    }
+
+    textarea.code-font {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.45;
+      tab-size: 2;
+      white-space: pre;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 768px) {
+      .form-grid-2, .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .terminal-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-bright);
+      line-height: 1.5;
+    }
+    .terminal-box pre {
+      overflow-x: auto;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+    }
+    th, td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .step-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    dialog {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: auto;
+      max-width: 580px;
+      width: calc(100% - 32px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+    }
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(2px);
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-status.ready {
+      background: rgba(35, 134, 54, 0.2);
+      color: #3fb950;
+    }
+    .badge-status.optional {
+      background: var(--surface-muted);
+      color: var(--muted);
+    }
+
+    .badge-type {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .badge-type.parent {
+      background: rgba(188, 140, 255, 0.15);
+      color: var(--purple);
+      border: 1px solid rgba(188, 140, 255, 0.4);
+    }
+    .badge-type.child {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--border-focus);
+      border: 1px solid rgba(88, 166, 255, 0.4);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="studio-header">
+    <div class="brand-group">
+      <span class="brand-title">
+        <span>⚡ Classline Studio</span>
+        <span class="badge-repo">classline/db</span>
+      </span>
+      <span id="header-file-counter" class="badge-repo" style="color:var(--text)">0 files loaded</span>
+    </div>
+
+    <div class="header-actions">
+      <input type="file" id="input-dir" webkitdirectory directory multiple hidden>
+      <input type="file" id="input-zip" accept=".zip" hidden>
+
+      <button type="button" class="btn btn-default btn-sm" id="btn-mount-folder" title="Mount local workspace">
+        📂 Open Local db/
+      </button>
+      <button type="button" class="btn btn-default btn-sm" id="btn-mount-zip" title="Mount from backup ZIP">
+        📦 Open db.zip
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" id="btn-global-export">
+        💾 Export db.zip
+      </button>
+    </div>
+  </header>
+
+  <nav class="stepper-nav" aria-label="Database Workflow Steps">
+    <button type="button" class="step-indicator-btn active" data-step="1">
+      <span class="step-circle">1</span>
+      <span>Workspace Setup</span>
+    </button>
+    <span class="step-divider">›</span>
+    <button type="button" class="step-indicator-btn" data-step="2">
+      <span class="step-circle">2</span>
+      <span>Prompt & Hierarchy</span>
+    </button>
+    <span class="step-divider">›</span>
+    <button type="button" class="step-indicator-btn" data-step="3">
+      <span class="step-circle">3</span>
+      <span>AI Ingest & Patch</span>
+    </button>
+    <span class="step-divider">›</span>
+    <button type="button" class="step-indicator-btn" data-step="4">
+      <span class="step-circle">4</span>
+      <span>Inspect & Export</span>
+    </button>
+  </nav>
+
+  <main class="studio-main">
+
+    <!-- STEP 1: Workspace Setup -->
+    <section class="step-card active-step" id="step-1-card">
+      <div class="step-card-header" onclick="toggleStep(1)">
+        <div class="step-title-group">
+          <span class="step-circle step-circle-lg">1</span>
+          <div class="step-title-text">
+            <h2>Initialize Workspace (Optional)</h2>
+            <p>Start fresh or load an existing database folder/archive from your Git clone.</p>
+          </div>
+        </div>
+        <span class="badge-status optional">Optional</span>
+      </div>
+
+      <div class="step-card-body">
+        <p style="color:var(--muted); font-size:12px;">
+          You can start with a clean in-memory database or mount your existing <code>db/</code> folder. Studio handles parent-child relations and recalculates <code>registry.json</code> automatically.
+        </p>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-default" onclick="document.getElementById('input-dir').click()">
+            📂 Mount Local db/ Directory
+          </button>
+          <button type="button" class="btn btn-default" onclick="document.getElementById('input-zip').click()">
+            📦 Load Existing db.zip Archive
+          </button>
+          <button type="button" class="btn btn-default" id="btn-reset-db">
+            ✨ Clear to Blank Workspace
+          </button>
+        </div>
+
+        <div class="terminal-box" id="workspace-status-box">
+          Workspace Mode: <strong>Fresh Blank State</strong> (Ready for additions).
+        </div>
+
+        <div class="step-actions">
+          <span></span>
+          <button type="button" class="btn btn-blue" onclick="goToStep(2)">
+            Continue to Step 2 ›
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: Configure Prompt & Hierarchy -->
+    <section class="step-card collapsed" id="step-2-card">
+      <div class="step-card-header" onclick="toggleStep(2)">
+        <div class="step-title-group">
+          <span class="step-circle step-circle-lg">2</span>
+          <div class="step-title-text">
+            <h2>Configure Prompt & Entity Hierarchy</h2>
+            <p>Define whether this entity is a parent board/university or an affiliated child college/school.</p>
+          </div>
+        </div>
+        <span class="badge-status ready">Hierarchy & Prompt</span>
+      </div>
+
+      <div class="step-card-body">
+        <div class="form-grid-3">
+          <div>
+            <label for="ai-target-state">State / Region</label>
+            <select id="ai-target-state"></select>
+          </div>
+          <div>
+            <label for="ai-entity-type">Entity Type</label>
+            <select id="ai-entity-type">
+              <option value="parent">Parent Body (University / School Board / Trust)</option>
+              <option value="child" selected>Child Entity (Affiliated College / School Wing)</option>
+            </select>
+          </div>
+          <div id="wrapper-parent-select">
+            <label for="ai-parent-institution">Inherit Holidays From</label>
+            <select id="ai-parent-institution">
+              <option value="">None / Autonomous</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div>
+            <label for="ai-target-name">Institution Name</label>
+            <input type="text" id="ai-target-name" placeholder="e.g. St. Stephen's College">
+          </div>
+          <div>
+            <label for="ai-target-category">Academic Category</label>
+            <input type="text" id="ai-target-category" value="Collegiate / Undergraduate" placeholder="e.g. Higher Secondary">
+          </div>
+        </div>
+
+        <div>
+          <label for="ai-raw-notes">Paste Raw Timetable / Circular / Syllabus Text</label>
+          <textarea id="ai-raw-notes" rows="5" placeholder="Paste unformatted syllabus, circular text, period hours, or lecture notes here..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-blue" id="btn-build-prompt">Compile Prompt</button>
+          <button type="button" class="btn btn-default" id="btn-copy-prompt">Copy Prompt</button>
+          <button type="button" class="btn btn-default" id="btn-share-prompt">Share Prompt</button>
+        </div>
+
+        <div>
+          <label for="ai-compiled-prompt">System Prompt (Editable)</label>
+          <textarea id="ai-compiled-prompt" class="code-font" rows="9"></textarea>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-default" onclick="goToStep(1)">‹ Back</button>
+          <button type="button" class="btn btn-blue" onclick="goToStep(3)">
+            Continue to Step 3 ›
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: Ingest AI JSON -->
+    <section class="step-card collapsed" id="step-3-card">
+      <div class="step-card-header" onclick="toggleStep(3)">
+        <div class="step-title-group">
+          <span class="step-circle step-circle-lg">3</span>
+          <div class="step-title-text">
+            <h2>Ingest AI JSON & Mutate Database</h2>
+            <p>Paste the response from your AI model to auto-patch institutions and recalculate registry.json.</p>
+          </div>
+        </div>
+        <span class="badge-status ready">Auto-Patch</span>
+      </div>
+
+      <div class="step-card-body">
+        <label for="ai-response-payload">AI JSON Response</label>
+        <textarea id="ai-response-payload" class="code-font" rows="12" placeholder="Paste raw JSON here (markdown ```json codeblocks are stripped automatically)..."></textarea>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-primary" id="btn-dry-run">
+            Apply & Auto-Sync Registry
+          </button>
+          <button type="button" class="btn btn-default" id="btn-clear-payload">Clear Input</button>
+        </div>
+
+        <div id="dry-run-preview" class="hidden">
+          <label>Mutation Result</label>
+          <div class="terminal-box" id="dry-run-log"></div>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-default" onclick="goToStep(2)">‹ Back</button>
+          <button type="button" class="btn btn-blue" onclick="goToStep(4)">
+            Continue to Step 4 ›
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: Inspect & Export -->
+    <section class="step-card collapsed" id="step-4-card">
+      <div class="step-card-header" onclick="toggleStep(4)">
+        <div class="step-title-group">
+          <span class="step-circle step-circle-lg">4</span>
+          <div class="step-title-text">
+            <h2>Inspect & Export db.zip</h2>
+            <p>Review loaded institution packages, inspect parent-child linkages, and download the commit archive.</p>
+          </div>
+        </div>
+        <span class="badge-status ready">Export</span>
+      </div>
+
+      <div class="step-card-body">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="color:var(--text-bright); font-size:13px;">Loaded Institution Packages</h3>
+          <button type="button" class="btn btn-default btn-sm" id="btn-add-inst-modal">+ New Manual Package</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th>Type</th>
+                <th>ID (Slug)</th>
+                <th>Institution Name</th>
+                <th>Inherits From</th>
+                <th>Classes</th>
+                <th>Holidays</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inst-table-body"></tbody>
+          </table>
+        </div>
+
+        <div id="panel-inst-editor" class="hidden" style="margin-top: 10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+            <label id="inst-editor-title" style="margin:0;">Editing Package</label>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-primary btn-sm" id="btn-save-inst-json">Save & Sync</button>
+              <button type="button" class="btn btn-default btn-sm" id="btn-close-inst-editor">Close</button>
+            </div>
+          </div>
+          <textarea id="inst-raw-json" class="code-font" rows="14"></textarea>
+        </div>
+
+        <div>
+          <label>Auto-Synchronized db/registry.json</label>
+          <textarea id="registry-raw-json" class="code-font" rows="8" readonly></textarea>
+        </div>
+
+        <div class="terminal-box" style="margin-top: 6px;">
+          <pre># Unpack into repository root
+unzip -o classline-db-*.zip -d ./
+git status db/
+git add db/ && git commit -m "feat(db): update academic schedules and parent-child registry" && git push</pre>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-default" onclick="goToStep(3)">‹ Back</button>
+          <button type="button" class="btn btn-primary" id="btn-export-all-step4">
+            💾 Download Clean db.zip
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Create Manual Institution Dialog -->
+  <dialog id="modal-new-inst">
+    <form id="form-new-inst" method="dialog">
+      <h3 style="color:var(--text-bright); margin-bottom: 8px;">Create Institution Package</h3>
+      
+      <div class="form-grid-2">
+        <div>
+          <label for="new-inst-state">State / Region</label>
+          <select id="new-inst-state" required></select>
+        </div>
+        <div>
+          <label for="new-inst-type">Entity Type</label>
+          <select id="new-inst-type">
+            <option value="parent">Parent Body (University / Board)</option>
+            <option value="child" selected>Child (Affiliated College / School)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="new-inst-parent-wrap">
+        <label for="new-inst-parent">Parent Organization</label>
+        <select id="new-inst-parent"></select>
+      </div>
+
+      <label for="new-inst-id">Unique ID (Slug)</label>
+      <input type="text" id="new-inst-id" required placeholder="e.g. du-st-stephens">
+
+      <label for="new-inst-name">Institution Name</label>
+      <input type="text" id="new-inst-name" required placeholder="e.g. St. Stephen's College">
+
+      <label for="new-inst-cat">Category</label>
+      <input type="text" id="new-inst-cat" value="Collegiate / Undergraduate" required>
+
+      <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-default" onclick="this.closest('dialog').close()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create File</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    "use strict";
+
+    const INDIA_SUBDIVISIONS = {
+      states: [
+        { code: "AP", name: "Andhra Pradesh" }, { code: "AR", name: "Arunachal Pradesh" },
+        { code: "AS", name: "Assam" }, { code: "BR", name: "Bihar" },
+        { code: "CG", name: "Chhattisgarh" }, { code: "GA", name: "Goa" },
+        { code: "GJ", name: "Gujarat" }, { code: "HR", name: "Haryana" },
+        { code: "HP", name: "Himachal Pradesh" }, { code: "JH", name: "Jharkhand" },
+        { code: "KA", name: "Karnataka" }, { code: "KL", name: "Kerala" },
+        { code: "MP", name: "Madhya Pradesh" }, { code: "MH", name: "Maharashtra" },
+        { code: "MN", name: "Manipur" }, { code: "ML", name: "Meghalaya" },
+        { code: "MZ", name: "Mizoram" }, { code: "NL", name: "Nagaland" },
+        { code: "OD", name: "Odisha" }, { code: "PB", name: "Punjab" },
+        { code: "RJ", name: "Rajasthan" }, { code: "SK", name: "Sikkim" },
+        { code: "TN", name: "Tamil Nadu" }, { code: "TS", name: "Telangana" },
+        { code: "TR", name: "Tripura" }, { code: "UP", name: "Uttar Pradesh" },
+        { code: "UK", name: "Uttarakhand" }, { code: "WB", name: "West Bengal" }
+      ],
+      unionTerritories: [
+        { code: "AN", name: "Andaman & Nicobar Islands" }, { code: "CH", name: "Chandigarh" },
+        { code: "DN", name: "Dadra & Nagar Haveli and Daman & Diu" }, { code: "DL", name: "Delhi (NCT)" },
+        { code: "JK", name: "Jammu & Kashmir" }, { code: "LA", name: "Ladakh" },
+        { code: "LD", name: "Lakshadweep" }, { code: "PY", name: "Puducherry" }
+      ]
+    };
+    const ALL_REGIONS = [...INDIA_SUBDIVISIONS.states, ...INDIA_SUBDIVISIONS.unionTerritories];
+
+    let dbFiles = {}; 
+    let currentEditingFile = null;
+
+    function goToStep(stepNumber) {
+      for (let i = 1; i <= 4; i++) {
+        const card = document.getElementById(`step-${i}-card`);
+        const navBtn = document.querySelector(`.step-indicator-btn[data-step="${i}"]`);
+        
+        if (i === stepNumber) {
+          card.classList.remove("collapsed");
+          card.classList.add("active-step");
+          navBtn.classList.add("active");
+          card.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          card.classList.add("collapsed");
+          card.classList.remove("active-step");
+          navBtn.classList.remove("active");
+          if (i < stepNumber) {
+            navBtn.classList.add("completed");
+          }
+        }
+      }
+    }
+
+    function toggleStep(stepNumber) {
+      goToStep(stepNumber);
+    }
+
+    document.querySelectorAll(".step-indicator-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        goToStep(Number(btn.dataset.step));
+      });
+    });
+
+    function initRegionSelects() {
+      const selects = [document.getElementById("ai-target-state"), document.getElementById("new-inst-state")];
+      selects.forEach(sel => {
+        sel.replaceChildren();
+        ALL_REGIONS.forEach(reg => {
+          const opt = document.createElement("option");
+          opt.value = reg.code;
+          opt.textContent = `${reg.name} (${reg.code})`;
+          sel.appendChild(opt);
+        });
+      });
+      document.getElementById("ai-target-state").value = "DL";
+      updateParentSelects();
+    }
+
+    function updateParentSelects() {
+      const parentSelects = [document.getElementById("ai-parent-institution"), document.getElementById("new-inst-parent")];
+      const parents = [];
+
+      Object.keys(dbFiles).forEach(path => {
+        const data = dbFiles[path];
+        if (data && data.institution && data.institution.type === "parent") {
+          parents.push({
+            id: data.institution.id,
+            name: data.institution.name,
+            file: path.replace(/^db\//, "")
+          });
+        }
+      });
+
+      parentSelects.forEach(sel => {
+        if (!sel) return;
+        sel.replaceChildren();
+        const def = document.createElement("option");
+        def.value = "";
+        def.textContent = "None / Autonomous";
+        sel.appendChild(def);
+
+        parents.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.file;
+          opt.dataset.parentId = p.id;
+          opt.textContent = p.name;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    document.getElementById("ai-entity-type").addEventListener("change", (e) => {
+      const wrap = document.getElementById("wrapper-parent-select");
+      if (e.target.value === "parent") {
+        wrap.classList.add("hidden");
+      } else {
+        wrap.classList.remove("hidden");
+      }
+      buildPrompt();
+    });
+
+    document.getElementById("new-inst-type").addEventListener("change", (e) => {
+      const wrap = document.getElementById("new-inst-parent-wrap");
+      if (e.target.value === "parent") {
+        wrap.classList.add("hidden");
+      } else {
+        wrap.classList.remove("hidden");
+      }
+    });
+
+    function buildPrompt() {
+      const state = document.getElementById("ai-target-state").value;
+      const type = document.getElementById("ai-entity-type").value;
+      const parentFile = document.getElementById("ai-parent-institution").value;
+      const name = document.getElementById("ai-target-name").value.trim() || (type === "parent" ? "University of Delhi" : "St. Stephen's College");
+      const category = document.getElementById("ai-target-category").value.trim() || "Higher Education";
+      const notes = document.getElementById("ai-raw-notes").value.trim() || "PASTE YOUR RAW TIMETABLE OR ACADEMIC CALENDAR HERE";
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "inst-slug";
+
+      const prompt = `You are a Database Formatting Engine for the "classline" academic routine repository.
+Convert this raw academic calendar or timetable into a verified JSON package for an institution.
+
+HIERARCHY RULES:
+- Entity Type: "${type}"
+${type === 'child' ? `- This is an affiliated entity. It inherits academic breaks from its parent: "${parentFile || 'None'}"` : '- This is a Parent Body (University/Board/Trust). It defines mandatory breaks followed by all affiliated colleges.'}
+
+SCHEMA CONSTRAINTS:
+1. Return ONLY pure valid JSON without markdown fences (\`\`\`json).
+2. Times MUST use 24-hour "HH:MM" (e.g. "09:30", "14:15").
+3. Weekdays MUST use integer arrays (0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat).
+4. Dates MUST follow strictly "YYYY-MM-DD".
+5. Holiday categories: "national", "state", "academic", "cultural", "institutional".
+
+TARGET SCHEMA:
+{
+  "institution": {
+    "id": "${slug}",
+    "name": "${name}",
+    "state": "${state}",
+    "type": "${type}",
+    ${type === 'child' && parentFile ? `"inheritsFrom": "${parentFile}",` : ''}
+    "category": "${category}",
+    "academicYear": "2026-2027",
+    "term": "Autumn Semester"
+  },
+  "holidays": [
+    {
+      "name": "Holiday Title",
+      "date": "2026-10-15",
+      "category": "institutional",
+      "note": "Classes suspended"
+    }
+  ],
+  "classes": [
+    {
+      "code": "CRS101",
+      "name": "Course Title",
+      "department": "Department",
+      "batch": "Batch / Semester / Section",
+      "startTime": "09:30",
+      "endTime": "11:00",
+      "location": "Room 101",
+      "days": [1, 3],
+      "date": null
+    }
+  ]
+}
+
+SOURCE MATERIAL:
+${notes}`;
+
+      document.getElementById("ai-compiled-prompt").value = prompt;
+    }
+
+    function rebuildRegistry() {
+      const registry = {
+        version: 1,
+        updatedAt: new Date().toISOString().split("T")[0],
+        regions: {}
+      };
+
+      Object.keys(dbFiles).forEach(filePath => {
+        const match = filePath.match(/^db\/institutions\/IN\/([A-Z]{2})\/([^/]+)\.json$/);
+        if (!match) return;
+
+        const [, stateCode, fileSlug] = match;
+        const data = dbFiles[filePath];
+        if (!data || !data.institution) return;
+
+        if (!registry.regions[stateCode]) {
+          const rObj = ALL_REGIONS.find(r => r.code === stateCode);
+          registry.regions[stateCode] = {
+            name: rObj ? rObj.name : stateCode,
+            hasRegionalHolidays: true,
+            institutions: []
+          };
+        }
+
+        const instMeta = {
+          id: data.institution.id || fileSlug,
+          name: data.institution.name || fileSlug,
+          type: data.institution.type || "child",
+          category: data.institution.category || "General",
+          file: `institutions/IN/${stateCode}/${fileSlug}.json`
+        };
+
+        if (data.institution.inheritsFrom) {
+          instMeta.inheritsFrom = data.institution.inheritsFrom;
+        }
+
+        registry.regions[stateCode].institutions.push(instMeta);
+      });
+
+      Object.keys(registry.regions).forEach(k => {
+        registry.regions[k].institutions.sort((a, b) => a.name.localeCompare(b.name));
+      });
+
+      dbFiles["db/registry.json"] = registry;
+      document.getElementById("registry-raw-json").value = JSON.stringify(registry, null, 2);
+      renderTable();
+      updateCounter();
+      updateParentSelects();
+    }
+
+    function updateCounter() {
+      const count = Object.keys(dbFiles).length;
+      document.getElementById("header-file-counter").textContent = `${count} files loaded`;
+      const statusBox = document.getElementById("workspace-status-box");
+      if (statusBox) {
+        statusBox.innerHTML = count === 0 
+          ? `Workspace Mode: <strong>Fresh Blank State</strong> (Ready for additions).` 
+          : `Active Files: <strong>${count} files mounted</strong> in memory.`;
+      }
+    }
+
+    function applyAiMutation() {
+      const raw = document.getElementById("ai-response-payload").value.trim();
+      if (!raw) {
+        alert("Please paste the AI JSON output first.");
+        return;
+      }
+
+      let clean = raw;
+      if (clean.startsWith("```")) {
+        clean = clean.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "").trim();
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(clean);
+      } catch (err) {
+        alert("JSON Parse Error: " + err.message);
+        return;
+      }
+
+      if (!parsed.institution || !parsed.institution.id || !parsed.institution.state) {
+        alert("Invalid format: Root object must include 'institution' with 'id' and 'state'.");
+        return;
+      }
+
+      const stateCode = parsed.institution.state.toUpperCase();
+      const slug = parsed.institution.id.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const targetPath = `db/institutions/IN/${stateCode}/${slug}.json`;
+
+      const normalizedClasses = (parsed.classes || []).map((c, i) => ({
+        id: c.id || `cls-${slug}-${i+1}`,
+        code: String(c.code || "").trim(),
+        name: String(c.name || "Lecture").trim(),
+        department: String(c.department || "").trim(),
+        batch: String(c.batch || "").trim(),
+        startTime: c.startTime,
+        endTime: c.endTime,
+        location: String(c.location || "").trim(),
+        days: Array.isArray(c.days) ? c.days : [],
+        date: c.date || null
+      }));
+
+      const normalizedHolidays = (parsed.holidays || []).map((h, i) => ({
+        id: h.id || `hol-${slug}-${i+1}`,
+        name: String(h.name || "Holiday").trim(),
+        date: h.date,
+        category: ["national", "state", "academic", "cultural", "institutional"].includes(h.category) ? h.category : "institutional",
+        note: String(h.note || "").trim()
+      }));
+
+      dbFiles[targetPath] = {
+        institution: parsed.institution,
+        holidays: normalizedHolidays,
+        classes: normalizedClasses
+      };
+
+      rebuildRegistry();
+
+      const log = document.getElementById("dry-run-log");
+      log.textContent = `[SUCCESS] Mutated: ${targetPath}\nEntity Type: ${parsed.institution.type || 'child'}\nAdded/Updated ${normalizedClasses.length} classes and ${normalizedHolidays.length} holidays.\ndb/registry.json auto-synchronized.`;
+      document.getElementById("dry-run-preview").classList.remove("hidden");
+      document.querySelector('.step-indicator-btn[data-step="3"]').classList.add("completed");
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("inst-table-body");
+      tbody.replaceChildren();
+
+      const paths = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/"));
+      if (!paths.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="8" style="text-align:center; color:var(--muted); padding:20px;">No institutions loaded yet. Use Step 2 & 3 or create one manually below.</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      paths.sort().forEach(path => {
+        const item = dbFiles[path];
+        const match = path.match(/^db\/institutions\/IN\/([A-Z]{2})\/([^/]+)\.json$/);
+        const state = match ? match[1] : "--";
+        const id = item.institution?.id || "--";
+        const name = item.institution?.name || "--";
+        const type = item.institution?.type || "child";
+        const inherits = item.institution?.inheritsFrom ? item.institution.inheritsFrom.split('/').pop() : "--";
+        const classCount = (item.classes || []).length;
+        const holCount = (item.holidays || []).length;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="badge-repo">${state}</span></td>
+          <td><span class="badge-type ${type}">${type}</span></td>
+          <td><code>${id}</code></td>
+          <td><strong>${name}</strong></td>
+          <td><code style="font-size:11px;">${inherits}</code></td>
+          <td>${classCount}</td>
+          <td>${holCount}</td>
+          <td>
+            <button type="button" class="btn btn-default btn-sm edit-btn">Edit</button>
+            <button type="button" class="btn btn-danger btn-sm del-btn">Delete</button>
+          </td>
+        `;
+
+        tr.querySelector(".edit-btn").addEventListener("click", () => openEditor(path));
+        tr.querySelector(".del-btn").addEventListener("click", () => {
+          if (confirm(`Remove ${name} (${path}) from database?`)) {
+            delete dbFiles[path];
+            rebuildRegistry();
+          }
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openEditor(filePath) {
+      currentEditingFile = filePath;
+      document.getElementById("inst-editor-title").textContent = `Editing: ${filePath}`;
+      document.getElementById("inst-raw-json").value = JSON.stringify(dbFiles[filePath], null, 2);
+      document.getElementById("panel-inst-editor").classList.remove("hidden");
+      document.getElementById("panel-inst-editor").scrollIntoView({ behavior: "smooth" });
+    }
+
+    document.getElementById("btn-close-inst-editor").addEventListener("click", () => {
+      document.getElementById("panel-inst-editor").classList.add("hidden");
+    });
+
+    document.getElementById("btn-save-inst-json").addEventListener("click", () => {
+      try {
+        const val = JSON.parse(document.getElementById("inst-raw-json").value);
+        dbFiles[currentEditingFile] = val;
+        rebuildRegistry();
+        alert("Package saved and registry recalculated.");
+      } catch (err) {
+        alert("Syntax Error: " + err.message);
+      }
+    });
+
+    async function exportZip() {
+      const zip = new JSZip();
+      if (!dbFiles["db/registry.json"]) {
+        rebuildRegistry();
+      }
+
+      Object.keys(dbFiles).forEach(path => {
+        zip.file(path, JSON.stringify(dbFiles[path], null, 2) + "\n");
+      });
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `classline-db-${new Date().toISOString().split("T")[0]}.zip`;
+      a.click();
+    }
+
+    document.getElementById("btn-mount-folder").addEventListener("click", () => document.getElementById("input-dir").click());
+    document.getElementById("btn-mount-zip").addEventListener("click", () => document.getElementById("input-zip").click());
+
+    document.getElementById("input-dir").addEventListener("change", async (e) => {
+      const files = Array.from(e.target.files).filter(f => f.name.endsWith(".json"));
+      if (!files.length) return;
+      dbFiles = {};
+
+      for (const file of files) {
+        const text = await file.text();
+        try {
+          let path = file.webkitRelativePath.replace(/^[^/]+\//, "");
+          if (!path.startsWith("db/")) path = "db/" + path;
+          dbFiles[path] = JSON.parse(text);
+        } catch (err) {
+          console.error("Parse fail: " + file.name, err);
+        }
+      }
+      rebuildRegistry();
+      alert(`Mounted ${Object.keys(dbFiles).length} JSON files.`);
+    });
+
+    document.getElementById("input-zip").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const zip = await JSZip.loadAsync(file);
+      dbFiles = {};
+
+      for (const [relativePath, zipEntry] of Object.entries(zip.files)) {
+        if (!zipEntry.dir && relativePath.endsWith(".json")) {
+          const text = await zipEntry.async("text");
+          try {
+            let path = relativePath;
+            if (!path.startsWith("db/")) path = "db/" + path;
+            dbFiles[path] = JSON.parse(text);
+          } catch (err) {
+            console.error("Parse fail: " + relativePath, err);
+          }
+        }
+      }
+      rebuildRegistry();
+      alert(`Mounted ${Object.keys(dbFiles).length} files from archive.`);
+    });
+
+    document.getElementById("btn-reset-db").addEventListener("click", () => {
+      if (confirm("Reset to clean empty workspace?")) {
+        dbFiles = {};
+        rebuildRegistry();
+      }
+    });
+
+    document.getElementById("btn-build-prompt").addEventListener("click", buildPrompt);
+    document.getElementById("btn-copy-prompt").addEventListener("click", () => {
+      const val = document.getElementById("ai-compiled-prompt").value;
+      if (!val) return;
+      navigator.clipboard.writeText(val);
+      alert("Prompt copied to clipboard.");
+    });
+    document.getElementById("btn-share-prompt").addEventListener("click", () => {
+      const val = document.getElementById("ai-compiled-prompt").value;
+      if (navigator.share && val) navigator.share({ title: "Classline DB Prompt", text: val });
+    });
+    document.getElementById("btn-dry-run").addEventListener("click", applyAiMutation);
+    document.getElementById("btn-clear-payload").addEventListener("click", () => {
+      document.getElementById("ai-response-payload").value = "";
+    });
+    document.getElementById("btn-global-export").addEventListener("click", exportZip);
+    document.getElementById("btn-export-all-step4").addEventListener("click", exportZip);
+
+    document.getElementById("btn-add-inst-modal").addEventListener("click", () => {
+      document.getElementById("modal-new-inst").showModal();
+    });
+
+    document.getElementById("form-new-inst").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const state = document.getElementById("new-inst-state").value;
+      const type = document.getElementById("new-inst-type").value;
+      const parentFile = document.getElementById("new-inst-parent").value;
+      const id = document.getElementById("new-inst-id").value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const name = document.getElementById("new-inst-name").value.trim();
+      const cat = document.getElementById("new-inst-cat").value.trim();
+      const path = `db/institutions/IN/${state}/${id}.json`;
+
+      const instMeta = {
+        id,
+        name,
+        state,
+        type,
+        category: cat,
+        academicYear: "2026-2027",
+        term: "Current"
+      };
+
+      if (type === "child" && parentFile) {
+        instMeta.inheritsFrom = parentFile;
+      }
+
+      dbFiles[path] = {
+        institution: instMeta,
+        holidays: [],
+        classes: []
+      };
+
+      rebuildRegistry();
+      document.getElementById("modal-new-inst").close();
+      openEditor(path);
+    });
+
+    initRegionSelects();
+    buildPrompt();
+    rebuildRegistry();
+  </script>
+</body>
+</html>

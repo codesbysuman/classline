@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-22",
+  "regions": {
+    "AS": {
+      "name": "Assam",
+      "hasRegionalHolidays": true,
+      "institutions": [
+        {
+          "id": "bilasipara-college",
+          "name": "Bilasipara College",
+          "type": "child",
+          "category": "Collegiate / Undergraduate",
+          "file": "institutions/IN/AS/bilasipara-college.json",
+          "inheritsFrom": "institutions/IN/AS/gauhati-university.json"
+        },
+        {
+          "id": "gauhati-university",
+          "name": "Gauhati University",
+          "type": "parent",
+          "category": "University",
+          "file": "institutions/IN/AS/gauhati-university.json"
+        }
+      ]
+    }
+  }
+}

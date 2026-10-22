@@ -541,7 +541,6 @@
       letter-spacing: 0.3px;
     }
 
-    /* Fixed Holidays Screen Fit & Touch Scrolling */
     .filter-bar {
       display: flex;
       align-items: center;
@@ -1055,8 +1054,85 @@
     }
     .weekday-chip input { width: auto; margin: 0; accent-color: var(--accent); }
 
+    /* Course Picker Batch & Accordion Styles */
+    .batch-accordion-group {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 12px;
+      background: var(--surface);
+    }
+    .batch-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--surface-soft);
+      cursor: pointer;
+      user-select: none;
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+    .batch-header-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .batch-body {
+      padding: 10px 12px;
+      display: grid;
+      gap: 10px;
+    }
+    .batch-body.collapsed {
+      display: none;
+    }
+
+    .subject-accordion-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .subject-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      gap: 10px;
+    }
+    .subject-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    .subject-slots-panel {
+      padding: 8px 14px 12px 36px;
+      background: var(--surface-soft);
+      border-top: 1px dashed var(--border);
+      display: grid;
+      gap: 6px;
+    }
+    .subject-slots-panel.collapsed {
+      display: none;
+    }
+    .slot-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--muted);
+      padding: 3px 0;
+    }
+    .slot-days {
+      font-weight: 700;
+      color: var(--text);
+    }
+
     .app-dialog {
-      width: min(520px, calc(100vw - 32px));
+      width: min(580px, calc(100vw - 32px));
       max-height: min(88vh, 720px);
       padding: 24px;
       border: 1px solid var(--border);
@@ -1383,7 +1459,7 @@
         </div>
       </section>
 
-      <!-- View: Holidays (Fixed Screen Fitting & Student Text) -->
+      <!-- View: Holidays -->
       <section class="view" id="view-holidays">
         <div class="calendar-heading">
           <div>
@@ -1403,7 +1479,6 @@
           </div>
         </div>
 
-        <!-- Safe overflow & touch-friendly filter strip -->
         <div class="filter-bar" id="holiday-filter-bar">
           <button type="button" class="filter-chip active" data-filter="all">All <span class="count-pill" id="count-all">0</span></button>
           <button type="button" class="filter-chip" data-filter="national">National <span class="count-pill" id="count-national">0</span></button>
@@ -1510,6 +1585,43 @@
                 <div class="stat-number" id="stats-trash-count">0</div>
                 <div class="stat-label">In Trash</div>
               </div>
+            </div>
+          </div>
+
+          <!-- Institution & Database Package Selector -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div>
+                <h3>🏫 Institution & Board Timetable</h3>
+                <p>Select your university board and affiliated college to load official breaks and course offerings.</p>
+              </div>
+              <span class="badge-source" id="db-sync-status">Static DB Connected</span>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label for="db-state-select">State / Region</label>
+                <select id="db-state-select"></select>
+              </div>
+              <div>
+                <label for="db-parent-select">University / Board (Parent)</label>
+                <select id="db-parent-select">
+                  <option value="">-- Select State First --</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="db-child-select">Affiliated College / School Wing (Child)</label>
+              <select id="db-child-select">
+                <option value="">-- Select State First --</option>
+              </select>
+            </div>
+
+            <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="primary-button" id="btn-load-campus-data">
+                Import College Classes & Holidays
+              </button>
             </div>
           </div>
 
@@ -1788,38 +1900,67 @@
     </div>
   </dialog>
 
-  <!-- Setup Onboarding Dialog -->
-  <dialog id="onboarding-dialog" class="app-dialog" style="max-width: 480px;">
+  <!-- Setup Onboarding Dialog with Unified State Sync -->
+  <dialog id="onboarding-dialog" class="app-dialog" style="max-width: 520px;">
     <div class="dialog-heading">
       <div>
         <span class="eyebrow">WELCOME TO CLASSLINE</span>
-        <h2>Select your region</h2>
+        <h2>Select your region & institution</h2>
       </div>
     </div>
     <p class="muted" style="margin-bottom: 16px; font-size: 13px;">
-      Choose your State or Union Territory in India to load official public holidays and academic closures automatically into your calendar.
+      Choose your region for public holidays and pick your university/college to load official schedules.
     </p>
 
     <form id="onboarding-form" method="dialog">
-      <label for="onboarding-state-select">Your State or UT</label>
-      <select id="onboarding-state-select" required></select>
+      <label for="onb-state-select">Your State or UT (Public Holidays & DB)</label>
+      <select id="onb-state-select" required></select>
 
-      <div style="display: grid; gap: 8px; margin: 16px 0;">
-        <label class="weekday-chip" style="margin:0;">
-          <input type="checkbox" id="onboarding-sync-national" checked>
-          <span><strong>National holidays</strong> (Compulsory gazetted)</span>
-        </label>
-        <label class="weekday-chip" style="margin:0;">
-          <input type="checkbox" id="onboarding-sync-state" checked>
-          <span><strong>State holidays</strong> (Regional festivals)</span>
-        </label>
+      <div style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px;">
+        <label for="onb-parent-select">University / Board (Parent)</label>
+        <select id="onb-parent-select">
+          <option value="">-- Select State First --</option>
+        </select>
+
+        <label for="onb-child-select">Affiliated College / School Wing (Child)</label>
+        <select id="onb-child-select">
+          <option value="">-- Select State First --</option>
+        </select>
       </div>
 
-      <div class="button-row" style="justify-content: flex-end;">
-        <button type="button" class="secondary-button" id="onboarding-skip-btn">Set up later</button>
-        <button type="submit" class="primary-button">Continue</button>
+      <div class="button-row" style="justify-content: flex-end; margin-top: 20px;">
+        <button type="button" class="secondary-button" id="onboarding-skip-btn">Skip for now</button>
+        <button type="submit" class="primary-button">Save and continue</button>
       </div>
     </form>
+  </dialog>
+
+  <!-- Interactive Course Picker Checklist Modal with Batch & Subject Accordions -->
+  <dialog id="course-picker-dialog" class="app-dialog" style="max-width: 640px;">
+    <div class="dialog-heading">
+      <div>
+        <span class="eyebrow">CAMPUS SYLLABUS</span>
+        <h2 id="picker-dialog-title">Select your classes</h2>
+      </div>
+      <button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">
+        <svg><use href="#icon-close"/></svg>
+      </button>
+    </div>
+    <p class="muted" style="margin-bottom: 14px; font-size: 12.5px;">
+      Classes are organized by batch. Subjects with multiple day schedules are grouped into expandable cards so you can review and select your exact routine.
+    </p>
+
+    <div id="course-checklist-container" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
+      <!-- Populated dynamically with batch accordions -->
+    </div>
+
+    <div class="button-row" style="justify-content: space-between; border-top: 1px solid var(--border); padding-top: 14px;">
+      <span class="small muted" id="picker-selected-summary">0 slots selected</span>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
+        <button type="button" class="primary-button" id="btn-import-selected-classes">Add Selected Classes to Routine</button>
+      </div>
+    </div>
   </dialog>
 
   <!-- Clean Confirmation Dialog -->
@@ -1846,47 +1987,60 @@
 
     const INDIA_SUBDIVISIONS = {
       states: [
-        { code: "AP", name: "Andhra Pradesh" },
-        { code: "AR", name: "Arunachal Pradesh" },
-        { code: "AS", name: "Assam" },
-        { code: "BR", name: "Bihar" },
-        { code: "CG", name: "Chhattisgarh" },
-        { code: "GA", name: "Goa" },
-        { code: "GJ", name: "Gujarat" },
-        { code: "HR", name: "Haryana" },
-        { code: "HP", name: "Himachal Pradesh" },
-        { code: "JH", name: "Jharkhand" },
-        { code: "KA", name: "Karnataka" },
-        { code: "KL", name: "Kerala" },
-        { code: "MP", name: "Madhya Pradesh" },
-        { code: "MH", name: "Maharashtra" },
-        { code: "MN", name: "Manipur" },
-        { code: "ML", name: "Meghalaya" },
-        { code: "MZ", name: "Mizoram" },
-        { code: "NL", name: "Nagaland" },
-        { code: "OD", name: "Odisha" },
-        { code: "PB", name: "Punjab" },
-        { code: "RJ", name: "Rajasthan" },
-        { code: "SK", name: "Sikkim" },
-        { code: "TN", name: "Tamil Nadu" },
-        { code: "TS", name: "Telangana" },
-        { code: "TR", name: "Tripura" },
-        { code: "UP", name: "Uttar Pradesh" },
-        { code: "UK", name: "Uttarakhand" },
-        { code: "WB", name: "West Bengal" }
+        { code: "AP", name: "Andhra Pradesh" }, { code: "AR", name: "Arunachal Pradesh" },
+        { code: "AS", name: "Assam" }, { code: "BR", name: "Bihar" },
+        { code: "CG", name: "Chhattisgarh" }, { code: "GA", name: "Goa" },
+        { code: "GJ", name: "Gujarat" }, { code: "HR", name: "Haryana" },
+        { code: "HP", name: "Himachal Pradesh" }, { code: "JH", name: "Jharkhand" },
+        { code: "KA", name: "Karnataka" }, { code: "KL", name: "Kerala" },
+        { code: "MP", name: "Madhya Pradesh" }, { code: "MH", name: "Maharashtra" },
+        { code: "MN", name: "Manipur" }, { code: "ML", name: "Meghalaya" },
+        { code: "MZ", name: "Mizoram" }, { code: "NL", name: "Nagaland" },
+        { code: "OD", name: "Odisha" }, { code: "PB", name: "Punjab" },
+        { code: "RJ", name: "Rajasthan" }, { code: "SK", name: "Sikkim" },
+        { code: "TN", name: "Tamil Nadu" }, { code: "TS", name: "Telangana" },
+        { code: "TR", name: "Tripura" }, { code: "UP", name: "Uttar Pradesh" },
+        { code: "UK", name: "Uttarakhand" }, { code: "WB", name: "West Bengal" }
       ],
       unionTerritories: [
-        { code: "AN", name: "Andaman & Nicobar Islands" },
-        { code: "CH", name: "Chandigarh" },
-        { code: "DN", name: "Dadra & Nagar Haveli and Daman & Diu" },
-        { code: "DL", name: "Delhi (NCT)" },
-        { code: "JK", name: "Jammu & Kashmir" },
-        { code: "LA", name: "Ladakh" },
-        { code: "LD", name: "Lakshadweep" },
-        { code: "PY", name: "Puducherry" }
+        { code: "AN", name: "Andaman & Nicobar Islands" }, { code: "CH", name: "Chandigarh" },
+        { code: "DN", name: "Dadra & Nagar Haveli and Daman & Diu" }, { code: "DL", name: "Delhi (NCT)" },
+        { code: "JK", name: "Jammu & Kashmir" }, { code: "LA", name: "Ladakh" },
+        { code: "LD", name: "Lakshadweep" }, { code: "PY", name: "Puducherry" }
       ]
     };
     const ALL_INDIA_REGIONS = [...INDIA_SUBDIVISIONS.states, ...INDIA_SUBDIVISIONS.unionTerritories];
+    const WEEKDAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    const StaticDB = (() => {
+      let registryCache = null;
+
+      async function getRegistry() {
+        if (registryCache) return registryCache;
+        try {
+          const res = await fetch("./db/registry.json");
+          if (!res.ok) throw new Error("Registry not found");
+          registryCache = await res.json();
+          return registryCache;
+        } catch (err) {
+          console.warn("Static DB fetch notice:", err);
+          return null;
+        }
+      }
+
+      async function fetchPackage(filePath) {
+        try {
+          const res = await fetch(`./db/${filePath}`);
+          if (!res.ok) throw new Error(`Failed to load ${filePath}`);
+          return await res.json();
+        } catch (err) {
+          console.warn("Package fetch notice:", err);
+          return null;
+        }
+      }
+
+      return { getRegistry, fetchPackage };
+    })();
 
     const ClasslineDB = (() => {
       const STORAGE_KEY = "classline_state_prod_v1";
@@ -1900,7 +2054,8 @@
           preferences: {
             theme: "light",
             setupCompleted: false,
-            syncSubdivision: "DL",
+            syncSubdivision: "AS",
+            selectedInstitutionFile: null,
             syncNational: true,
             syncState: true,
             lastSyncTimestamp: null
@@ -1919,7 +2074,8 @@
               data.preferences = {
                 theme: data.preferences.theme || "light",
                 setupCompleted: Boolean(data.preferences.setupCompleted),
-                syncSubdivision: data.preferences.syncSubdivision || "DL",
+                syncSubdivision: data.preferences.syncSubdivision || "AS",
+                selectedInstitutionFile: data.preferences.selectedInstitutionFile || null,
                 syncNational: data.preferences.syncNational !== false,
                 syncState: data.preferences.syncState !== false,
                 lastSyncTimestamp: data.preferences.lastSyncTimestamp || null
@@ -2098,7 +2254,7 @@
           const strong = document.createElement("strong");
           strong.textContent = "Your timetable is empty";
           const p = document.createElement("p");
-          p.textContent = "Add your weekly lecture hours or special exam sessions.";
+          p.textContent = "Add your weekly lecture hours or import your campus syllabus.";
 
           const btn = document.createElement("button");
           btn.type = "button";
@@ -2111,15 +2267,13 @@
           return;
         }
 
-        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
         sorted.forEach(item => {
           const card = document.createElement("article");
           card.className = "class-card";
 
           const timeDiv = document.createElement("div");
           timeDiv.className = "class-time";
-          timeDiv.textContent = `${item.startTime} –${item.endTime}`;
+          timeDiv.textContent = `${item.startTime} – ${item.endTime}`;
 
           const line = document.createElement("div");
           line.className = "class-time-line";
@@ -2133,8 +2287,8 @@
           const desc = document.createElement("p");
           const dayInfo = item.date 
             ? `Date: ${item.date}` 
-            : (item.days || []).map(d => weekdays[d]).join(", ");
-          desc.textContent = item.location ? `📍 ${item.location} •${dayInfo}` : dayInfo;
+            : (item.days || []).map(d => WEEKDAY_NAMES[d]).join(", ");
+          desc.textContent = item.location ? `📍 ${item.location} • ${dayInfo}` : dayInfo;
 
           details.append(title, desc);
 
@@ -2236,10 +2390,10 @@
 
           header.append(title, badge);
 
-          if ((item.source || "").startsWith("api-sync")) {
+          if ((item.source || "").startsWith("api-sync") || item.source === "campus-sync") {
             const src = document.createElement("span");
             src.className = "badge-source";
-            src.textContent = "Official";
+            src.textContent = item.source === "campus-sync" ? "College" : "Official";
             header.append(src);
           }
 
@@ -2300,7 +2454,6 @@
     })();
 
     const ClasslineCalendar = (() => {
-      const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       let currentDate = new Date();
       let selectedDate = toISODate(new Date());
       let isMonthMode = false;
@@ -2341,7 +2494,7 @@
 
         const startText = start.toLocaleDateString(undefined, { day: "numeric", month: "short" });
         const endText = end.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-        document.getElementById("week-heading").textContent = `${startText} –${endText}`;
+        document.getElementById("week-heading").textContent = `${startText} – ${endText}`;
 
         for (let i = 0; i < 7; i++) {
           const dayDate = addDays(start, i);
@@ -2354,11 +2507,11 @@
           const button = document.createElement("button");
           button.type = "button";
           button.className = `day-cell${isSelected ? " selected" : ""}${isToday ? " today" : ""}`;
-          button.setAttribute("aria-label", `${WEEKDAYS[dayDate.getDay()]},${dayDate.getDate()}`);
+          button.setAttribute("aria-label", `${WEEKDAY_NAMES[dayDate.getDay()]}, ${dayDate.getDate()}`);
 
           const dayName = document.createElement("span");
           dayName.className = "day-name";
-          dayName.textContent = WEEKDAYS[dayDate.getDay()];
+          dayName.textContent = WEEKDAY_NAMES[dayDate.getDay()];
 
           const dayNumber = document.createElement("span");
           dayNumber.className = "day-number";
@@ -2402,7 +2555,7 @@
         document.getElementById("week-heading").textContent =
           currentDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 
-        WEEKDAYS.forEach(day => {
+        WEEKDAY_NAMES.forEach(day => {
           const header = document.createElement("div");
           header.className = "month-weekday";
           header.textContent = day;
@@ -2529,7 +2682,7 @@
 
           const timeDiv = document.createElement("div");
           timeDiv.className = "class-time";
-          timeDiv.textContent = `${item.startTime} –${item.endTime}`;
+          timeDiv.textContent = `${item.startTime} – ${item.endTime}`;
 
           const line = document.createElement("div");
           line.className = "class-time-line";
@@ -3001,7 +3154,7 @@ RULES:
           }
 
           if (state.preferences.syncState) {
-            const region = state.preferences.syncSubdivision || "DL";
+            const region = state.preferences.syncSubdivision || "AS";
             const res = await ClasslineHolidaySync.fetchLiveStateHolidays(region, year);
             state.holidays = state.holidays.filter(h => h.source !== "api-sync-state");
             if (res.status === "ok") {
@@ -3025,31 +3178,333 @@ RULES:
         }
       }
 
+      /* Unified Static DB & State Synchronizer */
+      async function setupStaticDbBinders(stateSelId, parentSelId, childSelId) {
+        const stateSel = document.getElementById(stateSelId);
+        const parentSel = document.getElementById(parentSelId);
+        const childSel = document.getElementById(childSelId);
+
+        if (!stateSel || !parentSel || !childSel) return;
+
+        stateSel.replaceChildren(Object.assign(document.createElement("option"), { value: "", textContent: "-- Select State --" }));
+        ALL_INDIA_REGIONS.forEach(reg => {
+          stateSel.appendChild(Object.assign(document.createElement("option"), { value: reg.code, textContent: reg.name }));
+        });
+
+        const registry = await StaticDB.getRegistry();
+
+        const updateInstitutions = (stateCode) => {
+          parentSel.replaceChildren(Object.assign(document.createElement("option"), { value: "", textContent: "-- Direct / None (All Colleges) --" }));
+          childSel.replaceChildren(Object.assign(document.createElement("option"), { value: "", textContent: "-- Select College / Wing --" }));
+
+          if (!registry || !registry.regions) return;
+          const regData = registry.regions[stateCode];
+          if (!regData || !regData.institutions) return;
+
+          // Populate parent bodies
+          regData.institutions.filter(i => i.type === "parent").forEach(p => {
+            parentSel.appendChild(Object.assign(document.createElement("option"), { value: p.file, textContent: p.name }));
+          });
+
+          // Populate child colleges
+          populateChildren(stateCode, parentSel.value);
+        };
+
+        const populateChildren = (stateCode, selectedParentFile) => {
+          childSel.replaceChildren(Object.assign(document.createElement("option"), { value: "", textContent: "-- Select College / Wing --" }));
+          if (!registry || !registry.regions) return;
+          const regData = registry.regions[stateCode];
+          if (!regData || !regData.institutions) return;
+
+          regData.institutions
+            .filter(i => i.type === "child" && (!selectedParentFile || !i.inheritsFrom || i.inheritsFrom === selectedParentFile))
+            .forEach(c => {
+              childSel.appendChild(Object.assign(document.createElement("option"), { value: c.file, textContent: c.name }));
+            });
+        };
+
+        stateSel.onchange = (e) => {
+          const selectedState = e.target.value;
+          state.preferences.syncSubdivision = selectedState;
+          persist();
+          updateInstitutions(selectedState);
+          syncOtherStateDropdowns(stateSelId, selectedState);
+          if (state.preferences.syncState) syncHolidays();
+        };
+
+        parentSel.onchange = (e) => {
+          populateChildren(stateSel.value, e.target.value);
+        };
+
+        const currentState = state.preferences.syncSubdivision || "AS";
+        stateSel.value = currentState;
+        updateInstitutions(currentState);
+      }
+
+      function syncOtherStateDropdowns(triggerId, newStateCode) {
+        ["sync-state-select", "db-state-select", "onb-state-select"].forEach(id => {
+          if (id !== triggerId) {
+            const el = document.getElementById(id);
+            if (el && el.value !== newStateCode) {
+              el.value = newStateCode;
+              if (id === "db-state-select") {
+                setupStaticDbBinders("db-state-select", "db-parent-select", "db-child-select");
+              } else if (id === "onb-state-select") {
+                setupStaticDbBinders("onb-state-select", "onb-parent-select", "onb-child-select");
+              }
+            }
+          }
+        });
+      }
+
+      async function importCampusPackage(childFile) {
+        if (!childFile) {
+          toast("Please select an affiliated college first.", { isError: true });
+          return;
+        }
+        const childPkg = await StaticDB.fetchPackage(childFile);
+        if (!childPkg) {
+          toast("Failed to load campus package.", { isError: true });
+          return;
+        }
+
+        let parentHolidays = [];
+        if (childPkg.institution?.inheritsFrom) {
+          const parentPkg = await StaticDB.fetchPackage(childPkg.institution.inheritsFrom);
+          if (parentPkg && Array.isArray(parentPkg.holidays)) parentHolidays = parentPkg.holidays;
+        }
+
+        const holidayMap = new Map();
+        state.holidays.forEach(h => holidayMap.set(h.date, h));
+        parentHolidays.forEach(h => holidayMap.set(h.date, { ...h, id: h.id || `par-${Date.now()}`, source: 'parent-sync' }));
+        (childPkg.holidays || []).forEach(h => holidayMap.set(h.date, { ...h, id: h.id || `child-${Date.now()}`, source: 'campus-sync' }));
+
+        state.holidays = Array.from(holidayMap.values());
+        state.preferences.selectedInstitutionFile = childFile;
+        persist();
+
+        // Launch Advanced Batch & Accordion Course Picker
+        openAdvancedCoursePickerModal(childPkg);
+      }
+
+      /* Upgraded: Batch & Accordion Course Selection Engine */
+      function openAdvancedCoursePickerModal(pkg) {
+        const container = document.getElementById("course-checklist-container");
+        container.replaceChildren();
+
+        const titleEl = document.getElementById("picker-dialog-title");
+        if (titleEl) titleEl.textContent = `Select Classes — ${pkg.institution?.name || "Campus"}`;
+
+        const rawClasses = pkg.classes || [];
+        if (!rawClasses.length) {
+          toast("College holidays imported! No timetable classes listed in this package.");
+          renderAll();
+          return;
+        }
+
+        // 1. Group by Batch (e.g. "HS-1", "HS-2", "B.A. 1st Sem")
+        const batchMap = new Map();
+        rawClasses.forEach(c => {
+          const batch = String(c.batch || "General").trim();
+          if (!batchMap.has(batch)) batchMap.set(batch, []);
+          batchMap.get(batch).push(c);
+        });
+
+        // 2. Build UI Hierarchy: Batch -> Subject Accordion -> Day/Time Slots
+        batchMap.forEach((batchClasses, batchName) => {
+          const batchGroup = document.createElement("div");
+          batchGroup.className = "batch-accordion-group";
+
+          // Group by Subject Name inside this batch
+          const subjectMap = new Map();
+          batchClasses.forEach(cls => {
+            const subName = String(cls.name || "Lecture").trim();
+            if (!subjectMap.has(subName)) subjectMap.set(subName, []);
+            subjectMap.get(subName).push(cls);
+          });
+
+          // Batch Header
+          const batchHeader = document.createElement("div");
+          batchHeader.className = "batch-header";
+          batchHeader.innerHTML = `
+            <div class="batch-header-title">
+              <span>📚 <strong>${batchName}</strong></span>
+              <span class="badge-source" style="font-size:10px;">${subjectMap.size} subjects</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;" onclick="event.stopPropagation()">
+              <button type="button" class="small-button batch-toggle-all-btn" style="padding:2px 8px; font-size:11px;">Select Batch</button>
+              <span class="batch-chevron" style="font-size:12px; color:var(--muted); cursor:pointer;">▼</span>
+            </div>
+          `;
+
+          const batchBody = document.createElement("div");
+          batchBody.className = "batch-body";
+
+          // Toggle entire batch collapse
+          batchHeader.addEventListener("click", () => {
+            batchBody.classList.toggle("collapsed");
+            const chevron = batchHeader.querySelector(".batch-chevron");
+            chevron.textContent = batchBody.classList.contains("collapsed") ? "►" : "▼";
+          });
+
+          // Batch Select All button
+          const batchToggleBtn = batchHeader.querySelector(".batch-toggle-all-btn");
+          batchToggleBtn.addEventListener("click", () => {
+            const inputs = batchBody.querySelectorAll("input[type='checkbox']");
+            const anyUnchecked = Array.from(inputs).some(i => !i.checked);
+            inputs.forEach(i => i.checked = anyUnchecked);
+            updatePickerSummary();
+          });
+
+          // Build Subject Accordions
+          subjectMap.forEach((slots, subName) => {
+            const subjectCard = document.createElement("div");
+            subjectCard.className = "subject-accordion-card";
+
+            const headerRow = document.createElement("div");
+            headerRow.className = "subject-header-row";
+
+            const titleWrap = document.createElement("div");
+            titleWrap.className = "subject-title-wrap";
+
+            const mainCb = document.createElement("input");
+            mainCb.type = "checkbox";
+            mainCb.checked = false;
+            mainCb.style.width = "18px";
+            mainCb.style.height = "18px";
+            mainCb.style.accentColor = "var(--accent)";
+
+            const titleMeta = document.createElement("div");
+            const codeTag = slots[0].code ? `<span class="badge-source" style="font-size:10px; margin-right:4px;">${slots[0].code}</span>` : "";
+            const locationTag = slots[0].location ? ` • 📍 ${slots[0].location}` : "";
+            titleMeta.innerHTML = `
+              <div style="font-weight:700; font-size:13px; color:var(--text);">${codeTag}${subName}</div>
+              <div style="font-size:11px; color:var(--muted);">${slots.length} schedule slot(s)${locationTag}</div>
+            `;
+
+            titleWrap.append(mainCb, titleMeta);
+
+            const chevron = document.createElement("span");
+            chevron.style.cssText = "font-size:12px; color:var(--muted);";
+            chevron.textContent = slots.length > 1 ? "▼" : "";
+
+            headerRow.append(titleWrap, chevron);
+
+            // Accordion slots panel
+            const slotsPanel = document.createElement("div");
+            slotsPanel.className = `subject-slots-panel ${slots.length > 1 ? "" : "collapsed"}`;
+
+            const slotCheckboxes = [];
+
+            slots.forEach((slot, slotIdx) => {
+              const slotRow = document.createElement("label");
+              slotRow.className = "slot-row";
+              slotRow.style.cursor = "pointer";
+
+              const slotCb = document.createElement("input");
+              slotCb.type = "checkbox";
+              slotCb.className = "class-slot-input";
+              slotCb.value = JSON.stringify(slot);
+              slotCb.checked = false;
+              slotCb.style.width = "16px";
+              slotCb.style.height = "16px";
+              slotCb.style.accentColor = "var(--accent)";
+              slotCheckboxes.push(slotCb);
+
+              const daysText = slot.date 
+                ? `Single Date: ${slot.date}` 
+                : (slot.days || []).map(d => WEEKDAY_NAMES[d]).join(", ");
+
+              const slotInfo = document.createElement("div");
+              slotInfo.style.flex = "1";
+              slotInfo.style.marginLeft = "8px";
+              slotInfo.innerHTML = `<span class="slot-days">${daysText}</span>: <span>${slot.startTime} – ${slot.endTime}</span>${slot.location ? ` (<em>${slot.location}</em>)` : ""}`;
+
+              slotRow.append(slotCb, slotInfo);
+              slotsPanel.append(slotRow);
+
+              slotCb.addEventListener("change", () => {
+                const allChecked = slotCheckboxes.every(cb => cb.checked);
+                const someChecked = slotCheckboxes.some(cb => cb.checked);
+                mainCb.checked = allChecked;
+                mainCb.indeterminate = someChecked && !allChecked;
+                updatePickerSummary();
+              });
+            });
+
+            // Master Checkbox toggles all variations of this subject
+            mainCb.addEventListener("change", () => {
+              slotCheckboxes.forEach(cb => cb.checked = mainCb.checked);
+              updatePickerSummary();
+            });
+
+            // Clicking header row (outside checkbox) toggles accordion collapse
+            headerRow.addEventListener("click", (e) => {
+              if (e.target !== mainCb) {
+                if (slots.length > 1) {
+                  slotsPanel.classList.toggle("collapsed");
+                  chevron.textContent = slotsPanel.classList.contains("collapsed") ? "►" : "▼";
+                }
+              }
+            });
+
+            subjectCard.append(headerRow, slotsPanel);
+            batchBody.append(subjectCard);
+          });
+
+          batchGroup.append(batchHeader, batchBody);
+          container.append(batchGroup);
+        });
+
+        function updatePickerSummary() {
+          const totalChecked = container.querySelectorAll("input.class-slot-input:checked").length;
+          const summary = document.getElementById("picker-selected-summary");
+          if (summary) summary.textContent = `${totalChecked} lecture slot(s) selected`;
+        }
+
+        updatePickerSummary();
+
+        const dlg = document.getElementById("course-picker-dialog");
+        dlg.showModal();
+
+        document.getElementById("btn-import-selected-classes").onclick = () => {
+          let added = 0;
+          container.querySelectorAll("input.class-slot-input:checked").forEach(cb => {
+            const cls = JSON.parse(cb.value);
+            const payload = {
+              id: `cls-db-${Date.now()}-${Math.random().toString(36).substr(2,4)}`,
+              name: cls.name,
+              startTime: cls.startTime,
+              endTime: cls.endTime,
+              location: cls.location || "",
+              days: cls.days || [],
+              date: cls.date || null
+            };
+            if (!state.classes.some(c => c.name === payload.name && c.startTime === payload.startTime && JSON.stringify(c.days) === JSON.stringify(payload.days))) {
+              state.classes.push(payload);
+              added++;
+            }
+          });
+          persist();
+          renderAll();
+          dlg.close();
+          toast(`Added ${added} course lecture slot(s) to your weekly routine!`);
+        };
+      }
+
       function populateSubdivisions() {
         const select = document.getElementById("sync-state-select");
-        const onbSelect = document.getElementById("onboarding-state-select");
-        [select, onbSelect].forEach(s => {
-          if (!s) return;
-          s.replaceChildren();
-          const g1 = document.createElement("optgroup");
-          g1.label = "States";
-          INDIA_SUBDIVISIONS.states.forEach(st => {
-            const opt = document.createElement("option");
-            opt.value = st.code;
-            opt.textContent = st.name;
-            g1.append(opt);
-          });
-          const g2 = document.createElement("optgroup");
-          g2.label = "Union Territories";
-          INDIA_SUBDIVISIONS.unionTerritories.forEach(ut => {
-            const opt = document.createElement("option");
-            opt.value = ut.code;
-            opt.textContent = ut.name;
-            g2.append(opt);
-          });
-          s.append(g1, g2);
-          s.value = state.preferences.syncSubdivision || "DL";
-        });
+        if (select) {
+          select.replaceChildren();
+          INDIA_SUBDIVISIONS.states.forEach(st => select.appendChild(Object.assign(document.createElement("option"), { value: st.code, textContent: st.name })));
+          const utg = document.createElement("optgroup");
+          utg.label = "Union Territories";
+          INDIA_SUBDIVISIONS.unionTerritories.forEach(ut => utg.appendChild(Object.assign(document.createElement("option"), { value: ut.code, textContent: ut.name })));
+          select.appendChild(utg);
+          select.value = state.preferences.syncSubdivision || "AS";
+        }
+        setupStaticDbBinders("db-state-select", "db-parent-select", "db-child-select");
+        setupStaticDbBinders("onb-state-select", "onb-parent-select", "onb-child-select");
       }
 
       function renderAll() {
@@ -3062,15 +3517,6 @@ RULES:
 
         document.getElementById("sync-toggle-national").checked = state.preferences.syncNational;
         document.getElementById("sync-toggle-state").checked = state.preferences.syncState;
-
-        const syncStats = document.getElementById("sync-stats-text");
-        if (syncStats) {
-          const syncedCount = state.holidays.filter(h => (h.source || "").startsWith("api-sync")).length;
-          const timeStr = state.preferences.lastSyncTimestamp
-            ? new Date(state.preferences.lastSyncTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            : "Never";
-          syncStats.textContent = `${syncedCount} official holidays synced. (Last checked: ${timeStr})`;
-        }
       }
 
       function bindEvents() {
@@ -3098,28 +3544,14 @@ RULES:
         document.getElementById("holiday-category").addEventListener("change", e => updateHolidayCategoryPreview(e.target.value));
 
         document.getElementById("holiday-recycle-btn").addEventListener("click", () => {
-          renderHolidayTrashList();
           document.getElementById("holiday-recovery-dialog").showModal();
         });
 
         document.getElementById("clear-holiday-trash").addEventListener("click", () => {
           state.deletedHolidays = [];
           persist();
-          renderHolidayTrashList();
           updateTrashCount();
           toast("Trash cleared.");
-        });
-
-        document.getElementById("recover-default-holidays-btn").addEventListener("click", () => {
-          const yr = new Date().getFullYear();
-          state.holidays.push(
-            { id: `rec-${Date.now()}-1`, name: "Mid-Semester Recess", date: `${yr}-03-24`, category: "academic", source: "manual", note: "Classes paused" },
-            { id: `rec-${Date.now()}-2`, name: "Winter Break", date: `${yr}-12-25`, category: "academic", source: "manual", note: "End of semester vacation" }
-          );
-          persist();
-          renderAll();
-          document.getElementById("holiday-recovery-dialog").close();
-          toast("Standard semester break dates added.");
         });
 
         document.getElementById("class-form").addEventListener("submit", (e) => {
@@ -3143,7 +3575,7 @@ RULES:
           persist();
           renderAll();
           document.getElementById("class-dialog").close();
-          toast("Class saved to your routine.");
+          toast("Class saved.");
         });
 
         document.getElementById("holiday-form").addEventListener("submit", (e) => {
@@ -3153,12 +3585,6 @@ RULES:
           const date = document.getElementById("holiday-date").value;
           const category = document.getElementById("holiday-category").value;
           const note = document.getElementById("holiday-note").value.trim();
-
-          const collision = state.holidays.some(h => h.date === date && h.id !== id);
-          if (collision) {
-            toast("A holiday is already scheduled for that date.", { isError: true });
-            return;
-          }
 
           const payload = { id: id || `hol-${Date.now()}`, name, date, category, source: "manual", note };
           const idx = state.holidays.findIndex(h => h.id === id);
@@ -3171,28 +3597,25 @@ RULES:
           toast("Holiday saved.");
         });
 
-        const toggleTheme = () => {
-          state.preferences.theme = ClasslineTheme.toggle();
-          persist();
-        };
+        const toggleTheme = () => { state.preferences.theme = ClasslineTheme.toggle(); persist(); };
         document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
         document.getElementById("settings-theme-toggle")?.addEventListener("click", toggleTheme);
 
+        document.getElementById("btn-load-campus-data").addEventListener("click", () => {
+          const childFile = document.getElementById("db-child-select").value;
+          importCampusPackage(childFile);
+        });
+
         document.getElementById("sync-state-select").addEventListener("change", (e) => {
-          state.preferences.syncSubdivision = e.target.value;
+          const selected = e.target.value;
+          state.preferences.syncSubdivision = selected;
           persist();
+          syncOtherStateDropdowns("sync-state-select", selected);
           if (state.preferences.syncState) syncHolidays();
         });
-        document.getElementById("sync-toggle-national").addEventListener("change", (e) => {
-          state.preferences.syncNational = e.target.checked;
-          persist();
-          syncHolidays();
-        });
-        document.getElementById("sync-toggle-state").addEventListener("change", (e) => {
-          state.preferences.syncState = e.target.checked;
-          persist();
-          syncHolidays();
-        });
+
+        document.getElementById("sync-toggle-national").addEventListener("change", (e) => { state.preferences.syncNational = e.target.checked; persist(); syncHolidays(); });
+        document.getElementById("sync-toggle-state").addEventListener("change", (e) => { state.preferences.syncState = e.target.checked; persist(); syncHolidays(); });
         document.getElementById("manual-sync-btn").addEventListener("click", syncHolidays);
         document.getElementById("sync-retry-btn").addEventListener("click", syncHolidays);
 
@@ -3204,9 +3627,7 @@ RULES:
 
         document.getElementById("export-data").addEventListener("click", () => {
           const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = `classline-routine-${new Date().toISOString().slice(0, 10)}.json`;
+          const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `classline-routine-${new Date().toISOString().slice(0,10)}.json` });
           a.click();
         });
 
@@ -3222,10 +3643,8 @@ RULES:
               state = parsed;
               persist();
               renderAll();
-              toast("Timetable restored.");
-            } catch {
-              toast("Invalid timetable backup file.", { isError: true });
-            }
+              toast("Timetable successfully restored.");
+            } catch { toast("Invalid backup file.", { isError: true }); }
           };
           reader.readAsText(file);
         });
@@ -3233,29 +3652,28 @@ RULES:
         document.getElementById("clear-all-data-btn").addEventListener("click", () => {
           confirmDialog({
             title: "Reset schedule?",
-            message: "Clear all saved classes, holidays, and settings to start fresh?",
-            onConfirm: () => {
-              state = ClasslineDB.createInitialState();
-              persist();
-              renderAll();
-              toast("All schedule data cleared.");
-            }
+            message: "Clear all saved classes and holidays to start fresh?",
+            onConfirm: () => { state = ClasslineDB.createInitialState(); persist(); renderAll(); toast("Schedule reset."); }
           });
         });
 
-        const onb = document.getElementById("onboarding-form");
-        if (onb) {
-          onb.addEventListener("submit", (e) => {
+        const onbForm = document.getElementById("onboarding-form");
+        if (onbForm) {
+          onbForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             state.preferences.setupCompleted = true;
-            state.preferences.syncSubdivision = document.getElementById("onboarding-state-select").value;
-            state.preferences.syncNational = document.getElementById("onboarding-sync-national").checked;
-            state.preferences.syncState = document.getElementById("onboarding-sync-state").checked;
             persist();
             document.getElementById("onboarding-dialog").close();
-            syncHolidays();
+
+            const childFile = document.getElementById("onb-child-select").value;
+            if (childFile) {
+              await importCampusPackage(childFile);
+            } else {
+              toast("Welcome to Classline!");
+            }
           });
         }
+
         document.getElementById("onboarding-skip-btn").addEventListener("click", () => {
           state.preferences.setupCompleted = true;
           persist();
@@ -3266,7 +3684,6 @@ RULES:
       function init() {
         state = ClasslineDB.load();
         ClasslineTheme.apply(state.preferences?.theme || "light");
-        populateSubdivisions();
         bindEvents();
         renderAll();
 
@@ -3275,28 +3692,13 @@ RULES:
         }
       }
 
-      return {
-        init,
-        persist,
-        renderAll,
-        toast,
-        navigate,
-        confirmDialog,
-        openClassDialog,
-        openHolidayDialog,
-        restoreHoliday,
-        updateTrashCount
-      };
+      return { init, persist, renderAll, toast, navigate, confirmDialog, openClassDialog, openHolidayDialog, restoreHoliday, updateTrashCount };
     })();
 
-    document.addEventListener("DOMContentLoaded", () => {
-      ClasslineApp.init();
-    });
+    document.addEventListener("DOMContentLoaded", () => { ClasslineApp.init(); });
 
     if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
-      navigator.serviceWorker.register("./sw.js").catch(error => {
-        console.warn("Service worker registration notice:", error);
-      });
+      navigator.serviceWorker.register("./sw.js").catch(e => console.warn("SW notice:", e));
     }
   </script>
 </body>

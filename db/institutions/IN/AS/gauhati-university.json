@@ -1,0 +1,252 @@
+{
+  "institution": {
+    "id": "gauhati-university",
+    "name": "Gauhati University",
+    "state": "AS",
+    "type": "parent",
+    "category": "University",
+    "academicYear": "2026-2026",
+    "term": "Annual"
+  },
+  "holidays": [
+    {
+      "id": "hol-1",
+      "name": "Magh Bihu",
+      "date": "2026-01-13",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-2",
+      "name": "Magh Bihu",
+      "date": "2026-01-14",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-3",
+      "name": "Magh Bihu",
+      "date": "2026-01-15",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-4",
+      "name": "Saraswati Puja",
+      "date": "2026-01-23",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-5",
+      "name": "Republic Day",
+      "date": "2026-01-26",
+      "category": "national",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-6",
+      "name": "G.U. Foundation Day",
+      "date": "2026-02-15",
+      "category": "institutional",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-7",
+      "name": "Sivaratri",
+      "date": "2026-03-03",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-8",
+      "name": "Dol Jatra",
+      "date": "2026-03-21",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-9",
+      "name": "Dol Jatra",
+      "date": "2026-03-22",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-10",
+      "name": "Good Friday",
+      "date": "2026-04-03",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-11",
+      "name": "Bohag Bihu",
+      "date": "2026-04-14",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-12",
+      "name": "Bohag Bihu",
+      "date": "2026-04-15",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-13",
+      "name": "Bohag Bihu",
+      "date": "2026-04-16",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-14",
+      "name": "May Day / Buddha Purnima",
+      "date": "2026-05-01",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-15",
+      "name": "Id-Uz-Zuha",
+      "date": "2026-05-27",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-16",
+      "name": "Id-Uz-Zuha",
+      "date": "2026-05-28",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-17",
+      "name": "Independence Day",
+      "date": "2026-08-15",
+      "category": "national",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-18",
+      "name": "Tirubhav Tithi of Sri Sri Madhabdeva",
+      "date": "2026-09-01",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-19",
+      "name": "Janmastomi",
+      "date": "2026-09-04",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-20",
+      "name": "Tirubhav Tithi of Sri Sri Sankardev",
+      "date": "2026-09-12",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-21",
+      "name": "Janmostav of Sri Sri Sankardev",
+      "date": "2026-09-21",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-22",
+      "name": "Birthday of Mahatma Gandhi",
+      "date": "2026-10-02",
+      "category": "national",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-23",
+      "name": "Durga Puja, Kati Bihu, & Lakhsmi Puja",
+      "date": "2026-10-18",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-24",
+      "name": "Durga Puja, Kati Bihu, & Lakhsmi Puja",
+      "date": "2026-10-19",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-25",
+      "name": "Durga Puja, Kati Bihu, & Lakhsmi Puja",
+      "date": "2026-10-20",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-26",
+      "name": "Durga Puja, Kati Bihu, & Lakhsmi Puja",
+      "date": "2026-10-21",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-27",
+      "name": "Durga Puja, Kati Bihu, & Lakhsmi Puja",
+      "date": "2026-10-22",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-28",
+      "name": "Durga Puja, Kati Bihu, & Lakhsmi Puja",
+      "date": "2026-10-23",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-29",
+      "name": "Durga Puja, Kati Bihu, & Lakhsmi Puja",
+      "date": "2026-10-24",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-30",
+      "name": "Durga Puja, Kati Bihu, & Lakhsmi Puja",
+      "date": "2026-10-25",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-31",
+      "name": "Kali Puja & Dipawali",
+      "date": "2026-11-08",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-32",
+      "name": "Guru Nanak's Birthday",
+      "date": "2026-11-24",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-33",
+      "name": "Asom Divas (Su-ka-Pha Divas)",
+      "date": "2026-12-02",
+      "category": "state",
+      "note": "Offices & Classes closed"
+    },
+    {
+      "id": "hol-34",
+      "name": "Christmas Day",
+      "date": "2026-12-25",
+      "category": "cultural",
+      "note": "Offices & Classes closed"
+    }
+  ],
+  "classes": []
+}
