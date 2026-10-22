@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#f7f7f5">
-  <meta name="description" content="A robust, student-friendly academic timetable and routine planner with holiday calendar updates and smart assistant support.">
-  <title>Classline — Academic Routine Planner</title>
+  <meta name="description" content="A student-friendly academic timetable and routine planner with holiday calendar updates and smart assistant support.">
+  <title>Classline — Student Routine & Timetable Planner</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.json">
   
@@ -14,9 +14,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* ==========================================================================
-       CSS Custom Properties & Color Systems (Light / Dark)
-       ========================================================================== */
     :root {
       color-scheme: light;
       --bg: #f7f7f5;
@@ -38,7 +35,7 @@
       --red-soft: #feecec;
       --red-border: #f8c0c0;
 
-      /* Holiday Category System - Light */
+      /* Holiday Category Tokens */
       --cat-national: #b91c1c;
       --cat-national-bg: #fee2e2;
       --cat-national-border: #fca5a5;
@@ -89,7 +86,6 @@
       --red-soft: #381919;
       --red-border: #5e2424;
 
-      /* Holiday Category System - Dark */
       --cat-national: #fca5a5;
       --cat-national-bg: #451010;
       --cat-national-border: #7f1d1d;
@@ -115,9 +111,6 @@
       --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.6);
     }
 
-    /* ==========================================================================
-       Reset & Base Styles
-       ========================================================================== */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -206,7 +199,6 @@
       margin-bottom: 4px;
     }
 
-    /* Layout */
     .app-shell {
       display: flex;
       min-height: 100vh;
@@ -283,9 +275,7 @@
       background: var(--surface-soft);
       color: var(--text);
     }
-    .nav-item.active {
-      font-weight: 700;
-    }
+    .nav-item.active { font-weight: 700; }
 
     .nav-symbol {
       display: inline-grid;
@@ -308,6 +298,25 @@
       border-top: 1px solid var(--border);
     }
 
+    .storage-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+      box-shadow: 0 0 0 2px var(--green-soft);
+    }
+
     .main-area {
       flex: 1 1 0%;
       min-width: 0;
@@ -316,7 +325,6 @@
       min-height: 100vh;
     }
 
-    /* Topbar */
     .topbar {
       position: sticky;
       top: 0;
@@ -340,7 +348,6 @@
       gap: 10px;
     }
 
-    /* Buttons */
     .primary-button, .secondary-button, .icon-button, .text-button, .danger-button {
       display: inline-flex;
       align-items: center;
@@ -361,9 +368,7 @@
       color: var(--accent-text);
       border: 1px solid transparent;
     }
-    .primary-button:hover {
-      background: var(--accent-hover);
-    }
+    .primary-button:hover { background: var(--accent-hover); }
 
     .secondary-button {
       background: var(--surface);
@@ -419,11 +424,8 @@
       color: var(--red) !important;
       border-color: var(--red-border) !important;
     }
-    .danger-button:hover {
-      background: var(--red-soft) !important;
-    }
+    .danger-button:hover { background: var(--red-soft) !important; }
 
-    /* Views */
     .view {
       display: none;
       animation: fadeIn 150ms ease forwards;
@@ -442,6 +444,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow);
+      max-width: 100%;
     }
 
     .calendar-heading, .panel-heading, .section-heading, .dialog-heading {
@@ -451,6 +454,13 @@
       gap: 12px;
       margin-bottom: 18px;
       flex-wrap: wrap;
+    }
+
+    .holiday-header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .welcome-row {
@@ -468,7 +478,6 @@
       gap: 6px;
     }
 
-    /* Category Badges & Indicators */
     .badge-category {
       display: inline-flex;
       align-items: center;
@@ -532,15 +541,20 @@
       letter-spacing: 0.3px;
     }
 
-    /* Filter Bar */
+    /* Fixed Holidays Screen Fit & Touch Scrolling */
     .filter-bar {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       overflow-x: auto;
-      padding-bottom: 6px;
-      scrollbar-width: thin;
+      padding: 4px 2px 8px 2px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      max-width: 100%;
+    }
+    .filter-bar::-webkit-scrollbar {
+      display: none;
     }
 
     .filter-chip {
@@ -555,6 +569,7 @@
       background: var(--surface);
       color: var(--muted);
       white-space: nowrap;
+      flex-shrink: 0;
       transition: all 130ms ease;
     }
     .filter-chip:hover {
@@ -578,7 +593,6 @@
       color: var(--accent-text);
     }
 
-    /* Week & Month Calendar Grid */
     .week-grid {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -649,7 +663,6 @@
       padding: 2px 0;
     }
 
-    /* Calendar Dots System */
     .cell-dot, .legend-dot {
       width: 7px;
       height: 7px;
@@ -667,7 +680,6 @@
     .cell-dot.holiday-dot.institutional, .legend-dot.holiday-dot.institutional { background: var(--cat-institutional); }
     .legend-dot.today-dot { background: var(--accent); }
 
-    /* Month Grid */
     .month-grid {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -739,7 +751,6 @@
       gap: 6px;
     }
 
-    /* Class and Holiday Cards */
     .class-list {
       display: grid;
       gap: 10px;
@@ -756,6 +767,8 @@
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-sm);
       transition: border-color 150ms ease;
+      width: 100%;
+      max-width: 100%;
     }
     .class-card:hover { border-color: var(--border-focus); }
 
@@ -766,7 +779,7 @@
       font-weight: 700;
       color: var(--text);
       font-variant-numeric: tabular-nums;
-      min-width: 90px;
+      min-width: 88px;
     }
 
     .class-time-line {
@@ -793,11 +806,13 @@
       font-size: 14.5px;
       font-weight: 700;
       word-break: break-word;
+      overflow-wrap: anywhere;
     }
     .class-details p {
       font-size: 12px;
       color: var(--muted);
       word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
     .card-actions {
@@ -805,6 +820,7 @@
       align-items: center;
       gap: 8px;
       margin-left: auto;
+      flex-shrink: 0;
     }
 
     .empty-state {
@@ -813,6 +829,7 @@
       border: 1.5px dashed var(--border);
       border-radius: var(--radius-md);
       background: var(--surface);
+      width: 100%;
     }
     .empty-state strong {
       display: block;
@@ -825,7 +842,6 @@
       margin-bottom: 14px;
     }
 
-    /* Callouts & Banners */
     .info-callout {
       display: flex;
       gap: 12px;
@@ -836,6 +852,7 @@
       margin-bottom: 20px;
       font-size: 12px;
       line-height: 1.5;
+      width: 100%;
     }
     .info-callout svg {
       width: 18px;
@@ -856,7 +873,6 @@
       color: var(--cat-academic);
     }
 
-    /* Assistant Screen */
     .assistant-panel { max-width: 820px; }
     .step-badge {
       display: inline-flex;
@@ -939,7 +955,6 @@
       margin: 0 2px;
     }
 
-    /* Settings Components */
     .settings-grid { display: grid; gap: 20px; max-width: 860px; }
     .settings-card { display: flex; flex-direction: column; gap: 18px; }
     .settings-card-header {
@@ -1040,7 +1055,6 @@
     }
     .weekday-chip input { width: auto; margin: 0; accent-color: var(--accent); }
 
-    /* Modals & Dialogs */
     .app-dialog {
       width: min(520px, calc(100vw - 32px));
       max-height: min(88vh, 720px);
@@ -1136,9 +1150,37 @@
         padding-left: 14px;
         padding-right: 14px;
         padding-bottom: calc(110px + env(safe-area-inset-bottom, 20px));
+        width: 100%;
       }
       .topbar { margin: 0 -14px 20px; padding: 12px 14px; }
       .mobile-nav { display: block; }
+      
+      .calendar-card, .panel, .settings-card {
+        padding: 16px 14px;
+      }
+      
+      .holiday-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      
+      .class-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 12px 14px;
+      }
+      .class-time-line {
+        display: none;
+      }
+      .card-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 8px;
+        border-top: 1px dashed var(--border);
+      }
+      
       .day-cell { min-height: 80px; padding: 6px 2px 4px; }
       .day-name { font-size: 9px; }
       .day-number { width: 24px; height: 24px; font-size: 12px; }
@@ -1150,7 +1192,7 @@
 </head>
 <body>
 
-  <!-- SVG Sprite Definitions -->
+  <!-- SVG Sprite Library -->
   <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
     <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor">
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -1214,16 +1256,15 @@
   </svg>
 
   <div class="app-shell">
-    <!-- Desktop Sidebar -->
-    <aside class="sidebar" id="sidebar" aria-label="Desktop navigation">
-      <a class="brand" href="#" aria-label="7Classline home">
-        <span class="brand-mark">7</span>
+    <aside class="sidebar" id="sidebar" aria-label="Main menu">
+      <a class="brand" href="#" aria-label="Classline student home">
+        <span class="brand-mark">C</span>
         <span>Classline</span>
       </a>
 
-      <div class="sidebar-label">ACADEMIC WORKSPACE</div>
+      <div class="sidebar-label">MY ACADEMICS</div>
 
-      <nav class="side-navigation" aria-label="Main navigation">
+      <nav class="side-navigation" aria-label="Primary sections">
         <button class="nav-item active" data-view="calendar">
           <span class="nav-symbol"><svg><use href="#icon-calendar"/></svg></span>
           Calendar
@@ -1238,11 +1279,15 @@
         </button>
         <button class="nav-item" data-view="assistant">
           <span class="nav-symbol"><svg><use href="#icon-ai"/></svg></span>
-          Assistant
+          Timetable assistant
         </button>
       </nav>
 
       <div class="sidebar-bottom">
+        <div class="storage-indicator">
+          <span class="status-dot"></span>
+          <span>Saved on this device</span>
+        </div>
         <button class="nav-item" data-view="settings">
           <span class="nav-symbol"><svg><use href="#icon-settings"/></svg></span>
           Settings
@@ -1250,16 +1295,14 @@
       </div>
     </aside>
 
-    <!-- Main Content Area -->
     <main class="main-area" id="main-content">
-      <!-- Sticky Topbar -->
       <header class="topbar">
         <div>
-          <span class="eyebrow" id="today-label">ACADEMIC SCHEDULE</span>
+          <span class="eyebrow" id="today-label">CLASS SCHEDULE</span>
           <h1 id="page-title">Calendar</h1>
         </div>
         <div class="topbar-actions">
-          <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle theme">
+          <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch day/night theme" title="Switch reading theme">
             <svg id="theme-icon"><use href="#icon-moon"/></svg>
           </button>
           <button class="primary-button" id="quick-add" type="button">
@@ -1273,8 +1316,8 @@
       <section class="view active" id="view-calendar">
         <div class="welcome-row">
           <div>
-            <h2>Your week, organized.</h2>
-            <p>View your recurring classes, scheduled exams, and campus closures.</p>
+            <h2>Your week at a glance</h2>
+            <p>Track your upcoming lectures, labs, exams, and scheduled breaks.</p>
           </div>
           <div class="week-controls">
             <button class="icon-button" id="previous-week" aria-label="Previous period">
@@ -1315,7 +1358,7 @@
             <span class="eyebrow">SELECTED DAY</span>
             <h2 id="selected-date-heading">Today's classes</h2>
           </div>
-          <button class="text-button" id="add-holiday-from-calendar">+ Mark as holiday</button>
+          <button class="text-button" id="add-holiday-from-calendar">+ Mark day off</button>
         </div>
 
         <div id="selected-day-content" class="class-list"></div>
@@ -1326,8 +1369,8 @@
         <div class="calendar-heading">
           <div>
             <span class="eyebrow">REGULAR CLASSES</span>
-            <h2>My routine</h2>
-            <p>Organize recurring weekly lectures and special single-day academic sessions.</p>
+            <h2>My weekly routine</h2>
+            <p>Set up your repeating class schedule or single study sessions.</p>
           </div>
           <button class="primary-button" id="routine-add-class">
             <svg style="width:16px;height:16px;stroke-width:2.5;"><use href="#icon-plus"/></svg>
@@ -1340,18 +1383,18 @@
         </div>
       </section>
 
-      <!-- View: Holidays -->
+      <!-- View: Holidays (Fixed Screen Fitting & Student Text) -->
       <section class="view" id="view-holidays">
         <div class="calendar-heading">
           <div>
             <span class="eyebrow">OFFICIAL ACADEMIC CALENDAR</span>
             <h2>Holidays & campus closures</h2>
-            <p>Recurring lectures are paused automatically on scheduled holiday dates.</p>
+            <p>Classes are automatically paused on marked holiday dates.</p>
           </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button class="secondary-button" id="holiday-recycle-btn" type="button">
+          <div class="holiday-header-actions">
+            <button class="secondary-button" id="holiday-recycle-btn" type="button" title="View deleted holidays">
               <svg style="width:16px;height:16px;stroke-width:2;"><use href="#icon-routine"/></svg>
-              <span>Recover (<span id="trash-count">0</span>)</span>
+              <span>Trash (<span id="trash-count">0</span>)</span>
             </button>
             <button class="primary-button" id="add-holiday">
               <svg style="width:16px;height:16px;stroke-width:2.5;"><use href="#icon-plus"/></svg>
@@ -1360,13 +1403,14 @@
           </div>
         </div>
 
+        <!-- Safe overflow & touch-friendly filter strip -->
         <div class="filter-bar" id="holiday-filter-bar">
           <button type="button" class="filter-chip active" data-filter="all">All <span class="count-pill" id="count-all">0</span></button>
           <button type="button" class="filter-chip" data-filter="national">National <span class="count-pill" id="count-national">0</span></button>
           <button type="button" class="filter-chip" data-filter="state">State <span class="count-pill" id="count-state">0</span></button>
-          <button type="button" class="filter-chip" data-filter="academic">Academic <span class="count-pill" id="count-academic">0</span></button>
-          <button type="button" class="filter-chip" data-filter="cultural">Cultural <span class="count-pill" id="count-cultural">0</span></button>
-          <button type="button" class="filter-chip" data-filter="institutional">Institutional <span class="count-pill" id="count-institutional">0</span></button>
+          <button type="button" class="filter-chip" data-filter="academic">Academic breaks <span class="count-pill" id="count-academic">0</span></button>
+          <button type="button" class="filter-chip" data-filter="cultural">Festivals <span class="count-pill" id="count-cultural">0</span></button>
+          <button type="button" class="filter-chip" data-filter="institutional">Campus events <span class="count-pill" id="count-institutional">0</span></button>
         </div>
 
         <div class="panel">
@@ -1377,18 +1421,18 @@
       <!-- View: Assistant -->
       <section class="view" id="view-assistant">
         <div style="margin-bottom: 24px;">
-          <span class="eyebrow">SMART PLANNING</span>
+          <span class="eyebrow">SMART TIMETABLE MAKER</span>
           <h2>Timetable assistant</h2>
-          <p>Describe your syllabus or routine in plain text and import it seamlessly.</p>
+          <p>Paste or describe your syllabus routine in natural English to load it into your schedule.</p>
         </div>
 
         <div class="panel assistant-panel">
           <div class="step-badge">01</div>
-          <h3>Describe your schedule</h3>
-          <p class="muted">Mention your subjects, timings, recurring days, and semester duration.</p>
+          <h3>Tell us your weekly schedule</h3>
+          <p class="muted">Mention your courses, room numbers, lecture hours, and semester dates.</p>
 
-          <label for="routine-description">Schedule notes</label>
-          <textarea id="routine-description" rows="5" placeholder="e.g. Distributed Systems on Monday and Wednesday 09:30 to 11:00 in Room 302..."></textarea>
+          <label for="routine-description">Schedule description</label>
+          <textarea id="routine-description" rows="5" placeholder="e.g., Computer Networks on Monday and Wednesday 09:30 to 11:00 in Room 204. Lab on Friday 2 PM..."></textarea>
 
           <div class="form-row">
             <div>
@@ -1406,11 +1450,11 @@
 
         <div class="panel assistant-panel" id="panel-step-2">
           <div class="step-badge">02</div>
-          <h3>Copy prompt for AI</h3>
-          <p class="muted">Paste this prompt into Claude, ChatGPT, or Gemini.</p>
+          <h3>Copy prompt to your AI</h3>
+          <p class="muted">Copy this prompt and send it to ChatGPT, Claude, or Gemini.</p>
 
           <label for="generated-prompt">Generated prompt</label>
-          <textarea id="generated-prompt" rows="7" readonly placeholder="Your structured prompt will appear here..."></textarea>
+          <textarea id="generated-prompt" rows="7" readonly placeholder="Your formatted prompt will appear here..."></textarea>
 
           <div class="button-row">
             <button class="secondary-button" id="copy-prompt">Copy prompt</button>
@@ -1420,11 +1464,11 @@
 
         <div class="panel assistant-panel" id="panel-step-3">
           <div class="step-badge">03</div>
-          <h3>Import routine</h3>
-          <p class="muted">Paste the structured response from your AI assistant to review and save.</p>
+          <h3>Bring routine into Classline</h3>
+          <p class="muted">Paste the response returned by your AI assistant to verify and save.</p>
 
-          <label for="routine-json">JSON response</label>
-          <textarea id="routine-json" rows="6" placeholder="Paste response JSON here..."></textarea>
+          <label for="routine-json">AI Response</label>
+          <textarea id="routine-json" rows="6" placeholder="Paste response here..."></textarea>
 
           <div class="button-row">
             <button class="secondary-button" id="read-clipboard">Paste from clipboard</button>
@@ -1439,20 +1483,19 @@
       <!-- View: Settings -->
       <section class="view" id="view-settings">
         <div style="margin-bottom: 24px;">
-          <span class="eyebrow">PREFERENCES & AUTOMATION</span>
+          <span class="eyebrow">PREFERENCES</span>
           <h2>Settings</h2>
-          <p>Manage official holiday updates, reading themes, and timetable backups.</p>
+          <p>Manage your region, official holidays, color themes, and schedule backups.</p>
         </div>
 
         <div class="settings-grid">
-          <!-- Metrics -->
           <div class="settings-card">
             <div class="settings-card-header">
               <div>
-                <h3>Schedule overview</h3>
-                <p>Summary of your locally stored timetable entries.</p>
+                <h3>Schedule summary</h3>
+                <p>Overview of items currently saved on this device.</p>
               </div>
-              <span class="badge-source">Local Storage</span>
+              <span class="badge-source">Active</span>
             </div>
             <div class="stats-grid">
               <div class="stat-tile">
@@ -1474,8 +1517,8 @@
           <div class="settings-card">
             <div class="settings-card-header">
               <div>
-                <h3>🇮🇳 Official Indian holiday updates</h3>
-                <p>Prevent timetable conflicts for gazetted national and state holidays.</p>
+                <h3>🇮🇳 Official Indian holidays</h3>
+                <p>Prevent timetable clashes for gazetted national and state holidays.</p>
               </div>
               <span class="badge-source" id="sync-status-indicator">Up to date</span>
             </div>
@@ -1487,13 +1530,13 @@
 
             <div id="sync-notice-banner" class="info-callout notice hidden">
               <svg><use href="#icon-info"/></svg>
-              <span id="sync-notice-text">Holiday schedule not yet published for this state.</span>
+              <span id="sync-notice-text">Holiday calendar not published for this state yet.</span>
             </div>
 
             <div id="sync-error-banner" class="info-callout warning hidden">
               <svg><use href="#icon-info"/></svg>
               <div>
-                <span>Unable to fetch updates. Please check your connection.</span>
+                <span>Unable to fetch updates. Please check your internet connection.</span>
                 <button type="button" class="small-button" id="sync-retry-btn" style="margin-top: 6px;">Try again</button>
               </div>
             </div>
@@ -1504,7 +1547,7 @@
                   <span class="badge-category national">National</span>
                   National gazetted holidays
                 </strong>
-                <p class="muted">Includes nationwide compulsory holidays.</p>
+                <p class="muted">Includes mandatory public holidays across India.</p>
               </div>
               <label class="switch-label">
                 <input type="checkbox" class="switch-input" id="sync-toggle-national">
@@ -1515,9 +1558,9 @@
               <div>
                 <strong style="display:flex; align-items:center; gap:8px;">
                   <span class="badge-category state">State</span>
-                  State & regional public holidays
+                  State & regional festival holidays
                 </strong>
-                <p class="muted" id="state-toggle-description">Public holidays for your selected region.</p>
+                <p class="muted" id="state-toggle-description">Public holidays for your chosen state.</p>
               </div>
               <label class="switch-label">
                 <input type="checkbox" class="switch-input" id="sync-toggle-state">
@@ -1528,8 +1571,25 @@
               <span class="small muted" id="sync-stats-text">0 official holidays synced.</span>
               <button type="button" class="secondary-button" id="manual-sync-btn">
                 <svg style="width:14px;height:14px;"><use href="#icon-sync"/></svg>
-                Sync holidays
+                Check for updates
               </button>
+            </div>
+          </div>
+
+          <!-- Appearance -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div>
+                <h3>Appearance & Theme</h3>
+                <p>Adjust reading contrast for day or night study sessions.</p>
+              </div>
+            </div>
+            <div class="settings-block">
+              <div>
+                <strong>Reading Theme</strong>
+                <p class="muted">Toggle between comfortable daylight mode and low-light dark mode.</p>
+              </div>
+              <button type="button" class="secondary-button" id="settings-theme-toggle">Switch theme</button>
             </div>
           </div>
 
@@ -1537,12 +1597,12 @@
           <div class="settings-card">
             <div class="settings-card-header">
               <div>
-                <h3>Backup & data transfer</h3>
-                <p>Export your schedule file or restore from a previous backup.</p>
+                <h3>Timetable backup & transfer</h3>
+                <p>Save a copy of your routine to your device or restore a saved file.</p>
               </div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button class="primary-button" id="export-data">Export backup</button>
+              <button class="primary-button" id="export-data">Download backup</button>
               <button class="secondary-button" id="import-data-button">Restore backup</button>
               <input id="import-data-file" type="file" accept=".json,application/json" hidden>
             </div>
@@ -1552,15 +1612,15 @@
             <div class="settings-card-header" style="border-bottom-color: var(--red-border);">
               <div>
                 <h3 style="color: var(--red);">Reset timetable</h3>
-                <p>Clear all routine classes and holiday dates to start fresh.</p>
+                <p>Clear all routine classes and holidays to start fresh.</p>
               </div>
             </div>
             <div class="settings-block" style="background: var(--surface);">
               <div>
-                <strong style="color: var(--red);">Clear all schedule data</strong>
-                <p class="muted">Permanently wipes classes, holidays, and trash entries.</p>
+                <strong style="color: var(--red);">Wipe all schedule data</strong>
+                <p class="muted">Permanently clears your timetable, classes, and deleted items.</p>
               </div>
-              <button type="button" class="danger-button secondary-button" id="clear-all-data-btn">Clear all</button>
+              <button type="button" class="danger-button secondary-button" id="clear-all-data-btn">Reset planner</button>
             </div>
           </div>
         </div>
@@ -1568,7 +1628,7 @@
     </main>
   </div>
 
-  <!-- Mobile Tab Bar -->
+  <!-- Mobile Bottom Tab Bar -->
   <nav class="mobile-nav" aria-label="Mobile Navigation">
     <div class="mobile-nav-inner">
       <button class="mobile-nav-item active" data-view="calendar">
@@ -1599,7 +1659,7 @@
     <form id="class-form" method="dialog">
       <div class="dialog-heading">
         <div>
-          <span class="eyebrow">CLASS EDITOR</span>
+          <span class="eyebrow">CLASS DETAILS</span>
           <h2 id="class-dialog-title">Add a class</h2>
         </div>
         <button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">
@@ -1609,8 +1669,8 @@
 
       <input id="class-id" type="hidden">
 
-      <label for="class-name">Subject / title</label>
-      <input id="class-name" maxlength="100" required placeholder="e.g. Distributed Systems">
+      <label for="class-name">Subject / Course name</label>
+      <input id="class-name" maxlength="100" required placeholder="e.g. Data Structures & Algorithms">
 
       <div class="form-row">
         <div>
@@ -1623,10 +1683,10 @@
         </div>
       </div>
 
-      <label for="class-location">Room / venue (optional)</label>
-      <input id="class-location" maxlength="100" placeholder="e.g. Lecture Hall 4">
+      <label for="class-location">Room / Hall (optional)</label>
+      <input id="class-location" maxlength="100" placeholder="e.g. Science Block, Room 302">
 
-      <label>Repeating weekdays</label>
+      <label>Weekly repeating days</label>
       <div class="weekday-picker" id="weekday-picker">
         <label class="weekday-chip"><input type="checkbox" value="1"> Mon</label>
         <label class="weekday-chip"><input type="checkbox" value="2"> Tue</label>
@@ -1637,8 +1697,9 @@
         <label class="weekday-chip"><input type="checkbox" value="0"> Sun</label>
       </div>
 
-      <label for="class-date">Specific date (optional)</label>
+      <label for="class-date">Single session date (optional)</label>
       <input id="class-date" type="date">
+      <p class="small muted" style="margin-top:4px;">Leave empty for regular weekly classes.</p>
 
       <div class="button-row" style="justify-content: flex-end;">
         <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
@@ -1653,7 +1714,7 @@
       <div class="dialog-heading">
         <div>
           <span class="eyebrow">ACADEMIC CALENDAR</span>
-          <h2 id="holiday-dialog-title">Add holiday or closure</h2>
+          <h2 id="holiday-dialog-title">Add holiday or day off</h2>
         </div>
         <button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">
           <svg><use href="#icon-close"/></svg>
@@ -1662,8 +1723,8 @@
 
       <input id="holiday-id" type="hidden">
 
-      <label for="holiday-name">Holiday title</label>
-      <input id="holiday-name" required maxlength="100" placeholder="e.g. Founders Day">
+      <label for="holiday-name">Holiday name</label>
+      <input id="holiday-name" required maxlength="100" placeholder="e.g. University Sports Day">
 
       <div class="form-row">
         <div>
@@ -1674,10 +1735,10 @@
           <label for="holiday-category">Category</label>
           <select id="holiday-category" required>
             <option value="national">National Gazetted</option>
-            <option value="state">State / Regional</option>
+            <option value="state">State Public Holiday</option>
             <option value="academic">Academic Recess</option>
-            <option value="cultural">Cultural Festival</option>
-            <option value="institutional" selected>Institutional Closure</option>
+            <option value="cultural">Festival / Cultural</option>
+            <option value="institutional" selected>Campus Closure</option>
           </select>
         </div>
       </div>
@@ -1688,7 +1749,7 @@
       </div>
 
       <label for="holiday-note">Notes (optional)</label>
-      <textarea id="holiday-note" rows="3" maxlength="300" placeholder="e.g. Library open until 2 PM"></textarea>
+      <textarea id="holiday-note" rows="3" maxlength="300" placeholder="e.g. Classes suspended; Library open"></textarea>
 
       <div class="button-row" style="justify-content: flex-end;">
         <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
@@ -1697,12 +1758,12 @@
     </form>
   </dialog>
 
-  <!-- Holiday Trash / Recovery Dialog -->
+  <!-- Holiday Trash Dialog -->
   <dialog id="holiday-recovery-dialog" class="app-dialog">
     <div class="dialog-heading">
       <div>
         <span class="eyebrow">RECYCLE BIN</span>
-        <h2>Recover holidays</h2>
+        <h2>Holiday trash & restore</h2>
       </div>
       <button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">
         <svg><use href="#icon-close"/></svg>
@@ -1710,7 +1771,7 @@
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-size:14px;">Deleted Holidays</h3>
+      <h3 style="font-size:14px;">Recently removed holidays</h3>
       <button type="button" class="text-button" id="clear-holiday-trash" style="color:var(--red);">Empty trash</button>
     </div>
 
@@ -1718,8 +1779,8 @@
 
     <div style="border-top:1px solid var(--border); padding-top:14px;">
       <h3 style="font-size:14px; margin-bottom:4px;">Academic placeholders</h3>
-      <p class="small muted" style="margin-bottom:10px;">Insert standard mid-term and winter vacation dates.</p>
-      <button type="button" class="secondary-button" id="recover-default-holidays-btn">Add Standard Breaks</button>
+      <p class="small muted" style="margin-bottom:10px;">Insert standard mid-term break and winter vacation dates.</p>
+      <button type="button" class="secondary-button" id="recover-default-holidays-btn">Add standard breaks</button>
     </div>
 
     <div class="button-row" style="justify-content: flex-end; margin-top: 18px;">
@@ -1731,16 +1792,16 @@
   <dialog id="onboarding-dialog" class="app-dialog" style="max-width: 480px;">
     <div class="dialog-heading">
       <div>
-        <span class="eyebrow">WELCOME TO 7CLASSLINE</span>
-        <h2>Choose your region</h2>
+        <span class="eyebrow">WELCOME TO CLASSLINE</span>
+        <h2>Select your region</h2>
       </div>
     </div>
     <p class="muted" style="margin-bottom: 16px; font-size: 13px;">
-      Select your State or Union Territory in India to load official public holidays into your routine planner.
+      Choose your State or Union Territory in India to load official public holidays and academic closures automatically into your calendar.
     </p>
 
     <form id="onboarding-form" method="dialog">
-      <label for="onboarding-state-select">State / UT</label>
+      <label for="onboarding-state-select">Your State or UT</label>
       <select id="onboarding-state-select" required></select>
 
       <div style="display: grid; gap: 8px; margin: 16px 0;">
@@ -1761,11 +1822,11 @@
     </form>
   </dialog>
 
-  <!-- Confirm Dialog -->
+  <!-- Clean Confirmation Dialog -->
   <dialog id="confirm-dialog" class="app-dialog">
     <div class="dialog-heading">
       <div>
-        <span class="eyebrow">CONFIRMATION</span>
+        <span class="eyebrow">PLEASE CONFIRM</span>
         <h2 id="confirm-title">Are you sure?</h2>
       </div>
     </div>
@@ -1776,16 +1837,13 @@
     </div>
   </dialog>
 
-  <!-- Notification Toast -->
+  <!-- Toast Notification -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <!-- JavaScript Application Logic -->
+  <!-- Application Logic -->
   <script>
     "use strict";
 
-    /* ==========================================================================
-       SUBDIVISIONS OF INDIA (28 States & 8 UTs)
-       ========================================================================== */
     const INDIA_SUBDIVISIONS = {
       states: [
         { code: "AP", name: "Andhra Pradesh" },
@@ -1830,15 +1888,12 @@
     };
     const ALL_INDIA_REGIONS = [...INDIA_SUBDIVISIONS.states, ...INDIA_SUBDIVISIONS.unionTerritories];
 
-    /* ==========================================================================
-       DATABASE & STORAGE ENGINE
-       ========================================================================== */
     const ClasslineDB = (() => {
-      const STORAGE_KEY = "7classline_state_v1";
+      const STORAGE_KEY = "classline_state_prod_v1";
 
       function createInitialState() {
         return {
-          version: 1,
+          version: 12,
           classes: [],
           holidays: [],
           deletedHolidays: [],
@@ -1873,7 +1928,7 @@
             }
           }
         } catch (e) {
-          console.warn("Storage load warning:", e);
+          console.warn("Storage notice:", e);
         }
         const state = createInitialState();
         save(state);
@@ -1884,7 +1939,7 @@
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (e) {
-          console.error("Storage save failure:", e);
+          console.error("Storage save notice:", e);
         }
         return state;
       }
@@ -1892,9 +1947,6 @@
       return { load, save, createInitialState };
     })();
 
-    /* ==========================================================================
-       THEME CONTROLLER
-       ========================================================================== */
     const ClasslineTheme = (() => {
       const root = document.documentElement;
 
@@ -1919,9 +1971,6 @@
       return { getTheme, apply, toggle };
     })();
 
-    /* ==========================================================================
-       HOLIDAY SYNC ENGINE
-       ========================================================================== */
     const ClasslineHolidaySync = (() => {
       const API_BASE = "https://calendar-api-d7a8.onrender.com/v1/holidays";
 
@@ -1996,9 +2045,6 @@
       return { fetchLiveCentralHolidays, fetchLiveStateHolidays };
     })();
 
-    /* ==========================================================================
-       ROUTINE ENGINE & DOM CONSTRUCTORS
-       ========================================================================== */
     const ClasslineRoutine = (() => {
       let state;
       let activeCategoryFilter = "all";
@@ -2016,6 +2062,8 @@
       }
 
       function getClassesForDate(dateStr) {
+        if (getHoliday(dateStr)) return [];
+
         const [y, m, d] = dateStr.split("-").map(Number);
         const dayOfWeek = new Date(y, m - 1, d).getDay();
 
@@ -2031,13 +2079,12 @@
         switch (cat) {
           case "national": return "National";
           case "state": return "State";
-          case "academic": return "Academic";
-          case "cultural": return "Cultural";
-          default: return "Institutional";
+          case "academic": return "Academic Break";
+          case "cultural": return "Festival";
+          default: return "Campus Event";
         }
       }
 
-      /* Safe Programmatic DOM Builder for Classes */
       function renderRoutineList() {
         const container = document.getElementById("routine-list");
         container.replaceChildren();
@@ -2049,14 +2096,14 @@
           empty.className = "empty-state";
 
           const strong = document.createElement("strong");
-          strong.textContent = "Your routine is clear";
+          strong.textContent = "Your timetable is empty";
           const p = document.createElement("p");
-          p.textContent = "Add your weekly timetable classes or single lecture dates.";
+          p.textContent = "Add your weekly lecture hours or special exam sessions.";
 
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "primary-button";
-          btn.textContent = "+ Add class";
+          btn.textContent = "+ Add your first class";
           btn.addEventListener("click", () => ClasslineApp.openClassDialog());
 
           empty.append(strong, p, btn);
@@ -2072,7 +2119,7 @@
 
           const timeDiv = document.createElement("div");
           timeDiv.className = "class-time";
-          timeDiv.textContent = `${item.startTime} – ${item.endTime}`;
+          timeDiv.textContent = `${item.startTime} –${item.endTime}`;
 
           const line = document.createElement("div");
           line.className = "class-time-line";
@@ -2087,7 +2134,7 @@
           const dayInfo = item.date 
             ? `Date: ${item.date}` 
             : (item.days || []).map(d => weekdays[d]).join(", ");
-          desc.textContent = item.location ? `📍 ${item.location} • ${dayInfo}` : dayInfo;
+          desc.textContent = item.location ? `📍 ${item.location} •${dayInfo}` : dayInfo;
 
           details.append(title, desc);
 
@@ -2106,8 +2153,8 @@
           delBtn.textContent = "Delete";
           delBtn.addEventListener("click", () => {
             ClasslineApp.confirmDialog({
-              title: "Delete Class",
-              message: `Remove "${item.name}" from your routine?`,
+              title: "Delete class",
+              message: `Remove "${item.name}" from your weekly routine?`,
               onConfirm: () => {
                 state.classes = state.classes.filter(c => c.id !== item.id);
                 ClasslineApp.persist();
@@ -2135,7 +2182,6 @@
         });
       }
 
-      /* Safe Programmatic DOM Builder for Holidays */
       function renderHolidayList() {
         const container = document.getElementById("holiday-list");
         container.replaceChildren();
@@ -2152,10 +2198,10 @@
           const empty = document.createElement("div");
           empty.className = "empty-state";
           const strong = document.createElement("strong");
-          strong.textContent = "No holidays found";
+          strong.textContent = "No holidays to show";
           const p = document.createElement("p");
           p.textContent = activeCategoryFilter === "all"
-            ? "No campus closures or holidays have been scheduled."
+            ? "No campus closures or holidays are scheduled right now."
             : `No holidays found under category '${getCategoryLabel(activeCategoryFilter)}'.`;
           empty.append(strong, p);
           container.append(empty);
@@ -2198,7 +2244,7 @@
           }
 
           const desc = document.createElement("p");
-          desc.textContent = item.note || "Academic holiday — classes paused";
+          desc.textContent = item.note || "College holiday — classes paused";
 
           details.append(header, desc);
 
@@ -2217,8 +2263,8 @@
           delBtn.textContent = "Delete";
           delBtn.addEventListener("click", () => {
             ClasslineApp.confirmDialog({
-              title: "Move to Trash?",
-              message: `Remove holiday "${item.name}" on ${item.date}? You can restore it anytime.`,
+              title: "Move holiday to trash?",
+              message: `Remove "${item.name}" on ${item.date}? You can restore it anytime.`,
               onConfirm: () => {
                 if (!Array.isArray(state.deletedHolidays)) state.deletedHolidays = [];
                 state.deletedHolidays.unshift({ ...item, deletedAt: new Date().toISOString() });
@@ -2253,9 +2299,6 @@
       };
     })();
 
-    /* ==========================================================================
-       CALENDAR CONTROLLER (Week & Month)
-       ========================================================================== */
     const ClasslineCalendar = (() => {
       const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       let currentDate = new Date();
@@ -2298,7 +2341,7 @@
 
         const startText = start.toLocaleDateString(undefined, { day: "numeric", month: "short" });
         const endText = end.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-        document.getElementById("week-heading").textContent = `${startText} – ${endText}`;
+        document.getElementById("week-heading").textContent = `${startText} –${endText}`;
 
         for (let i = 0; i < 7; i++) {
           const dayDate = addDays(start, i);
@@ -2311,7 +2354,7 @@
           const button = document.createElement("button");
           button.type = "button";
           button.className = `day-cell${isSelected ? " selected" : ""}${isToday ? " today" : ""}`;
-          button.setAttribute("aria-label", `${WEEKDAYS[dayDate.getDay()]}, ${dayDate.getDate()}`);
+          button.setAttribute("aria-label", `${WEEKDAYS[dayDate.getDay()]},${dayDate.getDate()}`);
 
           const dayName = document.createElement("span");
           dayName.className = "day-name";
@@ -2324,22 +2367,13 @@
           const indicators = document.createElement("div");
           indicators.className = "cell-indicators";
 
-          if (isToday) {
-            const todayDot = document.createElement("span");
-            todayDot.className = "cell-dot today-dot";
-            todayDot.title = "Today";
-            indicators.append(todayDot);
-          }
-
           if (holiday) {
             const cat = holiday.category || "institutional";
             const dot = document.createElement("span");
             dot.className = `cell-dot holiday-dot ${cat}`;
             dot.title = holiday.name;
             indicators.append(dot);
-          }
-
-          if (classes.length) {
+          } else if (classes.length) {
             const count = Math.min(classes.length, 3);
             for (let k = 0; k < count; k++) {
               const dot = document.createElement("span");
@@ -2403,22 +2437,13 @@
           const indicators = document.createElement("div");
           indicators.className = "month-indicators";
 
-          if (isToday) {
-            const todayDot = document.createElement("span");
-            todayDot.className = "cell-dot today-dot";
-            todayDot.title = "Today";
-            indicators.append(todayDot);
-          }
-
           if (holiday) {
             const cat = holiday.category || "institutional";
             const dot = document.createElement("span");
             dot.className = `cell-dot holiday-dot ${cat}`;
             dot.title = holiday.name;
             indicators.append(dot);
-          }
-
-          if (classes.length) {
+          } else if (classes.length) {
             const count = Math.min(classes.length, 3);
             for (let k = 0; k < count; k++) {
               const dot = document.createElement("span");
@@ -2472,19 +2497,20 @@
 
           const p = document.createElement("p");
           p.style.color = "var(--text)";
-          p.textContent = holiday.note || "Regular lectures are suspended today.";
+          p.textContent = holiday.note || "No lectures scheduled today.";
 
           callout.append(badge, strong, p);
           container.append(callout);
+          return;
         }
 
-        if (!classes.length && !holiday) {
+        if (!classes.length) {
           const empty = document.createElement("div");
           empty.className = "empty-state";
           const strong = document.createElement("strong");
           strong.textContent = "No classes scheduled";
           const p = document.createElement("p");
-          p.textContent = "Enjoy your free time or add an ad-hoc study session.";
+          p.textContent = "Your calendar is clear. Enjoy the free time or add a study session.";
 
           const btn = document.createElement("button");
           btn.type = "button";
@@ -2497,43 +2523,41 @@
           return;
         }
 
-        if (classes.length) {
-          classes.forEach(item => {
-            const card = document.createElement("article");
-            card.className = "class-card";
+        classes.forEach(item => {
+          const card = document.createElement("article");
+          card.className = "class-card";
 
-            const timeDiv = document.createElement("div");
-            timeDiv.className = "class-time";
-            timeDiv.textContent = `${item.startTime} – ${item.endTime}`;
+          const timeDiv = document.createElement("div");
+          timeDiv.className = "class-time";
+          timeDiv.textContent = `${item.startTime} –${item.endTime}`;
 
-            const line = document.createElement("div");
-            line.className = "class-time-line";
+          const line = document.createElement("div");
+          line.className = "class-time-line";
 
-            const details = document.createElement("div");
-            details.className = "class-details";
+          const details = document.createElement("div");
+          details.className = "class-details";
 
-            const title = document.createElement("h3");
-            title.textContent = item.name;
+          const title = document.createElement("h3");
+          title.textContent = item.name;
 
-            const p = document.createElement("p");
-            p.textContent = item.location ? `📍 ${item.location}` : "Scheduled lecture";
+          const p = document.createElement("p");
+          p.textContent = item.location ? `📍 ${item.location}` : "Scheduled lecture";
 
-            details.append(title, p);
+          details.append(title, p);
 
-            const actions = document.createElement("div");
-            actions.className = "card-actions";
+          const actions = document.createElement("div");
+          actions.className = "card-actions";
 
-            const editBtn = document.createElement("button");
-            editBtn.type = "button";
-            editBtn.className = "small-button";
-            editBtn.textContent = "Edit";
-            editBtn.addEventListener("click", () => ClasslineApp.openClassDialog(item));
+          const editBtn = document.createElement("button");
+          editBtn.type = "button";
+          editBtn.className = "small-button";
+          editBtn.textContent = "Edit";
+          editBtn.addEventListener("click", () => ClasslineApp.openClassDialog(item));
 
-            actions.append(editBtn);
-            card.append(timeDiv, line, details, actions);
-            container.append(card);
-          });
-        }
+          actions.append(editBtn);
+          card.append(timeDiv, line, details, actions);
+          container.append(card);
+        });
       }
 
       function render() {
@@ -2561,9 +2585,6 @@
       };
     })();
 
-    /* ==========================================================================
-       AI TIMETABLE ASSISTANT
-       ========================================================================== */
     const ClasslineAI = (() => {
       let pendingData = null;
 
@@ -2621,16 +2642,16 @@ RULES:
         try {
           parsed = JSON.parse(clean);
         } catch {
-          throw new Error("Unable to parse JSON. Please check the AI assistant output.");
+          throw new Error("Unable to read routine data. Please check your assistant output.");
         }
 
         if (!parsed || !Array.isArray(parsed.classes) || !Array.isArray(parsed.holidays)) {
-          throw new Error("Missing 'classes' or 'holidays' array in JSON data.");
+          throw new Error("Routine data must contain both 'classes' and 'holidays' lists.");
         }
 
         const validClasses = parsed.classes.map((c, i) => {
-          if (!c.name) throw new Error(`Class #${i+1} is missing a course title.`);
-          if (!c.startTime || !c.endTime) throw new Error(`Class "${c.name}" requires startTime & endTime.`);
+          if (!c.name) throw new Error(`Class #${i+1} is missing a subject title.`);
+          if (!c.startTime || !c.endTime) throw new Error(`Class "${c.name}" requires start and end times.`);
           return {
             id: `cls-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
             name: String(c.name).trim(),
@@ -2676,14 +2697,14 @@ RULES:
             <input type="radio" name="import-mode" value="merge" checked id="radio-merge">
             <span>
               <strong>Add to existing schedule</strong>
-              <small style="display:block; color:var(--muted);">Keep existing classes and add new ones.</small>
+              <small style="display:block; color:var(--muted);">Keep existing classes and append new ones.</small>
             </span>
           </label>
           <label class="import-option">
             <input type="radio" name="import-mode" value="replace" id="radio-replace">
             <span>
               <strong>Replace all schedule entries</strong>
-              <small style="display:block; color:var(--muted);">Wipe current routine and start completely fresh.</small>
+              <small style="display:block; color:var(--muted);">Clear current timetable and load fresh.</small>
             </span>
           </label>
         `;
@@ -2731,6 +2752,17 @@ RULES:
         el.className = `status-message ${type}`.trim();
       }
 
+      function copyTextFallback(text) {
+        const t = document.createElement("textarea");
+        t.value = text;
+        t.style.position = "fixed";
+        t.style.opacity = "0";
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand("copy");
+        document.body.removeChild(t);
+      }
+
       return {
         generatePrompt: () => {
           try {
@@ -2744,20 +2776,42 @@ RULES:
         copyPrompt: () => {
           const p = document.getElementById("generated-prompt").value;
           if (!p) return showStatus("Generate a prompt first.", "error");
-          const t = document.createElement("textarea");
-          t.value = p;
-          document.body.appendChild(t);
-          t.select();
-          document.execCommand("copy");
-          document.body.removeChild(t);
+          copyTextFallback(p);
           ClasslineApp.toast("Prompt copied to clipboard!");
+        },
+        sharePrompt: async () => {
+          const p = document.getElementById("generated-prompt").value;
+          if (!p) return showStatus("Generate a prompt first.", "error");
+          if (navigator.share) {
+            try {
+              await navigator.share({ title: "Classline Timetable Prompt", text: p });
+              return;
+            } catch (err) {
+              if (err.name === "AbortError") return;
+            }
+          }
+          copyTextFallback(p);
+          ClasslineApp.toast("Sharing unsupported; prompt copied instead.");
+        },
+        readClipboard: async () => {
+          try {
+            if (!navigator.clipboard?.readText) {
+              throw new Error("Clipboard read blocked. Please paste manually into the box.");
+            }
+            const txt = await navigator.clipboard.readText();
+            if (!txt.trim()) throw new Error("Clipboard is empty.");
+            document.getElementById("routine-json").value = txt;
+            showStatus("Pasted from clipboard! Click 'Review & Add'.", "success");
+          } catch (e) {
+            showStatus(e.message || "Failed to read clipboard.", "error");
+          }
         },
         validate: () => {
           try {
             const raw = document.getElementById("routine-json").value;
             pendingData = parseJson(raw);
             renderPreview(pendingData);
-            showStatus("Verified! Review the entries below.", "success");
+            showStatus("Schedule verified! Review details below.", "success");
           } catch (e) {
             showStatus(e.message, "error");
           }
@@ -2765,9 +2819,6 @@ RULES:
       };
     })();
 
-    /* ==========================================================================
-       APP MAIN CONTROLLER
-       ========================================================================== */
     const ClasslineApp = (() => {
       let state;
 
@@ -2886,7 +2937,7 @@ RULES:
       function navigate(view) {
         document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === `view-${view}`));
         document.querySelectorAll("[data-view]").forEach(b => b.classList.toggle("active", b.dataset.view === view));
-        const titles = { calendar: "Calendar", routine: "My routine", holidays: "Holidays", assistant: "Assistant", settings: "Settings" };
+        const titles = { calendar: "Calendar", routine: "My routine", holidays: "Holidays", assistant: "Timetable assistant", settings: "Settings" };
         document.getElementById("page-title").textContent = titles[view] || "Calendar";
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -2969,8 +3020,8 @@ RULES:
           indicator.textContent = "Up to date";
           toast(`Official holiday calendar synced (+${added} added).`);
         } catch (err) {
-          indicator.textContent = "Sync failed";
-          toast("Unable to sync holidays. Working in offline mode.", { isError: true });
+          indicator.textContent = "Update failed";
+          toast("Unable to sync holidays right now. Working offline.", { isError: true });
         }
       }
 
@@ -3011,6 +3062,15 @@ RULES:
 
         document.getElementById("sync-toggle-national").checked = state.preferences.syncNational;
         document.getElementById("sync-toggle-state").checked = state.preferences.syncState;
+
+        const syncStats = document.getElementById("sync-stats-text");
+        if (syncStats) {
+          const syncedCount = state.holidays.filter(h => (h.source || "").startsWith("api-sync")).length;
+          const timeStr = state.preferences.lastSyncTimestamp
+            ? new Date(state.preferences.lastSyncTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : "Never";
+          syncStats.textContent = `${syncedCount} official holidays synced. (Last checked: ${timeStr})`;
+        }
       }
 
       function bindEvents() {
@@ -3054,12 +3114,12 @@ RULES:
           const yr = new Date().getFullYear();
           state.holidays.push(
             { id: `rec-${Date.now()}-1`, name: "Mid-Semester Recess", date: `${yr}-03-24`, category: "academic", source: "manual", note: "Classes paused" },
-            { id: `rec-${Date.now()}-2`, name: "Winter Break", date: `${yr}-12-25`, category: "academic", source: "manual", note: "End of term" }
+            { id: `rec-${Date.now()}-2`, name: "Winter Break", date: `${yr}-12-25`, category: "academic", source: "manual", note: "End of semester vacation" }
           );
           persist();
           renderAll();
           document.getElementById("holiday-recovery-dialog").close();
-          toast("Academic recess dates added.");
+          toast("Standard semester break dates added.");
         });
 
         document.getElementById("class-form").addEventListener("submit", (e) => {
@@ -3072,8 +3132,8 @@ RULES:
           const date = document.getElementById("class-date").value || null;
           const days = Array.from(document.querySelectorAll("#weekday-picker input:checked")).map(i => Number(i.value));
 
-          if (startTime >= endTime) return toast("Start time must precede end time.", { isError: true });
-          if (!date && !days.length) return toast("Select days of week or a date.", { isError: true });
+          if (startTime >= endTime) return toast("Start time must be earlier than end time.", { isError: true });
+          if (!date && !days.length) return toast("Please select weekly days or a specific date.", { isError: true });
 
           const payload = { id: id || `cls-${Date.now()}`, name, startTime, endTime, location, days, date };
           const idx = state.classes.findIndex(c => c.id === id);
@@ -3083,7 +3143,7 @@ RULES:
           persist();
           renderAll();
           document.getElementById("class-dialog").close();
-          toast("Class saved.");
+          toast("Class saved to your routine.");
         });
 
         document.getElementById("holiday-form").addEventListener("submit", (e) => {
@@ -3093,6 +3153,12 @@ RULES:
           const date = document.getElementById("holiday-date").value;
           const category = document.getElementById("holiday-category").value;
           const note = document.getElementById("holiday-note").value.trim();
+
+          const collision = state.holidays.some(h => h.date === date && h.id !== id);
+          if (collision) {
+            toast("A holiday is already scheduled for that date.", { isError: true });
+            return;
+          }
 
           const payload = { id: id || `hol-${Date.now()}`, name, date, category, source: "manual", note };
           const idx = state.holidays.findIndex(h => h.id === id);
@@ -3110,6 +3176,7 @@ RULES:
           persist();
         };
         document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+        document.getElementById("settings-theme-toggle")?.addEventListener("click", toggleTheme);
 
         document.getElementById("sync-state-select").addEventListener("change", (e) => {
           state.preferences.syncSubdivision = e.target.value;
@@ -3131,13 +3198,15 @@ RULES:
 
         document.getElementById("generate-prompt").addEventListener("click", ClasslineAI.generatePrompt);
         document.getElementById("copy-prompt").addEventListener("click", ClasslineAI.copyPrompt);
+        document.getElementById("share-prompt").addEventListener("click", ClasslineAI.sharePrompt);
+        document.getElementById("read-clipboard").addEventListener("click", ClasslineAI.readClipboard);
         document.getElementById("validate-routine").addEventListener("click", ClasslineAI.validate);
 
         document.getElementById("export-data").addEventListener("click", () => {
           const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
           const a = document.createElement("a");
           a.href = URL.createObjectURL(blob);
-          a.download = `7classline-routine-${new Date().toISOString().slice(0, 10)}.json`;
+          a.download = `classline-routine-${new Date().toISOString().slice(0, 10)}.json`;
           a.click();
         });
 
@@ -3163,8 +3232,8 @@ RULES:
 
         document.getElementById("clear-all-data-btn").addEventListener("click", () => {
           confirmDialog({
-            title: "Reset Schedule?",
-            message: "Clear all saved classes, holidays, and preferences?",
+            title: "Reset schedule?",
+            message: "Clear all saved classes, holidays, and settings to start fresh?",
             onConfirm: () => {
               state = ClasslineDB.createInitialState();
               persist();
@@ -3197,6 +3266,7 @@ RULES:
       function init() {
         state = ClasslineDB.load();
         ClasslineTheme.apply(state.preferences?.theme || "light");
+        populateSubdivisions();
         bindEvents();
         renderAll();
 
@@ -3225,7 +3295,7 @@ RULES:
 
     if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
       navigator.serviceWorker.register("./sw.js").catch(error => {
-        console.warn("Service worker registration failed.", error);
+        console.warn("Service worker registration notice:", error);
       });
     }
   </script>
