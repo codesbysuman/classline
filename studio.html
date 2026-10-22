@@ -1,37 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Classline — Guided Database Registry Studio</title>
-  
+  <title>Classline — Database Registry Studio</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <style>
+    /* =========================================================================
+       1. PURE VANILLA DESIGN TOKENS & SYSTEM BASE (Linear / Deep Dark UI)
+       ========================================================================= */
     :root {
-      --bg: #0d1117;
-      --surface: #161b22;
-      --surface-soft: #21262d;
-      --surface-muted: #30363d;
-      --border: #30363d;
-      --border-focus: #58a6ff;
-      --text: #c9d1d9;
-      --text-bright: #f0f6fc;
-      --muted: #8b949e;
-      --accent: #238636;
-      --accent-hover: #2ea043;
-      --accent-blue: #1f6feb;
-      --accent-blue-hover: #388bfd;
-      --red: #da3633;
-      --red-hover: #f85149;
-      --amber: #d29922;
-      --purple: #bc8cff;
+      --bg: #090d16;
+      --bg-elevated: #111827;
+      --surface: #162032;
+      --surface-hover: #1f2b42;
+      --surface-active: #273754;
+      --surface-input: #0b111e;
+      
+      --border-subtle: #1e293b;
+      --border-default: #2a3852;
+      --border-strong: #3d5075;
+      --border-focus: #60a5fa;
+
+      --text-main: #e2e8f0;
+      --text-bright: #ffffff;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --blue: #3b82f6;
+      --blue-hover: #60a5fa;
+      --blue-subtle: rgba(59, 130, 246, 0.15);
+      
+      --accent-green: #10b981;
+      --accent-green-hover: #34d399;
+      --accent-green-subtle: rgba(16, 185, 129, 0.15);
+
+      --purple: #a855f7;
+      --purple-subtle: rgba(168, 85, 247, 0.15);
+
+      --amber: #f59e0b;
+      --amber-subtle: rgba(245, 158, 11, 0.15);
+
+      --red: #ef4444;
+      --red-hover: #f87171;
+      --red-subtle: rgba(239, 68, 68, 0.15);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      --radius: 8px;
+      --font-mono: 'Fira Code', ui-monospace, Menlo, Monaco, Consolas, monospace;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.7);
     }
 
     *, *::before, *::after {
@@ -42,52 +71,216 @@
 
     body {
       background: var(--bg);
-      color: var(--text);
+      color: var(--text-main);
       font-family: var(--font-sans);
       font-size: 13px;
       line-height: 1.5;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .studio-header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 20px;
-      display: flex;
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+    /* =========================================================================
+       2. REUSABLE ATOMS: BUTTONS, BADGES, INPUTS
+       ========================================================================= */
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: 12.5px;
+      color: var(--text-main);
+    }
+
+    .font-mono {
+      font-family: var(--font-mono) !important;
+    }
+
+    .btn {
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 13px;
+      font-weight: 600;
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-default);
+      background: var(--surface);
+      color: var(--text-bright);
+      cursor: pointer;
+      user-select: none;
+      transition: all 120ms cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--surface-hover);
+      border-color: var(--border-strong);
+    }
+    .btn:active:not(:disabled) {
+      background: var(--surface-active);
+      transform: scale(0.98);
+    }
+    .btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #1e7041;
+      border-color: #2da45f;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(30, 112, 65, 0.4);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #238636;
+      border-color: #38b76c;
+    }
+
+    .btn-blue {
+      background: #1d4ed8;
+      border-color: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(29, 78, 216, 0.4);
+    }
+    .btn-blue:hover:not(:disabled) {
+      background: var(--blue-hover);
+      color: #0b0f19;
+    }
+
+    .btn-danger {
+      background: var(--red-subtle);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: var(--red);
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .btn-sm {
+      padding: 4px 9px;
+      font-size: 11.5px;
+    }
+    .btn-icon {
+      padding: 5px 8px;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    label {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input[type="text"], input[type="number"], input[type="time"], input[type="date"], select, textarea {
+      width: 100%;
+      background: var(--surface-input);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      color: var(--text-bright);
+      outline: none;
+      transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 1px var(--border-focus);
+      background-color: var(--bg-elevated);
+    }
+    input[readonly] {
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-dim);
+      cursor: not-allowed;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .badge-parent { background: var(--purple-subtle); color: var(--purple); border: 1px solid rgba(168, 85, 247, 0.4); }
+    .badge-child { background: var(--blue-subtle); color: var(--blue-hover); border: 1px solid rgba(96, 165, 250, 0.4); }
+    .badge-success { background: var(--accent-green-subtle); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-warning { background: var(--amber-subtle); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-danger { background: var(--red-subtle); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    /* =========================================================================
+       3. TOP HEADER & WORKSPACE TOOLBAR
+       ========================================================================= */
+    .app-header {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 20px;
       position: sticky;
       top: 0;
       z-index: 50;
     }
-
-    .brand-group {
+    .header-inner {
+      max-width: 1480px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .brand-cluster {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
-    .brand-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-bright);
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 13px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+    }
+    .brand-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-bright);
+      letter-spacing: -0.01em;
+    }
+    .brand-title span {
+      font-weight: 400;
+      color: var(--text-muted);
     }
 
-    .badge-repo {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 2px 7px;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--purple);
+    .history-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--surface-input);
+      border: 1px solid var(--border-default);
+      padding: 3px 6px;
+      border-radius: var(--radius-md);
     }
 
     .header-actions {
@@ -97,1092 +290,1242 @@
       flex-wrap: wrap;
     }
 
-    button, .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 7px 14px;
-      border-radius: var(--radius);
-      font-size: 12px;
-      font-weight: 600;
-      font-family: var(--font-sans);
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 120ms ease;
-      white-space: nowrap;
-      text-decoration: none;
-    }
-
-    .btn-default {
-      background: var(--surface-soft);
-      color: var(--text-bright);
-      border-color: var(--border);
-    }
-    .btn-default:hover {
-      background: var(--surface-muted);
-      border-color: var(--muted);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #ffffff;
-    }
-    .btn-primary:hover {
-      background: var(--accent-hover);
-    }
-
-    .btn-blue {
-      background: var(--accent-blue);
-      color: #ffffff;
-    }
-    .btn-blue:hover {
-      background: var(--accent-blue-hover);
-    }
-
-    .btn-danger {
-      background: var(--red);
-      color: #ffffff;
-    }
-    .btn-danger:hover {
-      background: var(--red-hover);
-    }
-
-    .btn-sm {
-      padding: 4px 10px;
-      font-size: 11.5px;
-    }
-
-    .stepper-nav {
+    /* =========================================================================
+       4. NAVIGATION BAR (4 DEDICATED VISUAL TABS + TOOLS)
+       ========================================================================= */
+    .view-navbar {
       background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 6px 20px;
+      position: sticky;
+      top: 49px;
+      z-index: 40;
+    }
+    .view-navbar-inner {
+      max-width: 1480px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 12px;
       overflow-x: auto;
       scrollbar-width: none;
     }
-    .stepper-nav::-webkit-scrollbar {
-      display: none;
-    }
+    .view-navbar-inner::-webkit-scrollbar { display: none; }
 
-    .step-indicator-btn {
-      background: transparent;
-      border: none;
+    .nav-tabs-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-tab-btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: var(--radius);
-      color: var(--muted);
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
       font-weight: 600;
-      cursor: pointer;
       font-size: 12px;
+      cursor: pointer;
+      transition: all 120ms ease;
       white-space: nowrap;
-      transition: all 140ms ease;
     }
-    .step-indicator-btn:hover {
-      background: var(--surface-soft);
+    .nav-tab-btn:hover {
+      background: var(--surface-hover);
       color: var(--text-bright);
     }
-    .step-indicator-btn.active {
-      color: var(--text-bright);
-      background: var(--surface-soft);
-      box-shadow: inset 0 0 0 1px var(--border-focus);
+    .nav-tab-btn.active {
+      background: var(--bg-elevated);
+      color: var(--blue-hover);
+      border-color: var(--border-default);
     }
-    .step-indicator-btn.completed .step-circle {
-      background: var(--accent);
-      color: #ffffff;
-      border-color: var(--accent);
-    }
-
-    .step-circle {
-      display: inline-grid;
-      place-items: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--surface-muted);
-      border: 1.5px solid var(--border);
-      color: var(--text);
+    .nav-tab-counter {
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      background: var(--border-default);
+      color: var(--text-main);
+      font-size: 10px;
       font-family: var(--font-mono);
-      font-weight: 700;
-      font-size: 11px;
-      flex-shrink: 0;
-      transition: all 140ms ease;
     }
-    .step-indicator-btn.active .step-circle {
-      background: var(--accent-blue);
-      color: #ffffff;
-      border-color: var(--accent-blue);
+    .nav-tab-btn.active .nav-tab-counter {
+      background: rgba(96, 165, 250, 0.2);
+      color: var(--blue-hover);
     }
 
-    .step-divider {
-      color: var(--border);
-      font-size: 14px;
-      user-select: none;
-    }
-
-    .studio-main {
-      flex: 1;
-      padding: 20px;
-      max-width: 1120px;
-      margin: 0 auto;
+    /* =========================================================================
+       5. MAIN CONTAINER & PANELS
+       ========================================================================= */
+    .app-main {
+      max-width: 1480px;
       width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    .step-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color 150ms ease;
+    .view-panel {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeIn 140ms ease-out forwards;
     }
-    .step-card.active-step {
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 1px var(--border-focus);
+    .view-panel.active {
+      display: flex;
     }
 
-    .step-card-header {
-      padding: 16px 20px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .step-title-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .step-card-header .step-circle-lg {
-      width: 32px;
-      height: 32px;
-      font-size: 13px;
-    }
-    .step-title-text h2 {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-bright);
-    }
-    .step-title-text p {
-      font-size: 11.5px;
-      color: var(--muted);
-      margin-top: 1px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .step-card-body {
-      padding: 20px;
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
-    .step-card.collapsed .step-card-body {
-      display: none;
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
     }
-    .step-card.collapsed .step-card-header {
-      border-bottom: none;
-    }
-
-    label {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      margin: 4px 0 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      background: var(--bg);
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 700;
       color: var(--text-bright);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 9px 12px;
-      font-family: var(--font-sans);
-      font-size: 12.5px;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--border-focus);
-    }
-
-    textarea.code-font {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      line-height: 1.45;
-      tab-size: 2;
-      white-space: pre;
-    }
-
-    .form-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .form-grid-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-    }
-    .form-grid-4 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
-    @media (max-width: 768px) {
-      .form-grid-2, .form-grid-3, .form-grid-4 {
+    .card-subtitle {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+    @media (max-width: 860px) {
+      .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* =========================================================================
+       6. EXCLUSIVE CARD VIEW SYSTEM (IN-CARD TWO-WAY EDITING)
+       ========================================================================= */
+    .cards-responsive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 480px) {
+      .cards-responsive-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .terminal-box {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px 16px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--text-bright);
-      line-height: 1.5;
+    .editor-item-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 140ms ease, box-shadow 140ms ease;
+      position: relative;
     }
-    .terminal-box pre {
-      overflow-x: auto;
+    .editor-item-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md);
     }
-
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+    .editor-item-card.is-holiday {
+      border-left: 4px solid var(--amber);
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 12px;
-    }
-    th, td {
-      padding: 9px 14px;
-      border-bottom: 1px solid var(--border);
-    }
-    th {
-      background: var(--surface-soft);
-      color: var(--muted);
-      font-weight: 600;
-      font-size: 11px;
-      text-transform: uppercase;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
+    .editor-item-card.is-class {
+      border-left: 4px solid var(--blue);
     }
 
-    .step-actions {
+    .item-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin-top: 10px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
-      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .item-card-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 60%;
+      overflow: hidden;
+    }
+    .item-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 3px;
     }
 
+    /* Day Pills Toggles */
+    .day-pills-row {
+      display: flex;
+      gap: 4px;
+    }
+    .day-pill-toggle {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 5px;
+      border: 1px solid var(--border-default);
+      background: var(--surface-input);
+      color: var(--text-dim);
+      cursor: pointer;
+      user-select: none;
+      transition: all 120ms ease;
+    }
+    .day-pill-toggle.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+      box-shadow: 0 1px 4px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Filter Bar */
+    .stream-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+    }
+    .stream-tag-btn {
+      background: var(--surface);
+      border: 1px solid var(--border-default);
+      color: var(--text-muted);
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .stream-tag-btn.active {
+      background: var(--blue-subtle);
+      border-color: var(--blue);
+      color: var(--blue-hover);
+    }
+
+    /* =========================================================================
+       7. VISUALIZATIONS (MATRIX, TIMELINE, TREE)
+       ========================================================================= */
+    .matrix-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 5px;
+    }
+    .matrix-table th {
+      background: var(--surface);
+      text-align: center;
+      padding: 9px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .matrix-table td {
+      background: var(--bg-elevated);
+      border: 1px dashed var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      vertical-align: top;
+      min-width: 140px;
+      height: 78px;
+    }
+    .matrix-slot-block {
+      background: var(--blue-subtle);
+      border: 1px solid rgba(96, 165, 250, 0.4);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      margin-bottom: 5px;
+      font-size: 11px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: transform 100ms ease;
+    }
+    .matrix-slot-block:hover {
+      transform: translateY(-1px);
+      border-color: var(--blue-hover);
+    }
+
+    /* Timeline Month Cards */
+    .timeline-month-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .timeline-month-label {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--text-bright);
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .timeline-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      position: relative;
+    }
+    .timeline-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      border-top-left-radius: var(--radius-md);
+      border-bottom-left-radius: var(--radius-md);
+    }
+    .timeline-card[data-cat="national"]::before { background: #f59e0b; }
+    .timeline-card[data-cat="state"]::before { background: #3b82f6; }
+    .timeline-card[data-cat="academic"]::before { background: #a855f7; }
+    .timeline-card[data-cat="cultural"]::before { background: #10b981; }
+    .timeline-card[data-cat="institutional"]::before { background: #ec4899; }
+
+    /* Hierarchy Tree Nodes */
+    .tree-box {
+      border: 1px solid var(--border-default);
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .tree-branch {
+      margin-top: 10px;
+      margin-left: 18px;
+      padding-left: 14px;
+      border-left: 2px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Mount Options Card */
+    .mount-option-tile {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 120ms ease;
+    }
+    .mount-option-tile:hover {
+      border-color: var(--border-focus);
+      background: var(--surface-hover);
+    }
+
+    /* =========================================================================
+       8. MODALS & HISTORY DRAWER
+       ========================================================================= */
     dialog {
       background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
+      color: var(--text-main);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 22px;
       margin: auto;
       max-width: 600px;
       width: calc(100% - 32px);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+      box-shadow: var(--shadow-lg);
+      outline: none;
     }
     dialog::backdrop {
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(2px);
+      background: rgba(4, 7, 13, 0.85);
+      backdrop-filter: blur(4px);
     }
-
-    .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    .badge-status.ready {
-      background: rgba(35, 134, 54, 0.2);
-      color: #3fb950;
-    }
-    .badge-status.optional {
-      background: var(--surface-muted);
-      color: var(--muted);
-    }
-
-    .badge-type {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-    .badge-type.parent {
-      background: rgba(188, 140, 255, 0.15);
-      color: var(--purple);
-      border: 1px solid rgba(188, 140, 255, 0.4);
-    }
-    .badge-type.child {
-      background: rgba(88, 166, 255, 0.15);
-      color: var(--border-focus);
-      border: 1px solid rgba(88, 166, 255, 0.4);
-    }
-
-    .diag-item {
-      padding: 8px 12px;
-      border-radius: var(--radius);
-      font-size: 12px;
+    .dialog-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 6px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
     }
-    .diag-item.error {
-      background: rgba(218, 54, 51, 0.15);
-      border: 1px solid rgba(218, 54, 51, 0.4);
-      color: #f85149;
-    }
-    .diag-item.warning {
-      background: rgba(210, 153, 34, 0.15);
-      border: 1px solid rgba(210, 153, 34, 0.4);
-      color: #e3b341;
-    }
-    .diag-item.clean {
-      background: rgba(35, 134, 54, 0.15);
-      border: 1px solid rgba(35, 134, 54, 0.4);
-      color: #3fb950;
-    }
-
-    .file-export-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-
-    .editor-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
-    }
-    .editor-tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: var(--radius);
-      cursor: pointer;
-    }
-    .editor-tab-btn.active {
+    .dialog-title {
+      font-size: 15px;
+      font-weight: 700;
       color: var(--text-bright);
-      background: var(--surface-muted);
     }
 
-    .hidden {
-      display: none !important;
+    .history-drawer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 420px;
+      overflow-y: auto;
+      margin: 12px 0;
+    }
+    .history-card-item {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      padding: 9px 13px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .history-card-item.active {
+      border-color: var(--border-focus);
+      background: rgba(96, 165, 250, 0.08);
+    }
+
+    /* Toast */
+    #toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text-bright);
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 12.5px;
+      font-weight: 600;
+      z-index: 999;
+      transform: translateY(100px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #toast-msg.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
     }
   </style>
 </head>
 <body>
 
-  <header class="studio-header">
-    <div class="brand-group">
-      <span class="brand-title">
-        <span>⚡ Classline Studio</span>
-        <span class="badge-repo">classline/db</span>
-      </span>
-      <span id="header-file-counter" class="badge-repo" style="color:var(--text)">0 files loaded</span>
-      <span id="base-status-tag" class="badge-repo" style="color:var(--amber)">Standalone (No Base)</span>
-    </div>
+  <!-- =========================================================================
+       TOP HEADER
+       ========================================================================= -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-cluster">
+        <div class="brand-logo">CL</div>
+        <div class="brand-title">Classline <span>Studio</span></div>
+        <span id="badge-repo-status" class="badge badge-warning">Standalone</span>
+        <span id="badge-pkg-count" class="badge" style="background:var(--surface-input); color:var(--text-muted);">0 pkgs</span>
+      </div>
 
-    <div class="header-actions">
-      <input type="file" id="input-dir" webkitdirectory directory multiple hidden>
-      <input type="file" id="input-zip" accept=".zip" hidden>
+      <!-- Time Machine History Controls -->
+      <div class="history-controls">
+        <button id="btn-undo" class="btn btn-sm" title="Undo (Ctrl+Z)" disabled>
+          ↺ Undo
+        </button>
+        <button id="btn-redo" class="btn btn-sm" title="Redo (Ctrl+Y)" disabled>
+          ↻ Redo
+        </button>
+        <button id="btn-open-history" class="btn btn-sm" title="View Snapshot Timeline">
+          🕒 <span id="label-history-count">0 Snapshots</span>
+        </button>
+      </div>
 
-      <button type="button" class="btn btn-default btn-sm" id="btn-mount-folder" title="Mount local workspace">
-        📂 Mount Existing db/
-      </button>
-      <button type="button" class="btn btn-default btn-sm" id="btn-mount-zip" title="Mount from backup ZIP">
-        📦 Mount db.zip
-      </button>
-      <button type="button" class="btn btn-primary btn-sm" id="btn-global-export">
-        💾 Export db.zip
-      </button>
+      <!-- Main Actions -->
+      <div class="header-actions">
+        <input type="file" id="input-dir" webkitdirectory directory multiple hidden>
+        <input type="file" id="input-zip" accept=".zip" hidden>
+
+        <button id="btn-open-mount-modal" class="btn btn-blue btn-sm">
+          📂 Mount db/
+        </button>
+        <button id="btn-demo" class="btn btn-sm">✨ Load Demo</button>
+        <button id="btn-export-bundle" class="btn btn-primary btn-sm">💾 Export db.zip</button>
+      </div>
     </div>
   </header>
 
-  <nav class="stepper-nav" aria-label="Database Workflow Steps">
-    <button type="button" class="step-indicator-btn active" data-step="1">
-      <span class="step-circle">1</span>
-      <span>Workspace Setup</span>
-    </button>
-    <span class="step-divider">›</span>
-    <button type="button" class="step-indicator-btn" data-step="2">
-      <span class="step-circle">2</span>
-      <span>Prompt & Hierarchy</span>
-    </button>
-    <span class="step-divider">›</span>
-    <button type="button" class="step-indicator-btn" data-step="3">
-      <span class="step-circle">3</span>
-      <span>AI Ingest & Patch</span>
-    </button>
-    <span class="step-divider">›</span>
-    <button type="button" class="step-indicator-btn" data-step="4">
-      <span class="step-circle">4</span>
-      <span>Inspect, Edit & Export</span>
-    </button>
+  <!-- =========================================================================
+       SUB-NAVBAR TABS (4 DEDICATED VISUAL TABS + WORKSPACE TOOLS)
+       ========================================================================= -->
+  <nav class="view-navbar">
+    <div class="view-navbar-inner">
+      <div class="nav-tabs-group">
+        <button class="nav-tab-btn active" data-tab="card-editor">
+          <span>🃏 Card Editor</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="matrix-view">
+          <span>📅 Weekly Schedule Matrix</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="timeline-view">
+          <span>🏖️ Holiday Calendar & Timeline</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="hierarchy-view">
+          <span>🌲 Hierarchy Tree</span>
+        </button>
+      </div>
+
+      <div style="display:flex; gap:6px;">
+        <button class="nav-tab-btn" data-tab="ai-view">
+          <span>🤖 AI Assistant</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="diagnostics-view">
+          <span>🛡️ Diagnostics & Registry</span>
+          <span id="badge-diag-count" class="nav-tab-counter">0</span>
+        </button>
+      </div>
+    </div>
   </nav>
 
-  <main class="studio-main">
+  <!-- =========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================= -->
+  <main class="app-main">
 
-    <!-- STEP 1: Workspace Setup -->
-    <section class="step-card active-step" id="step-1-card">
-      <div class="step-card-header" onclick="toggleStep(1)">
-        <div class="step-title-group">
-          <span class="step-circle step-circle-lg">1</span>
-          <div class="step-title-text">
-            <h2>Initialize Workspace (Optional Base DB)</h2>
-            <p>Mount your existing repository database or start fresh.</p>
+    <!-- ---------------------------------------------------------------------
+         TAB 1: CARD EDITOR (EXCLUSIVE CARD-BASED INTERFACE)
+         --------------------------------------------------------------------- -->
+    <section id="tab-card-editor" class="view-panel active">
+      
+      <!-- Package Switcher Bar -->
+      <div class="card" style="padding:12px 18px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:280px;">
+            <label style="margin:0; min-width:90px;">Active Package:</label>
+            <select id="select-active-package" style="max-width:400px;">
+              <option value="">-- No Institution Packages Loaded --</option>
+            </select>
+            <span id="label-active-type" class="badge badge-child">CHILD</span>
+          </div>
+
+          <div style="display:flex; gap:8px;">
+            <button id="btn-modal-new-package" class="btn btn-blue btn-sm">+ New Package</button>
+            <button id="btn-download-active-json" class="btn btn-sm">⬇ Download JSON</button>
+            <button id="btn-clear-workspace" class="btn btn-danger btn-sm" title="Reset all in-memory database">✨ Clear Workspace</button>
           </div>
         </div>
-        <span class="badge-status optional">Optional</span>
       </div>
 
-      <div class="step-card-body">
-        <p style="color:var(--muted); font-size:12px;">
-          Mount your existing <code>classline/db</code> directory or ZIP archive so new institutions are cleanly merged. If you skip this, exporting will prompt a safety confirmation before replacing the whole database.
+      <!-- Empty State -->
+      <div id="editor-empty-state" class="card" style="text-align:center; padding:40px 20px;">
+        <div style="font-size:36px; margin-bottom:12px;">📦</div>
+        <h3 style="font-size:16px; color:var(--text-bright); margin-bottom:6px;">No Database Loaded in Workspace</h3>
+        <p style="color:var(--text-muted); font-size:12px; max-width:440px; margin:0 auto 18px;">
+          Mount your existing repository <code>./db/</code> directory, load a local directory or backup archive, or click below to populate the verified sample dataset.
         </p>
-
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button type="button" class="btn btn-default" onclick="document.getElementById('input-dir').click()">
-            📂 Mount Local db/ Directory
+        <div style="display:flex; gap:10px; justify-content:center;">
+          <button onclick="document.getElementById('modal-mount-workspace').showModal()" class="btn btn-blue">
+            📂 Choose Mount Option
           </button>
-          <button type="button" class="btn btn-default" onclick="document.getElementById('input-zip').click()">
-            📦 Load Existing db.zip Archive
-          </button>
-          <button type="button" class="btn btn-default" id="btn-reset-db">
-            ✨ Clear to Blank Workspace
-          </button>
-        </div>
-
-        <div class="terminal-box" id="workspace-status-box">
-          Workspace Mode: <strong>Fresh Blank State</strong>. No previous repository mounted yet.
-        </div>
-
-        <div class="step-actions">
-          <span></span>
-          <button type="button" class="btn btn-blue" onclick="goToStep(2)">
-            Continue to Step 2 ›
+          <button onclick="loadSampleDataset()" class="btn btn-primary">
+            ✨ Populate Sample Dataset
           </button>
         </div>
       </div>
+
+      <!-- Active Content Container -->
+      <div id="editor-active-container" style="display:none; flex-direction:column; gap:20px;">
+
+        <!-- 1. Institution Metadata Card -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Institution Profile & Affiliation</div>
+              <div class="card-subtitle">Every edit records an immutable snapshot with undo capability.</div>
+            </div>
+            <button id="btn-save-profile" class="btn btn-sm btn-primary">✓ Save Profile</button>
+          </div>
+
+          <div class="grid-4">
+            <div>
+              <label>Institution Name</label>
+              <input type="text" id="meta-inst-name" placeholder="e.g. Bilasipara College">
+            </div>
+            <div>
+              <label>Unique ID (Slug)</label>
+              <input type="text" id="meta-inst-id" readonly>
+            </div>
+            <div>
+              <label>State / Territory</label>
+              <select id="meta-inst-state"></select>
+            </div>
+            <div>
+              <label>Entity Hierarchy</label>
+              <select id="meta-inst-type">
+                <option value="parent">Parent Body (University / Board)</option>
+                <option value="child">Child (Affiliated College / School)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div>
+              <label>Academic Category</label>
+              <input type="text" id="meta-inst-category" placeholder="Collegiate / Undergraduate">
+            </div>
+            <div>
+              <label>Academic Year & Term</label>
+              <input type="text" id="meta-inst-year" placeholder="2026-2027 • Odd Semester">
+            </div>
+            <div>
+              <label>Inherits Holidays From</label>
+              <select id="meta-inst-inherits">
+                <option value="">Autonomous / Independent (None)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Timetable Classes (Card-View Only with Two-Way Live Inputs) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span>Timetable Periods & Classes</span>
+                <span id="badge-classes-count" class="badge badge-child">0 Cards</span>
+              </div>
+              <div class="card-subtitle">Every field (Course Code, Batch, Timings, Weekdays) is fully editable.</div>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+              <button id="btn-open-batch-gen" class="btn btn-blue btn-sm">
+                ⚡ Batch Period Generator
+              </button>
+              <button id="btn-add-class-card" class="btn btn-sm">
+                + Add Single Card
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Stream Filter -->
+          <div class="stream-filter-bar">
+            <span style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Filter Batch:</span>
+            <div id="class-stream-tags" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+          </div>
+
+          <!-- Classes Card Grid -->
+          <div id="classes-card-grid" class="cards-responsive-grid"></div>
+        </div>
+
+        <!-- 3. Holidays & Academic Recesses (Card-View Only) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span>Holidays & Academic Breaks</span>
+                <span id="badge-holidays-count" class="badge badge-warning">0 Cards</span>
+              </div>
+              <div class="card-subtitle">Institution-level closures (auto-blended with parent university holidays).</div>
+            </div>
+            <button id="btn-add-holiday-card" class="btn btn-sm btn-primary">
+              + Add Holiday Card
+            </button>
+          </div>
+
+          <!-- Holidays Card Grid -->
+          <div id="holidays-card-grid" class="cards-responsive-grid"></div>
+        </div>
+
+      </div>
+
     </section>
 
-    <!-- STEP 2: Configure Prompt & Hierarchy -->
-    <section class="step-card collapsed" id="step-2-card">
-      <div class="step-card-header" onclick="toggleStep(2)">
-        <div class="step-title-group">
-          <span class="step-circle step-circle-lg">2</span>
-          <div class="step-title-text">
-            <h2>Configure Prompt & Entity Hierarchy</h2>
-            <p>Define entity relations: parent board/university or affiliated college/school.</p>
-          </div>
-        </div>
-        <span class="badge-status ready">Hierarchy & Prompt</span>
-      </div>
-
-      <div class="step-card-body">
-        <div class="form-grid-3">
+    <!-- ---------------------------------------------------------------------
+         TAB 2: WEEKLY SCHEDULE MATRIX (VISUALIZATION)
+         --------------------------------------------------------------------- -->
+    <section id="tab-matrix-view" class="view-panel">
+      <div class="card">
+        <div class="card-header">
           <div>
-            <label for="ai-target-state">State / Region</label>
-            <select id="ai-target-state"></select>
+            <div class="card-title">Interactive Weekly Schedule Matrix</div>
+            <div class="card-subtitle">Inspect period allocations and overlapping routines across weekdays.</div>
           </div>
-          <div>
-            <label for="ai-entity-type">Entity Type</label>
-            <select id="ai-entity-type">
-              <option value="parent">Parent Body (University / School Board / Trust)</option>
-              <option value="child" selected>Child Entity (Affiliated College / School Wing)</option>
-            </select>
-          </div>
-          <div id="wrapper-parent-select">
-            <label for="ai-parent-institution">Inherit Holidays From</label>
-            <select id="ai-parent-institution">
-              <option value="">None / Autonomous (Direct)</option>
-            </select>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label style="margin:0;">Filter Batch:</label>
+            <select id="matrix-batch-select" style="width:170px;"></select>
           </div>
         </div>
 
-        <div class="form-grid-2">
-          <div>
-            <label for="ai-target-name">Institution Name</label>
-            <input type="text" id="ai-target-name" placeholder="e.g. Bilasipara College">
-          </div>
-          <div>
-            <label for="ai-target-category">Academic Category</label>
-            <input type="text" id="ai-target-category" value="Collegiate / Undergraduate" placeholder="e.g. Higher Secondary">
-          </div>
-        </div>
-
-        <div>
-          <label for="ai-raw-notes">Paste Raw Timetable / Circular / Syllabus Text</label>
-          <textarea id="ai-raw-notes" rows="5" placeholder="Paste unformatted syllabus, routine periods, or academic calendar here..."></textarea>
-        </div>
-
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button type="button" class="btn btn-blue" id="btn-build-prompt">Compile Prompt</button>
-          <button type="button" class="btn btn-default" id="btn-copy-prompt">Copy Prompt</button>
-          <button type="button" class="btn btn-default" id="btn-share-prompt">Share Prompt</button>
-        </div>
-
-        <div>
-          <label for="ai-compiled-prompt">System Prompt (Editable)</label>
-          <textarea id="ai-compiled-prompt" class="code-font" rows="11"></textarea>
-        </div>
-
-        <div class="step-actions">
-          <button type="button" class="btn btn-default" onclick="goToStep(1)">‹ Back</button>
-          <button type="button" class="btn btn-blue" onclick="goToStep(3)">
-            Continue to Step 3 ›
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- STEP 3: Ingest AI JSON -->
-    <section class="step-card collapsed" id="step-3-card">
-      <div class="step-card-header" onclick="toggleStep(3)">
-        <div class="step-title-group">
-          <span class="step-circle step-circle-lg">3</span>
-          <div class="step-title-text">
-            <h2>Ingest AI JSON & Mutate Database</h2>
-            <p>Paste the response from your AI model to auto-patch institutions and recalculate registry.json.</p>
-          </div>
-        </div>
-        <span class="badge-status ready">Auto-Patch</span>
-      </div>
-
-      <div class="step-card-body">
-        <label for="ai-response-payload">AI JSON Response</label>
-        <textarea id="ai-response-payload" class="code-font" rows="12" placeholder="Paste raw JSON here (markdown ```json blocks are stripped automatically)..."></textarea>
-
-        <div style="display: flex; gap: 8px;">
-          <button type="button" class="btn btn-primary" id="btn-dry-run">
-            Apply & Auto-Sync Registry
-          </button>
-          <button type="button" class="btn btn-default" id="btn-clear-payload">Clear Input</button>
-        </div>
-
-        <div id="dry-run-preview" class="hidden">
-          <label>Mutation Result</label>
-          <div class="terminal-box" id="dry-run-log"></div>
-        </div>
-
-        <div class="step-actions">
-          <button type="button" class="btn btn-default" onclick="goToStep(2)">‹ Back</button>
-          <button type="button" class="btn btn-blue" onclick="goToStep(4)">
-            Continue to Step 4 ›
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- STEP 4: Inspect, Edit & Export -->
-    <section class="step-card collapsed" id="step-4-card">
-      <div class="step-card-header" onclick="toggleStep(4)">
-        <div class="step-title-group">
-          <span class="step-circle step-circle-lg">4</span>
-          <div class="step-title-text">
-            <h2>Inspect, Edit & Export</h2>
-            <p>Validate integrity, modify packages with forms or JSON, and export single files or the complete db.zip bundle.</p>
-          </div>
-        </div>
-        <span class="badge-status ready">Integrity & Export</span>
-      </div>
-
-      <div class="step-card-body">
-
-        <!-- Integrity Diagnostic Panel -->
-        <div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <label style="margin:0;">Database Integrity & Validation Checks</label>
-            <button type="button" class="btn btn-default btn-sm" id="btn-run-diagnostics">Re-check Integrity</button>
-          </div>
-          <div id="integrity-report-box"></div>
-        </div>
-
-        <!-- Loaded Packages Table -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-          <h3 style="color:var(--text-bright); font-size:13px;">Loaded Institution Packages</h3>
-          <button type="button" class="btn btn-default btn-sm" id="btn-add-inst-modal">+ New Manual Package</button>
-        </div>
-
-        <div class="table-container">
-          <table>
+        <div style="overflow-x:auto;">
+          <table class="matrix-table">
             <thead>
               <tr>
-                <th>Region</th>
-                <th>Type</th>
-                <th>ID (Slug)</th>
-                <th>Institution Name</th>
-                <th>Inherits From</th>
-                <th>Classes</th>
-                <th>Holidays</th>
-                <th>Actions</th>
+                <th style="width:110px;">Weekday</th>
+                <th>08:00 - 10:00</th>
+                <th>10:00 - 12:00</th>
+                <th>12:00 - 14:00</th>
+                <th>14:00 - 16:00</th>
+                <th>16:00 - 18:00</th>
               </tr>
             </thead>
-            <tbody id="inst-table-body"></tbody>
+            <tbody id="tbody-matrix-schedule"></tbody>
           </table>
         </div>
+      </div>
+    </section>
 
-        <!-- Combined GUI & Raw JSON Editor Panel -->
-        <div id="panel-inst-editor" class="hidden" style="margin-top: 14px; border: 1px solid var(--border); padding: 14px; border-radius: var(--radius); background: var(--surface-soft);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-            <h3 id="inst-editor-title" style="font-size:13px; color:var(--text-bright);">Editing Package</h3>
-            <div style="display:flex; gap:6px;">
-              <button type="button" class="btn btn-primary btn-sm" id="btn-save-inst-unified">Save & Sync</button>
-              <button type="button" class="btn btn-default btn-sm" id="btn-close-inst-editor">Close</button>
+    <!-- ---------------------------------------------------------------------
+         TAB 3: HOLIDAY CALENDAR & TIMELINE (VISUALIZATION)
+         --------------------------------------------------------------------- -->
+    <section id="tab-timeline-view" class="view-panel">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Chronological Academic Holiday Calendar</div>
+            <div class="card-subtitle">Blends local college holidays with inherited parent university breaks.</div>
+          </div>
+        </div>
+        <div id="timeline-calendar-container"></div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------------
+         TAB 4: HIERARCHY TREE (VISUALIZATION)
+         --------------------------------------------------------------------- -->
+    <section id="tab-hierarchy-view" class="view-panel">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Institutional Dependency Hierarchy</div>
+            <div class="card-subtitle">Visual tree showing parent universities and their affiliated colleges linked by <code>inheritsFrom</code>.</div>
+          </div>
+        </div>
+        <div id="hierarchy-tree-container"></div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------------
+         TAB 5: AI ASSISTANT & AUTO-PATCHER
+         --------------------------------------------------------------------- -->
+    <section id="tab-ai-view" class="view-panel">
+      <div class="grid-2">
+        
+        <!-- Prompt Compiler -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Context-Aware System Prompt Compiler</div>
+              <div class="card-subtitle">Includes exact JSON schema, repository parents, and batch tags.</div>
             </div>
+            <button id="btn-copy-ai-prompt" class="btn btn-sm">Copy Prompt</button>
           </div>
 
-          <div class="editor-tabs">
-            <button type="button" class="editor-tab-btn active" id="btn-tab-gui" onclick="switchEditorMode('gui')">Visual Form Editor</button>
-            <button type="button" class="editor-tab-btn" id="btn-tab-raw" onclick="switchEditorMode('raw')">Raw JSON Editor</button>
+          <div>
+            <label>Target Institution Name</label>
+            <input type="text" id="ai-target-name" placeholder="e.g. Bilasipara College">
           </div>
 
-          <!-- Mode A: Visual Form Editor -->
-          <div id="editor-gui-container">
-            <div class="form-grid-3">
-              <div>
-                <label>Institution Name</label>
-                <input type="text" id="gui-inst-name">
-              </div>
-              <div>
-                <label>State Code</label>
-                <input type="text" id="gui-inst-state" maxlength="2">
-              </div>
-              <div>
-                <label>Category</label>
-                <input type="text" id="gui-inst-cat">
-              </div>
-            </div>
-
-            <div class="form-grid-3" style="margin-top:8px;">
-              <div>
-                <label>Entity Type</label>
-                <select id="gui-inst-type">
-                  <option value="parent">Parent</option>
-                  <option value="child">Child</option>
-                </select>
-              </div>
-              <div>
-                <label>Inherits From (Relative Path)</label>
-                <input type="text" id="gui-inst-inherits" placeholder="e.g. institutions/IN/AS/gauhati-university.json">
-              </div>
-              <div>
-                <label>Term / Academic Year</label>
-                <input type="text" id="gui-inst-term" placeholder="Odd Semester / 2026-2027">
-              </div>
-            </div>
-
-            <div style="margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 10px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <label style="margin:0;">Holidays List (<span id="gui-holidays-count">0</span>)</label>
-                <button type="button" class="btn btn-default btn-sm" id="btn-gui-add-holiday">+ Add Holiday</button>
-              </div>
-              <div id="gui-holidays-list" style="max-height: 180px; overflow-y:auto; display:grid; gap:6px;"></div>
-            </div>
-
-            <div style="margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 10px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <label style="margin:0;">Classes / Timetable List (<span id="gui-classes-count">0</span>)</label>
-                <button type="button" class="btn btn-default btn-sm" id="btn-gui-add-class">+ Add Class</button>
-              </div>
-              <div id="gui-classes-list" style="max-height: 240px; overflow-y:auto; display:grid; gap:6px;"></div>
-            </div>
+          <div>
+            <label>Raw Routine / Timetable / Syllabus Text</label>
+            <textarea id="ai-raw-text" rows="5" placeholder="Paste unformatted syllabus, circular, or periodic routines..."></textarea>
           </div>
 
-          <!-- Mode B: Raw JSON Editor -->
-          <div id="editor-raw-container" class="hidden">
-            <textarea id="inst-raw-json" class="code-font" rows="18"></textarea>
+          <button id="btn-compile-ai-prompt" class="btn btn-blue btn-sm">Compile Prompt</button>
+
+          <div>
+            <label>Compiled System Prompt</label>
+            <textarea id="ai-compiled-output" rows="9" readonly class="font-mono" style="font-size:11px;"></textarea>
           </div>
         </div>
 
-        <!-- Registry & Single File Downloads -->
-        <div style="margin-top: 10px;">
-          <label>Granular Single-File Downloads & Relative Paths</label>
-          <div id="single-files-download-list"></div>
-        </div>
+        <!-- Ingest AI Payload -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">AI JSON Ingest & Auto-Patch</div>
+              <div class="card-subtitle">Strips markdown blocks safely and updates database immutably.</div>
+            </div>
+            <button id="btn-clear-ai-box" class="btn btn-sm">Clear</button>
+          </div>
 
-        <div style="margin-top: 10px;">
-          <label>Auto-Synchronized db/registry.json Preview</label>
-          <textarea id="registry-raw-json" class="code-font" rows="8" readonly></textarea>
-        </div>
+          <div>
+            <label>Paste AI Response Payload</label>
+            <textarea id="ai-payload-box" rows="15" class="font-mono" placeholder="Paste JSON response from model here..."></textarea>
+          </div>
 
-        <div class="terminal-box" style="margin-top: 6px;">
-          <pre># Unpack into classline repository root
-unzip -o classline-db-*.zip -d ./
-git status db/
-git add db/ && git commit -m "feat(db): update academic schedules and parent-child registry" && git push</pre>
-        </div>
-
-        <div class="step-actions">
-          <button type="button" class="btn btn-default" onclick="goToStep(3)">‹ Back</button>
-          <button type="button" class="btn btn-primary" id="btn-export-all-step4">
-            💾 Download db.zip Bundle
+          <button id="btn-apply-ai-payload" class="btn btn-primary">
+            ⚡ Ingest JSON & Auto-Patch
           </button>
         </div>
+
       </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------------
+         TAB 6: DIAGNOSTICS & REGISTRY SYNC
+         --------------------------------------------------------------------- -->
+    <section id="tab-diagnostics-view" class="view-panel">
+      
+      <!-- Diagnostic Auditor -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Database Integrity & Schema Auditor</div>
+            <div class="card-subtitle">Validates ISO dates, time bounds, orphan parent links, and stream identifiers.</div>
+          </div>
+          <button id="btn-rerun-diagnostics" class="btn btn-sm">Re-verify</button>
+        </div>
+
+        <div id="diagnostics-results-box" style="display:flex; flex-direction:column; gap:6px;"></div>
+      </div>
+
+      <!-- Synchronized registry.json preview -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title font-mono" style="font-size:12.5px;">db/registry.json (Auto-Synchronized)</div>
+            <div class="card-subtitle">Index file used by the student application to route states and colleges.</div>
+          </div>
+          <button id="btn-copy-registry-text" class="btn btn-sm">Copy Registry JSON</button>
+        </div>
+
+        <textarea id="raw-registry-box" rows="10" readonly class="font-mono" style="font-size:11.5px;"></textarea>
+      </div>
+
     </section>
 
   </main>
 
-  <!-- Create Manual Institution Dialog -->
-  <dialog id="modal-new-inst">
-    <form id="form-new-inst" method="dialog">
-      <h3 style="color:var(--text-bright); margin-bottom: 8px;">Create Institution Package</h3>
+  <!-- =========================================================================
+       MODAL 0: MOUNT DATABASE SELECTOR (LOCAL OR RELATIVE / REPO DIR)
+       ========================================================================= -->
+  <dialog id="modal-mount-workspace">
+    <div class="dialog-header">
+      <div class="dialog-title">📂 Mount Database Workspace</div>
+      <button onclick="document.getElementById('modal-mount-workspace').close()" class="btn btn-sm btn-icon">✕</button>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:12px;">
       
-      <div class="form-grid-2">
+      <!-- Option A: Relative Repo Directory (./db) -->
+      <div class="mount-option-tile" id="tile-mount-relative">
+        <span style="font-size:22px;">🌐</span>
+        <div style="flex:1;">
+          <div style="font-weight:700; color:var(--text-bright);">Repo / Relative (./db)</div>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
+            Auto-fetch directly from <code>./db/registry.json</code> and relative packages in your repository one directory up.
+          </div>
+          <button type="button" class="btn btn-blue btn-sm" id="btn-exec-relative-mount" style="margin-top:8px;">
+            ⚡ Fetch & Mount ./db
+          </button>
+        </div>
+      </div>
+
+      <!-- Option B: Local Directory (webkitdirectory) -->
+      <div class="mount-option-tile" onclick="document.getElementById('modal-mount-workspace').close(); document.getElementById('input-dir').click();">
+        <span style="font-size:22px;">📁</span>
+        <div style="flex:1;">
+          <div style="font-weight:700; color:var(--text-bright);">Local Directory Folder</div>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
+            Select your local <code>db/</code> folder via browser directory picker. Safe and fast.
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm">Browse Folder</button>
+      </div>
+
+      <!-- Option C: Backup Archive (.zip) -->
+      <div class="mount-option-tile" onclick="document.getElementById('modal-mount-workspace').close(); document.getElementById('input-zip').click();">
+        <span style="font-size:22px;">📦</span>
+        <div style="flex:1;">
+          <div style="font-weight:700; color:var(--text-bright);">Backup ZIP Archive</div>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
+            Upload a previously exported <code>db.zip</code> or <code>classline-db-*.zip</code> archive.
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm">Upload ZIP</button>
+      </div>
+
+    </div>
+
+    <div style="display:flex; justify-content:flex-end;">
+      <button onclick="document.getElementById('modal-mount-workspace').close()" class="btn btn-sm">Close</button>
+    </div>
+  </dialog>
+
+  <!-- =========================================================================
+       MODAL 1: BATCH PERIOD GENERATOR (WITH CUSTOMIZABLE CODES & PATTERNS)
+       ========================================================================= -->
+  <dialog id="modal-batch-gen">
+    <div class="dialog-header">
+      <div class="dialog-title">⚡ Batch Period Generator</div>
+      <button onclick="document.getElementById('modal-batch-gen').close()" class="btn btn-sm btn-icon">✕</button>
+    </div>
+
+    <form id="form-batch-gen" style="display:flex; flex-direction:column; gap:14px;">
+      <div class="grid-2">
         <div>
-          <label for="new-inst-state">State / Region</label>
-          <select id="new-inst-state" required></select>
+          <label>Target Academic Batch / Stream</label>
+          <input type="text" id="bgen-batch" required placeholder="e.g. HS-1, B.A. 1st Sem, Pluto 2">
         </div>
         <div>
-          <label for="new-inst-type">Entity Type</label>
-          <select id="new-inst-type">
+          <label>Room / Campus Location</label>
+          <input type="text" id="bgen-location" value="Room 101" placeholder="e.g. Hall A, Lab 2">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label>Course Code Prefix (Fully Editable in Cards)</label>
+          <input type="text" id="bgen-code-prefix" value="PER-" class="font-mono" placeholder="e.g. PER-, LEC-, ENG-">
+        </div>
+        <div>
+          <label>Subject / Course Name Pattern</label>
+          <input type="text" id="bgen-name-pattern" value="Period {n}" placeholder="Use {n} for number, e.g. Lecture {n}">
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div>
+          <label>Shift Start Time (24h)</label>
+          <input type="time" id="bgen-start" required value="09:00">
+        </div>
+        <div>
+          <label>Period Duration (Minutes)</label>
+          <input type="number" id="bgen-duration" required value="45" min="15" max="180">
+        </div>
+        <div>
+          <label>Number of Periods</label>
+          <input type="number" id="bgen-count" required value="5" min="1" max="12">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label>Insert Lunch Break After Period # (0 = None)</label>
+          <input type="number" id="bgen-lunch-after" value="3" min="0" max="10">
+        </div>
+        <div>
+          <label>Lunch Break Duration (Minutes)</label>
+          <input type="number" id="bgen-lunch-duration" value="30" min="5" max="90">
+        </div>
+      </div>
+
+      <div>
+        <label>Active Days of the Week</label>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <label class="btn btn-sm" style="cursor:pointer;"><input type="checkbox" name="bgen-day" value="1" checked> Mon</label>
+          <label class="btn btn-sm" style="cursor:pointer;"><input type="checkbox" name="bgen-day" value="2" checked> Tue</label>
+          <label class="btn btn-sm" style="cursor:pointer;"><input type="checkbox" name="bgen-day" value="3" checked> Wed</label>
+          <label class="btn btn-sm" style="cursor:pointer;"><input type="checkbox" name="bgen-day" value="4" checked> Thu</label>
+          <label class="btn btn-sm" style="cursor:pointer;"><input type="checkbox" name="bgen-day" value="5" checked> Fri</label>
+          <label class="btn btn-sm" style="cursor:pointer;"><input type="checkbox" name="bgen-day" value="6" checked> Sat</label>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+        <button type="button" onclick="document.getElementById('modal-batch-gen').close()" class="btn btn-sm">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm">Generate All Periods</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- =========================================================================
+       MODAL 2: SNAPSHOT TIME MACHINE TIMELINE
+       ========================================================================= -->
+  <dialog id="modal-history">
+    <div class="dialog-header">
+      <div>
+        <div class="dialog-title">🕒 Snapshot Time Machine</div>
+        <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
+          Tracked until workspace is reset. Revert to any state instantly.
+        </div>
+      </div>
+      <button onclick="document.getElementById('modal-history').close()" class="btn btn-sm btn-icon">✕</button>
+    </div>
+
+    <div id="history-items-drawer" class="history-drawer-list"></div>
+
+    <div style="display:flex; justify-content:flex-end; margin-top:12px; border-top:1px solid var(--border-subtle); padding-top:12px;">
+      <button onclick="document.getElementById('modal-history').close()" class="btn btn-sm">Close</button>
+    </div>
+  </dialog>
+
+  <!-- =========================================================================
+       MODAL 3: CREATE NEW INSTITUTION PACKAGE
+       ========================================================================= -->
+  <dialog id="modal-new-package">
+    <div class="dialog-header">
+      <div class="dialog-title">+ Create Institution Package</div>
+      <button onclick="document.getElementById('modal-new-package').close()" class="btn btn-sm btn-icon">✕</button>
+    </div>
+
+    <form id="form-new-package" style="display:flex; flex-direction:column; gap:12px;">
+      <div class="grid-2">
+        <div>
+          <label>State / Region</label>
+          <select id="npkg-state" required></select>
+        </div>
+        <div>
+          <label>Hierarchy Type</label>
+          <select id="npkg-type">
             <option value="parent">Parent Body (University / Board)</option>
             <option value="child" selected>Child (Affiliated College / School)</option>
           </select>
         </div>
       </div>
 
-      <div id="new-inst-parent-wrap">
-        <label for="new-inst-parent">Parent Organization</label>
-        <select id="new-inst-parent"></select>
+      <div>
+        <label>Institution Name</label>
+        <input type="text" id="npkg-name" required placeholder="e.g. Bilasipara College">
       </div>
 
-      <label for="new-inst-id">Unique ID (Slug)</label>
-      <input type="text" id="new-inst-id" required placeholder="e.g. bilasipara-college">
+      <div>
+        <label>Slug Identifier (File Path)</label>
+        <input type="text" id="npkg-id" required class="font-mono" placeholder="bilasipara-college">
+      </div>
 
-      <label for="new-inst-name">Institution Name</label>
-      <input type="text" id="new-inst-name" required placeholder="e.g. Bilasipara College">
-
-      <label for="new-inst-cat">Category</label>
-      <input type="text" id="new-inst-cat" value="Collegiate / Undergraduate" required>
-
-      <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px;">
-        <button type="button" class="btn btn-default" onclick="this.closest('dialog').close()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Create File</button>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+        <button type="button" onclick="document.getElementById('modal-new-package').close()" class="btn btn-sm">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm">Create File</button>
       </div>
     </form>
   </dialog>
 
-  <!-- Dangerous Overwrite Alert Dialog -->
+  <!-- =========================================================================
+       MODAL 4: UNMOUNTED BASE WARNING
+       ========================================================================= -->
   <dialog id="modal-danger-export">
-    <div style="display:flex; align-items:flex-start; gap:12px;">
-      <span style="font-size:24px;">⚠️</span>
-      <div>
-        <h3 style="color:var(--red-hover); margin-bottom: 6px;">Warning: No Previous Database Mounted</h3>
-        <p style="color:var(--text); font-size: 12.5px; line-height: 1.5; margin-bottom: 12px;">
-          You did not mount your repository's existing <code>db/</code> folder or <code>db.zip</code>. 
-          Exporting now will produce a <strong>fresh database that will completely replace and wipe</strong> any unmounted colleges in your repository when extracted.
-        </p>
-        <p style="color:var(--muted); font-size: 12px; margin-bottom: 16px;">
-          <strong>Recommended:</strong> Cancel and mount your existing <code>db/</code> first so Studio patches both together.
-        </p>
-      </div>
+    <div class="dialog-header">
+      <div class="dialog-title" style="color:var(--red);">⚠️ Warning: Unmounted Base Database</div>
+      <button onclick="document.getElementById('modal-danger-export').close()" class="btn btn-sm btn-icon">✕</button>
     </div>
-    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
-      <button type="button" class="btn btn-default" id="btn-cancel-danger-export">Mount Base DB First</button>
-      <button type="button" class="btn btn-danger" id="btn-confirm-danger-export">Continue Dangerously & Replace</button>
+    <p style="font-size:12.5px; line-height:1.6; color:var(--text-main); margin-bottom:12px;">
+      You haven't mounted your existing <code>classline/db</code> repository or <code>db.zip</code>. 
+      Exporting now will produce a fresh standalone archive containing only current session packages.
+    </p>
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+      <button onclick="document.getElementById('modal-danger-export').close()" class="btn btn-sm">Cancel</button>
+      <button id="btn-danger-confirm-download" class="btn btn-danger btn-sm">Export Anyway</button>
     </div>
   </dialog>
 
+  <!-- Toast Notification -->
+  <div id="toast-msg">
+    <span id="toast-icon">✓</span>
+    <span id="toast-text">Notification</span>
+  </div>
+
+  <!-- =========================================================================
+       CORE APPLICATION JAVASCRIPT
+       ========================================================================= -->
   <script>
     "use strict";
 
-    const INDIA_SUBDIVISIONS = {
-      states: [
-        { code: "AP", name: "Andhra Pradesh" }, { code: "AR", name: "Arunachal Pradesh" },
-        { code: "AS", name: "Assam" }, { code: "BR", name: "Bihar" },
-        { code: "CG", name: "Chhattisgarh" }, { code: "GA", name: "Goa" },
-        { code: "GJ", name: "Gujarat" }, { code: "HR", name: "Haryana" },
-        { code: "HP", name: "Himachal Pradesh" }, { code: "JH", name: "Jharkhand" },
-        { code: "KA", name: "Karnataka" }, { code: "KL", name: "Kerala" },
-        { code: "MP", name: "Madhya Pradesh" }, { code: "MH", name: "Maharashtra" },
-        { code: "MN", name: "Manipur" }, { code: "ML", name: "Meghalaya" },
-        { code: "MZ", name: "Mizoram" }, { code: "NL", name: "Nagaland" },
-        { code: "OD", name: "Odisha" }, { code: "PB", name: "Punjab" },
-        { code: "RJ", name: "Rajasthan" }, { code: "SK", name: "Sikkim" },
-        { code: "TN", name: "Tamil Nadu" }, { code: "TS", name: "Telangana" },
-        { code: "TR", name: "Tripura" }, { code: "UP", name: "Uttar Pradesh" },
-        { code: "UK", name: "Uttarakhand" }, { code: "WB", name: "West Bengal" }
-      ],
-      unionTerritories: [
-        { code: "AN", name: "Andaman & Nicobar Islands" }, { code: "CH", name: "Chandigarh" },
-        { code: "DN", name: "Dadra & Nagar Haveli and Daman & Diu" }, { code: "DL", name: "Delhi (NCT)" },
-        { code: "JK", name: "Jammu & Kashmir" }, { code: "LA", name: "Ladakh" },
-        { code: "LD", name: "Lakshadweep" }, { code: "PY", name: "Puducherry" }
-      ]
-    };
-    const ALL_REGIONS = [...INDIA_SUBDIVISIONS.states, ...INDIA_SUBDIVISIONS.unionTerritories];
+    /* -------------------------------------------------------------------------
+       1. DATA STRUCTURES & REGIONS
+       ------------------------------------------------------------------------- */
+    const INDIA_SUBDIVISIONS = [
+      { code: "AP", name: "Andhra Pradesh" }, { code: "AR", name: "Arunachal Pradesh" },
+      { code: "AS", name: "Assam" }, { code: "BR", name: "Bihar" },
+      { code: "CG", name: "Chhattisgarh" }, { code: "GA", name: "Goa" },
+      { code: "GJ", name: "Gujarat" }, { code: "HR", name: "Haryana" },
+      { code: "HP", name: "Himachal Pradesh" }, { code: "JH", name: "Jharkhand" },
+      { code: "KA", name: "Karnataka" }, { code: "KL", name: "Kerala" },
+      { code: "MP", name: "Madhya Pradesh" }, { code: "MH", name: "Maharashtra" },
+      { code: "MN", name: "Manipur" }, { code: "ML", name: "Meghalaya" },
+      { code: "MZ", name: "Mizoram" }, { code: "NL", name: "Nagaland" },
+      { code: "OD", name: "Odisha" }, { code: "PB", name: "Punjab" },
+      { code: "RJ", name: "Rajasthan" }, { code: "SK", name: "Sikkim" },
+      { code: "TN", name: "Tamil Nadu" }, { code: "TS", name: "Telangana" },
+      { code: "TR", name: "Tripura" }, { code: "UP", name: "Uttar Pradesh" },
+      { code: "UK", name: "Uttarakhand" }, { code: "WB", name: "West Bengal" },
+      { code: "DL", name: "Delhi (NCT)" }, { code: "JK", name: "Jammu & Kashmir" },
+      { code: "LA", name: "Ladakh" }, { code: "CH", name: "Chandigarh" }
+    ];
 
+    const DAYS_CONFIG = [
+      { id: 0, label: "S", full: "Sun" },
+      { id: 1, label: "M", full: "Mon" },
+      { id: 2, label: "T", full: "Tue" },
+      { id: 3, label: "W", full: "Wed" },
+      { id: 4, label: "T", full: "Thu" },
+      { id: 5, label: "F", full: "Fri" },
+      { id: 6, label: "S", full: "Sat" }
+    ];
+
+    /* -------------------------------------------------------------------------
+       2. IMMUTABLE STATE MACHINE & HISTORY ENGINE
+       ------------------------------------------------------------------------- */
     let dbFiles = {}; 
     let hasMountedBaseDb = false;
-    let currentEditingFile = null;
-    let currentEditorMode = "gui"; // 'gui' or 'raw'
+    let activeFilePath = null;
+    let activeBatchFilter = "ALL";
 
-    function goToStep(stepNumber) {
-      for (let i = 1; i <= 4; i++) {
-        const card = document.getElementById(`step-${i}-card`);
-        const navBtn = document.querySelector(`.step-indicator-btn[data-step="${i}"]`);
+    const historyStack = [];
+    let historyPointer = -1;
+    const MAX_HISTORY = 60;
+
+    function deepClone(val) {
+      return JSON.parse(JSON.stringify(val));
+    }
+
+    function commitSnapshot(actionName) {
+      const snap = {
+        id: "snap-" + Date.now() + "-" + Math.random().toString(36).substr(2, 4),
+        timestamp: new Date(),
+        action: actionName,
+        activeFilePath: activeFilePath,
+        files: deepClone(dbFiles)
+      };
+
+      if (historyPointer < historyStack.length - 1) {
+        historyStack.splice(historyPointer + 1);
+      }
+
+      historyStack.push(snap);
+      if (historyStack.length > MAX_HISTORY) {
+        historyStack.shift();
+      } else {
+        historyPointer++;
+      }
+
+      updateHistoryUI();
+      rebuildRegistry();
+    }
+
+    function undo() {
+      if (historyPointer > 0) {
+        historyPointer--;
+        restoreSnapshot(historyStack[historyPointer]);
+        showToast("Undone: " + historyStack[historyPointer].action);
+      }
+    }
+
+    function redo() {
+      if (historyPointer < historyStack.length - 1) {
+        historyPointer++;
+        restoreSnapshot(historyStack[historyPointer]);
+        showToast("Redone: " + historyStack[historyPointer].action);
+      }
+    }
+
+    function restoreSnapshot(snap) {
+      dbFiles = deepClone(snap.files);
+      if (snap.activeFilePath && dbFiles[snap.activeFilePath]) {
+        activeFilePath = snap.activeFilePath;
+      } else {
+        const remaining = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/"));
+        activeFilePath = remaining.length ? remaining[0] : null;
+      }
+      renderAll();
+      updateHistoryUI();
+    }
+
+    function updateHistoryUI() {
+      document.getElementById("btn-undo").disabled = historyPointer <= 0;
+      document.getElementById("btn-redo").disabled = historyPointer >= historyStack.length - 1;
+      document.getElementById("label-history-count").textContent = `${historyStack.length} Snapshots`;
+
+      const container = document.getElementById("history-items-drawer");
+      container.replaceChildren();
+
+      [...historyStack].reverse().forEach((snap, rIdx) => {
+        const idx = historyStack.length - 1 - rIdx;
+        const isCurrent = idx === historyPointer;
+
+        const row = document.createElement("div");
+        row.className = `history-card-item ${isCurrent ? 'active' : ''}`;
         
-        if (i === stepNumber) {
-          card.classList.remove("collapsed");
-          card.classList.add("active-step");
-          navBtn.classList.add("active");
-          card.scrollIntoView({ behavior: "smooth", block: "start" });
-        } else {
-          card.classList.add("collapsed");
-          card.classList.remove("active-step");
-          navBtn.classList.remove("active");
-          if (i < stepNumber) {
-            navBtn.classList.add("completed");
-          }
+        const time = new Date(snap.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        row.innerHTML = `
+          <div>
+            <div style="font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:6px;">
+              <span>${snap.action}</span>
+              ${isCurrent ? '<span class="badge badge-success" style="font-size:9px;">Active</span>' : ''}
+            </div>
+            <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">
+              ${time} • ${Object.keys(snap.files).filter(k => k.startsWith('db/institutions/IN/')).length} packages
+            </div>
+          </div>
+          <div>
+            ${!isCurrent ? `<button class="btn btn-sm btn-restore-target" data-idx="${idx}">Restore</button>` : ''}
+          </div>
+        `;
+
+        if (!isCurrent) {
+          row.querySelector(".btn-restore-target").onclick = () => {
+            historyPointer = idx;
+            restoreSnapshot(historyStack[idx]);
+            document.getElementById("modal-history").close();
+            showToast(`Restored: ${snap.action}`);
+          };
         }
-      }
-      if (stepNumber === 4) {
-        runIntegrityDiagnostics();
-        renderSingleFilesList();
-      }
-    }
 
-    function toggleStep(stepNumber) {
-      goToStep(stepNumber);
-    }
-
-    document.querySelectorAll(".step-indicator-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        goToStep(Number(btn.dataset.step));
-      });
-    });
-
-    function initRegionSelects() {
-      const selects = [document.getElementById("ai-target-state"), document.getElementById("new-inst-state")];
-      selects.forEach(sel => {
-        sel.replaceChildren();
-        ALL_REGIONS.forEach(reg => {
-          const opt = document.createElement("option");
-          opt.value = reg.code;
-          opt.textContent = `${reg.name} (${reg.code})`;
-          sel.appendChild(opt);
-        });
-      });
-      document.getElementById("ai-target-state").value = "AS";
-      updateParentSelects();
-    }
-
-    function updateParentSelects() {
-      const parentSelects = [document.getElementById("ai-parent-institution"), document.getElementById("new-inst-parent")];
-      const parents = [];
-
-      Object.keys(dbFiles).forEach(path => {
-        const data = dbFiles[path];
-        if (data && data.institution && data.institution.type === "parent") {
-          parents.push({
-            id: data.institution.id,
-            name: data.institution.name,
-            file: path.replace(/^db\//, "")
-          });
-        }
-      });
-
-      parentSelects.forEach(sel => {
-        if (!sel) return;
-        sel.replaceChildren();
-        const def = document.createElement("option");
-        def.value = "";
-        def.textContent = "None / Autonomous (Direct)";
-        sel.appendChild(def);
-
-        parents.forEach(p => {
-          const opt = document.createElement("option");
-          opt.value = p.file;
-          opt.dataset.parentId = p.id;
-          opt.textContent = `${p.name} (${p.file})`;
-          sel.appendChild(opt);
-        });
+        container.appendChild(row);
       });
     }
 
-    document.getElementById("ai-entity-type").addEventListener("change", (e) => {
-      const wrap = document.getElementById("wrapper-parent-select");
-      if (e.target.value === "parent") {
-        wrap.classList.add("hidden");
-      } else {
-        wrap.classList.remove("hidden");
-      }
-      buildPrompt();
-    });
-
-    document.getElementById("new-inst-type").addEventListener("change", (e) => {
-      const wrap = document.getElementById("new-inst-parent-wrap");
-      if (e.target.value === "parent") {
-        wrap.classList.add("hidden");
-      } else {
-        wrap.classList.remove("hidden");
-      }
-    });
-
-    /* Improved Context-Aware System Prompt Generator */
-    function buildPrompt() {
-      const state = document.getElementById("ai-target-state").value;
-      const type = document.getElementById("ai-entity-type").value;
-      const parentFile = document.getElementById("ai-parent-institution").value;
-      const name = document.getElementById("ai-target-name").value.trim();
-      const category = document.getElementById("ai-target-category").value.trim();
-      const notes = document.getElementById("ai-raw-notes").value.trim();
-
-      // Collect known parent institutions for registry context
-      const knownParents = [];
-      Object.keys(dbFiles).forEach(path => {
-        const d = dbFiles[path];
-        if (d?.institution?.type === "parent") {
-          knownParents.push({
-            name: d.institution.name,
-            state: d.institution.state,
-            file: path.replace(/^db\//, "")
-          });
-        }
-      });
-
-      const parentContextText = knownParents.length
-        ? `KNOWN PARENT BODIES IN REPOSITORY:
-${knownParents.map(p => `- "${p.name}" (State: ${p.state}) -> inheritsFrom path: "${p.file}"`).join('\n')}`
-        : "No existing parent bodies are mounted in this workspace yet.";
-
-      const prompt = `OUTPUT SPECIFICATION:
-Return strictly valid, raw JSON without markdown formatting (do not wrap in \`\`\`json or code fences).
-
-DATABASE STRUCTURE & LINKING RULES:
-1. File paths for institutions follow: "institutions/IN/{STATE}/{slug}.json".
-2. "type": Must be "parent" (for university/school board defining general academic breaks) OR "child" (for colleges/high schools).
-3. "inheritsFrom":
-   - If "type" is "child" and affiliated to a university, "inheritsFrom" MUST be the exact relative file path to the parent JSON (e.g. "institutions/IN/AS/gauhati-university.json").
-   - If autonomous or unaffiliated, omit "inheritsFrom" or set it to null.
-4. "batch": Must classify student groups for selective checklist filtering in the student app (e.g., "HS-1", "HS-2", "B.A. 1st Sem", "B.Sc Physics").
-
-${parentContextText}
-
-TARGET SCHEMA & FIELD DEFINITIONS:
-{
-  "institution": {
-    "id": string (unique slug formatted as lowercase alphanumeric with hyphens, e.g., "bilasipara-college"),
-    "name": string (full official name of the institution)${name ? ` [Target: "${name}"]` : ""},
-    "state": string (two-letter Indian state/UT ISO code, e.g., "AS", "DL", "MH") [Target: "${state}"],
-    "type": "parent" | "child" [Target: "${type}"],
-    ${type === 'child' ? `"inheritsFrom": string | null (exact file path of parent, e.g., "${parentFile || 'institutions/IN/' + state + '/parent-slug.json'}", or null if autonomous),` : ''}
-    "category": string (e.g., "Collegiate / Undergraduate", "Higher Secondary", "University")${category ? ` [Target: "${category}"]` : ""},
-    "academicYear": string (format: "YYYY-YYYY", e.g., "2026-2027"),
-    "term": string (e.g., "Odd Semester", "Even Semester", "Annual")
-  },
-  "holidays": [
-    {
-      "id": string (unique identifier, e.g., "hol-1"),
-      "name": string (title of the holiday or event),
-      "date": string (strict ISO format: "YYYY-MM-DD"),
-      "category": "national" | "state" | "academic" | "cultural" | "institutional",
-      "note": string (closure details or empty string)
-    }
-  ],
-  "classes": [
-    {
-      "id": string (unique identifier, e.g., "cls-1"),
-      "code": string (course code, e.g., "ENG101", or empty string),
-      "name": string (course or subject title),
-      "department": string (department or stream name),
-      "batch": string (academic group/stream identifier used for filtering, e.g., "HS-1", "B.A. 1st Sem"),
-      "startTime": string (strict 24-hour format: "HH:MM", e.g., "09:00", "14:30"),
-      "endTime": string (strict 24-hour format: "HH:MM", e.g., "10:00", "15:30"),
-      "location": string (room, hall, or campus block),
-      "days": array of integers (zero-indexed weekdays: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat),
-      "date": string | null (ISO "YYYY-MM-DD" if single-session lecture, otherwise null)
-    }
-  ]
-}
-
-SOURCE DATA TO MAP:
-${notes}`;
-
-      document.getElementById("ai-compiled-prompt").value = prompt;
-    }
-
+    /* -------------------------------------------------------------------------
+       3. REGISTRY COMPILER & INTEGRITY ENGINE
+       ------------------------------------------------------------------------- */
     function rebuildRegistry() {
-      const defaultRegistry = {
+      const defaultReg = {
         version: 1,
         updatedAt: new Date().toISOString().split("T")[0],
         regions: {}
       };
 
-      const registry = dbFiles["db/registry.json"] || defaultRegistry;
-      const regionsMap = registry.regions || {};
+      const registry = dbFiles["db/registry.json"] || defaultReg;
+      const regionsMap = {};
 
-      Object.keys(regionsMap).forEach(k => {
-        regionsMap[k].institutions = [];
-      });
-
-      Object.keys(dbFiles).forEach(filePath => {
-        const match = filePath.match(/^db\/institutions\/IN\/([A-Z]{2})\/([^/]+)\.json$/);
+      Object.keys(dbFiles).forEach(path => {
+        const match = path.match(/^db\/institutions\/IN\/([A-Z]{2})\/([^/]+)\.json$/);
         if (!match) return;
 
         const [, stateCode, fileSlug] = match;
-        const data = dbFiles[filePath];
+        const data = dbFiles[path];
         if (!data || !data.institution) return;
 
         if (!regionsMap[stateCode]) {
-          const rObj = ALL_REGIONS.find(r => r.code === stateCode);
+          const region = INDIA_SUBDIVISIONS.find(r => r.code === stateCode);
           regionsMap[stateCode] = {
-            name: rObj ? rObj.name : stateCode,
+            name: region ? region.name : stateCode,
             hasRegionalHolidays: true,
             institutions: []
           };
         }
 
-        const instMeta = {
+        const meta = {
           id: data.institution.id || fileSlug,
           name: data.institution.name || fileSlug,
           type: data.institution.type || "child",
@@ -1191,10 +1534,10 @@ ${notes}`;
         };
 
         if (data.institution.inheritsFrom) {
-          instMeta.inheritsFrom = data.institution.inheritsFrom;
+          meta.inheritsFrom = data.institution.inheritsFrom;
         }
 
-        regionsMap[stateCode].institutions.push(instMeta);
+        regionsMap[stateCode].institutions.push(meta);
       });
 
       Object.keys(regionsMap).forEach(k => {
@@ -1207,37 +1550,869 @@ ${notes}`;
         regions: regionsMap
       };
 
-      document.getElementById("registry-raw-json").value = JSON.stringify(dbFiles["db/registry.json"], null, 2);
-      renderTable();
-      updateCounter();
-      updateParentSelects();
-      runIntegrityDiagnostics();
-      renderSingleFilesList();
+      document.getElementById("raw-registry-box").value = JSON.stringify(dbFiles["db/registry.json"], null, 2);
     }
 
-    function updateCounter() {
-      const count = Object.keys(dbFiles).length;
-      document.getElementById("header-file-counter").textContent = `${count} files loaded`;
-      const baseTag = document.getElementById("base-status-tag");
-      if (hasMountedBaseDb) {
-        baseTag.textContent = "Base Mounted (Safe Patch Mode)";
-        baseTag.style.color = "var(--accent)";
+    function runIntegrityAudit() {
+      const box = document.getElementById("diagnostics-results-box");
+      box.replaceChildren();
+
+      const issues = [];
+      const instKeys = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/"));
+
+      instKeys.forEach(p => {
+        const pkg = dbFiles[p];
+        const inst = pkg?.institution || {};
+        const filename = p.split("/").pop();
+
+        if (inst.type === "child" && inst.inheritsFrom) {
+          const parentKey = `db/${inst.inheritsFrom.replace(/^\//, '')}`;
+          if (!dbFiles[parentKey]) {
+            issues.push({ level: "danger", file: filename, msg: `References missing parent: "${inst.inheritsFrom}"` });
+          }
+        }
+
+        (pkg.classes || []).forEach((c, idx) => {
+          if (!c.batch) {
+            issues.push({ level: "warning", file: filename, msg: `Class "${c.name || idx+1}" is missing a batch stream tag.` });
+          }
+          if (c.startTime && c.endTime && c.startTime >= c.endTime) {
+            issues.push({ level: "danger", file: filename, msg: `Class "${c.name}" timing is invalid (${c.startTime} >= ${c.endTime}).` });
+          }
+        });
+
+        (pkg.holidays || []).forEach(h => {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(h.date)) {
+            issues.push({ level: "danger", file: filename, msg: `Holiday "${h.name}" date must be ISO YYYY-MM-DD (got "${h.date}").` });
+          }
+        });
+      });
+
+      document.getElementById("badge-diag-count").textContent = issues.length;
+
+      if (!issues.length) {
+        box.innerHTML = `
+          <div class="card" style="background:rgba(16, 185, 129, 0.12); border-color:rgba(16, 185, 129, 0.3); color:var(--accent-green);">
+            ✓ All ${instKeys.length} institution files passed integrity checks. Clean schema verified!
+          </div>
+        `;
       } else {
-        baseTag.textContent = "Standalone (No Base DB)";
-        baseTag.style.color = "var(--amber)";
-      }
-      const statusBox = document.getElementById("workspace-status-box");
-      if (statusBox) {
-        statusBox.innerHTML = hasMountedBaseDb 
-          ? `Workspace Mode: <strong>Base DB Loaded</strong> (${count} files in memory). New inputs will cleanly patch your repo.` 
-          : `Workspace Mode: <strong>Fresh Blank State</strong> (No base mounted). Exporting will warn before replacing repository.`;
+        issues.forEach(iss => {
+          const row = document.createElement("div");
+          row.className = "card";
+          row.style.cssText = "padding:8px 12px; flex-direction:row; justify-content:space-between; align-items:center;";
+          row.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge badge-${iss.level}">${iss.level}</span>
+              <strong style="color:var(--text-bright);">${iss.file}</strong>:
+              <span>${iss.msg}</span>
+            </div>
+          `;
+          box.appendChild(row);
+        });
       }
     }
 
-    function applyAiMutation() {
-      const raw = document.getElementById("ai-response-payload").value.trim();
+    /* -------------------------------------------------------------------------
+       4. MOUNTING ENGINE (RELATIVE ./db, DIRECTORY & ZIP)
+       ------------------------------------------------------------------------- */
+    async function mountRepoRelativeDb() {
+      const btn = document.getElementById("btn-exec-relative-mount");
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "⏳ Fetching ./db...";
+      btn.disabled = true;
+
+      try {
+        const regRes = await fetch("./db/registry.json", { cache: "no-store" });
+        if (!regRes.ok) {
+          throw new Error(`HTTP ${regRes.status}: Unable to load ./db/registry.json`);
+        }
+        const registry = await regRes.json();
+        
+        const newFiles = {};
+        newFiles["db/registry.json"] = registry;
+
+        const allPromises = [];
+        const regions = registry.regions || {};
+
+        for (const [stateCode, rData] of Object.entries(regions)) {
+          const instList = rData.institutions || [];
+          for (const item of instList) {
+            if (item.file) {
+              const relPath = item.file.startsWith("db/") ? item.file : `db/${item.file}`;
+              const fetchUrl = `../${relPath}`;
+              
+              allPromises.push(
+                fetch(fetchUrl, { cache: "no-store" })
+                  .then(async res => {
+                    if (res.ok) {
+                      newFiles[relPath] = await res.json();
+                    }
+                  })
+                  .catch(err => {
+                    console.warn(`Failed loading package ${fetchUrl}`, err);
+                  })
+              );
+            }
+          }
+        }
+
+        await Promise.all(allPromises);
+
+        const loadedKeys = Object.keys(newFiles).filter(k => k.startsWith("db/institutions/IN/"));
+        if (!loadedKeys.length) {
+          throw new Error("registry.json was fetched but no institution JSON packages could be resolved at ./db/institutions/");
+        }
+
+        dbFiles = newFiles;
+        hasMountedBaseDb = true;
+        activeFilePath = loadedKeys[0];
+        commitSnapshot(`Mounted Repo Relative ./db (${loadedKeys.length} packages)`);
+        renderAll();
+        document.getElementById("modal-mount-workspace").close();
+        showToast(`Successfully mounted ./db (${loadedKeys.length} packages loaded)`);
+
+      } catch (err) {
+        console.error("Relative mount failure:", err);
+        alert(
+          `Unable to auto-fetch ./db/registry.json:\n\n` +
+          `${err.message}\n\n` +
+          `Notice: Browsers restrict relative fetch() when opened via 'file://' protocol due to CORS security rules. If you are not running a local server (e.g., npx serve or Live Server), please click 'Local Directory Folder' to select the folder directly!`
+        );
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById("btn-exec-relative-mount").onclick = mountRepoRelativeDb;
+    document.getElementById("btn-open-mount-modal").onclick = () => document.getElementById("modal-mount-workspace").showModal();
+
+    /* -------------------------------------------------------------------------
+       5. CLASSES: IN-CARD INLINE EDITING & BATCH GENERATOR
+       ------------------------------------------------------------------------- */
+    document.getElementById("form-batch-gen").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const activePkg = dbFiles[activeFilePath];
+      if (!activePkg) return;
+
+      const batch = document.getElementById("bgen-batch").value.trim() || "General";
+      const location = document.getElementById("bgen-location").value.trim() || "Room 101";
+      const codePrefix = document.getElementById("bgen-code-prefix").value.trim() || "PER-";
+      const namePattern = document.getElementById("bgen-name-pattern").value.trim() || "Period {n}";
+
+      const start = document.getElementById("bgen-start").value;
+      const dur = parseInt(document.getElementById("bgen-duration").value, 10);
+      const count = parseInt(document.getElementById("bgen-count").value, 10);
+      const lunchAfter = parseInt(document.getElementById("bgen-lunch-after").value, 10);
+      const lunchDur = parseInt(document.getElementById("bgen-lunch-duration").value, 10);
+
+      const days = Array.from(document.querySelectorAll('input[name="bgen-day"]:checked')).map(cb => parseInt(cb.value, 10));
+
+      if (!days.length) {
+        showToast("Select at least one active day", "error");
+        return;
+      }
+
+      function toMins(str) {
+        const [h, m] = str.split(":").map(Number);
+        return h * 60 + m;
+      }
+      function toTime(mins) {
+        const h = String(Math.floor(mins / 60)).padStart(2, '0');
+        const m = String(mins % 60).padStart(2, '0');
+        return `${h}:${m}`;
+      }
+
+      let curr = toMins(start);
+      const newCards = [];
+
+      for (let i = 1; i <= count; i++) {
+        const codeValue = `${codePrefix}${i}`;
+        const nameValue = namePattern.replace(/\{n\}/g, i);
+
+        newCards.push({
+          id: `cls-${Date.now().toString(36)}-${i}`,
+          code: codeValue,
+          name: nameValue,
+          batch: batch,
+          startTime: toTime(curr),
+          endTime: toTime(curr + dur),
+          days: [...days],
+          location: location,
+          date: null
+        });
+        curr += dur;
+
+        // Lunch break insertion
+        if (lunchAfter > 0 && i === lunchAfter) {
+          curr += lunchDur;
+        }
+      }
+
+      activePkg.classes = [...(activePkg.classes || []), ...newCards];
+      commitSnapshot(`Batch generated ${newCards.length} period cards for ${batch}`);
+      renderClassesCards();
+      document.getElementById("modal-batch-gen").close();
+      showToast(`Generated ${newCards.length} period cards!`);
+    });
+
+    function renderClassesCards() {
+      const activePkg = dbFiles[activeFilePath];
+      const grid = document.getElementById("classes-card-grid");
+      const tagsContainer = document.getElementById("class-stream-tags");
+      grid.replaceChildren();
+      tagsContainer.replaceChildren();
+
+      if (!activePkg) return;
+
+      const classes = activePkg.classes || [];
+      document.getElementById("badge-classes-count").textContent = `${classes.length} Cards`;
+
+      // Build batch filters
+      const streams = Array.from(new Set(classes.map(c => c.batch).filter(Boolean)));
+      
+      const allBtn = document.createElement("button");
+      allBtn.className = `stream-tag-btn ${activeBatchFilter === 'ALL' ? 'active' : ''}`;
+      allBtn.textContent = `All (${classes.length})`;
+      allBtn.onclick = () => { activeBatchFilter = "ALL"; renderClassesCards(); };
+      tagsContainer.appendChild(allBtn);
+
+      streams.forEach(st => {
+        const cnt = classes.filter(c => c.batch === st).length;
+        const btn = document.createElement("button");
+        btn.className = `stream-tag-btn ${activeBatchFilter === st ? 'active' : ''}`;
+        btn.textContent = `${st} (${cnt})`;
+        btn.onclick = () => { activeBatchFilter = st; renderClassesCards(); };
+        tagsContainer.appendChild(btn);
+      });
+
+      const visibleClasses = activeBatchFilter === "ALL" ? classes : classes.filter(c => c.batch === activeBatchFilter);
+
+      if (!visibleClasses.length) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding:32px 14px; background:var(--bg-elevated); border:1px dashed var(--border-default); border-radius:var(--radius-md); color:var(--text-dim);">
+            No period cards found in this view. Click "+ Add Single Card" or "⚡ Batch Period Generator".
+          </div>
+        `;
+        return;
+      }
+
+      visibleClasses.forEach((c) => {
+        const realIdx = classes.findIndex(item => item.id === c.id);
+
+        const card = document.createElement("div");
+        card.className = "editor-item-card is-class";
+
+        card.innerHTML = `
+          <div class="item-card-header">
+            <div class="item-card-badges">
+              <span class="badge badge-child badge-display-code">${c.code || 'CODE'}</span>
+              <span class="badge badge-display-batch" style="background:var(--surface-input);">${c.batch || 'General'}</span>
+            </div>
+            <div class="item-card-actions">
+              <button class="btn btn-sm btn-icon btn-mup" title="Move Up (↑)" ${realIdx === 0 ? 'disabled' : ''}>↑</button>
+              <button class="btn btn-sm btn-icon btn-mdown" title="Move Down (↓)" ${realIdx === classes.length - 1 ? 'disabled' : ''}>↓</button>
+              <button class="btn btn-sm btn-icon btn-dup" title="Duplicate (⎘)">⎘</button>
+              <button class="btn btn-sm btn-icon btn-del" style="color:var(--red);" title="Delete (🗑)">🗑</button>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Course Code</label>
+              <input type="text" class="inp-c-code font-mono" value="${c.code || ''}" placeholder="e.g. ENG-101, PER-1">
+            </div>
+            <div>
+              <label>Batch / Stream</label>
+              <input type="text" class="inp-c-batch font-mono" value="${c.batch || 'General'}" placeholder="e.g. HS-1, B.A. 1st Sem">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Subject / Course</label>
+              <input type="text" class="inp-c-name" value="${c.name || ''}" placeholder="e.g. Alternative English">
+            </div>
+            <div>
+              <label>Room / Location</label>
+              <input type="text" class="inp-c-loc" value="${c.location || ''}" placeholder="e.g. Hall A, Room 12">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Start Time (24h)</label>
+              <input type="time" class="inp-c-start" value="${c.startTime || '09:00'}">
+            </div>
+            <div>
+              <label>End Time (24h)</label>
+              <input type="time" class="inp-c-end" value="${c.endTime || '10:00'}">
+            </div>
+          </div>
+
+          <div>
+            <label>Active Days</label>
+            <div class="day-pills-row">
+              ${DAYS_CONFIG.map(d => `
+                <div class="day-pill-toggle ${(c.days || []).includes(d.id) ? 'active' : ''}" data-day="${d.id}" title="${d.full}">${d.label}</div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+
+        // Card Action Listeners
+        card.querySelector(".btn-mup").onclick = () => moveClassSlot(realIdx, -1);
+        card.querySelector(".btn-mdown").onclick = () => moveClassSlot(realIdx, 1);
+        card.querySelector(".btn-dup").onclick = () => duplicateClassSlot(realIdx);
+        card.querySelector(".btn-del").onclick = () => deleteClassSlot(realIdx);
+
+        // Day Toggles
+        card.querySelectorAll(".day-pill-toggle").forEach(p => {
+          p.onclick = () => {
+            const dayId = parseInt(p.dataset.day, 10);
+            let daysArr = [...(c.days || [])];
+            if (daysArr.includes(dayId)) daysArr = daysArr.filter(d => d !== dayId);
+            else daysArr.push(dayId);
+            daysArr.sort();
+            c.days = daysArr;
+            commitSnapshot(`Toggled weekday on ${c.name}`);
+            renderClassesCards();
+          };
+        });
+
+        const badgeCode = card.querySelector(".badge-display-code");
+        const badgeBatch = card.querySelector(".badge-display-batch");
+
+        const inpCode = card.querySelector(".inp-c-code");
+        const inpBatch = card.querySelector(".inp-c-batch");
+        const inpName = card.querySelector(".inp-c-name");
+        const inpLoc = card.querySelector(".inp-c-loc");
+        const inpStart = card.querySelector(".inp-c-start");
+        const inpEnd = card.querySelector(".inp-c-end");
+
+        // Live header badge sync on typing
+        inpCode.addEventListener("input", (e) => {
+          c.code = e.target.value.trim();
+          badgeCode.textContent = c.code || "CODE";
+        });
+        inpBatch.addEventListener("input", (e) => {
+          c.batch = e.target.value.trim();
+          badgeBatch.textContent = c.batch || "General";
+        });
+
+        // Commit snapshot on blur or change
+        const syncAndCommit = () => {
+          c.code = inpCode.value.trim();
+          c.batch = inpBatch.value.trim() || "General";
+          c.name = inpName.value.trim();
+          c.location = inpLoc.value.trim();
+          c.startTime = inpStart.value;
+          c.endTime = inpEnd.value;
+          commitSnapshot(`Updated class: ${c.code} / ${c.name}`);
+        };
+
+        [inpCode, inpBatch, inpName, inpLoc, inpStart, inpEnd].forEach(input => {
+          input.addEventListener("change", syncAndCommit);
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    function moveClassSlot(idx, dir) {
+      const activePkg = dbFiles[activeFilePath];
+      const target = idx + dir;
+      if (target < 0 || target >= activePkg.classes.length) return;
+      const tmp = activePkg.classes[idx];
+      activePkg.classes[idx] = activePkg.classes[target];
+      activePkg.classes[target] = tmp;
+      commitSnapshot(`Moved class card ${dir < 0 ? 'up' : 'down'}`);
+      renderClassesCards();
+    }
+
+    function duplicateClassSlot(idx) {
+      const activePkg = dbFiles[activeFilePath];
+      const clone = deepClone(activePkg.classes[idx]);
+      clone.id = `cls-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 4)}`;
+      clone.name += " (Copy)";
+      activePkg.classes.splice(idx + 1, 0, clone);
+      commitSnapshot(`Duplicated class: ${clone.name}`);
+      renderClassesCards();
+      showToast("Card duplicated!");
+    }
+
+    function deleteClassSlot(idx) {
+      const activePkg = dbFiles[activeFilePath];
+      const name = activePkg.classes[idx].name || activePkg.classes[idx].code;
+      activePkg.classes.splice(idx, 1);
+      commitSnapshot(`Deleted class: ${name}`);
+      renderClassesCards();
+      showToast("Card removed!");
+    }
+
+    document.getElementById("btn-add-class-card").onclick = () => {
+      const activePkg = dbFiles[activeFilePath];
+      if (!activePkg) return;
+      activePkg.classes.push({
+        id: `cls-${Date.now().toString(36)}`,
+        code: "NEW-101",
+        name: "New Lecture",
+        batch: "General",
+        startTime: "09:00",
+        endTime: "10:00",
+        days: [1, 2, 3, 4, 5],
+        location: "Hall 1",
+        date: null
+      });
+      commitSnapshot("Added new class card");
+      renderClassesCards();
+      showToast("New card added!");
+    };
+
+    /* -------------------------------------------------------------------------
+       6. HOLIDAYS: IN-CARD INLINE EDITING
+       ------------------------------------------------------------------------- */
+    function renderHolidaysCards() {
+      const activePkg = dbFiles[activeFilePath];
+      const grid = document.getElementById("holidays-card-grid");
+      grid.replaceChildren();
+
+      if (!activePkg) return;
+
+      const holidays = activePkg.holidays || [];
+      document.getElementById("badge-holidays-count").textContent = `${holidays.length} Cards`;
+
+      if (!holidays.length) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding:32px 14px; background:var(--bg-elevated); border:1px dashed var(--border-default); border-radius:var(--radius-md); color:var(--text-dim);">
+            No holiday breaks recorded yet. Click "+ Add Holiday Card".
+          </div>
+        `;
+        return;
+      }
+
+      holidays.forEach((h, idx) => {
+        const card = document.createElement("div");
+        card.className = "editor-item-card is-holiday";
+
+        card.innerHTML = `
+          <div class="item-card-header">
+            <span class="badge" style="background:var(--amber-subtle); color:var(--amber); border:1px solid rgba(245, 158, 11, 0.4);">${(h.category || 'institutional').toUpperCase()}</span>
+            <div class="item-card-actions">
+              <button class="btn btn-sm btn-icon btn-dup-hol" title="Duplicate (⎘)">⎘</button>
+              <button class="btn btn-sm btn-icon btn-del-hol" style="color:var(--red);" title="Delete (🗑)">🗑</button>
+            </div>
+          </div>
+
+          <div>
+            <label>Holiday / Break Name</label>
+            <input type="text" class="inp-h-name" value="${h.name || ''}" placeholder="e.g. Saraswati Puja">
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Date (YYYY-MM-DD)</label>
+              <input type="date" class="inp-h-date font-mono" value="${h.date || ''}">
+            </div>
+            <div>
+              <label>Category</label>
+              <select class="inp-h-cat">
+                <option value="national" ${h.category === 'national' ? 'selected' : ''}>National</option>
+                <option value="state" ${h.category === 'state' ? 'selected' : ''}>State</option>
+                <option value="academic" ${h.category === 'academic' ? 'selected' : ''}>Academic</option>
+                <option value="cultural" ${h.category === 'cultural' ? 'selected' : ''}>Cultural</option>
+                <option value="institutional" ${h.category === 'institutional' ? 'selected' : ''}>Institutional</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label>Notes / Closure Directive</label>
+            <input type="text" class="inp-h-note" value="${h.note || ''}" placeholder="e.g. Instruction suspended">
+          </div>
+        `;
+
+        card.querySelector(".btn-dup-hol").onclick = () => {
+          const clone = deepClone(h);
+          clone.id = `hol-${Date.now().toString(36)}`;
+          clone.name += " (Copy)";
+          activePkg.holidays.splice(idx + 1, 0, clone);
+          commitSnapshot(`Duplicated holiday: ${clone.name}`);
+          renderHolidaysCards();
+          showToast("Holiday duplicated!");
+        };
+
+        card.querySelector(".btn-del-hol").onclick = () => {
+          activePkg.holidays.splice(idx, 1);
+          commitSnapshot(`Deleted holiday: ${h.name}`);
+          renderHolidaysCards();
+          showToast("Holiday removed!");
+        };
+
+        card.querySelectorAll("input, select").forEach(el => {
+          el.onchange = () => {
+            h.name = card.querySelector(".inp-h-name").value.trim();
+            h.date = card.querySelector(".inp-h-date").value;
+            h.category = card.querySelector(".inp-h-cat").value;
+            h.note = card.querySelector(".inp-h-note").value.trim();
+            commitSnapshot(`Updated holiday: ${h.name}`);
+          };
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    document.getElementById("btn-add-holiday-card").onclick = () => {
+      const activePkg = dbFiles[activeFilePath];
+      if (!activePkg) return;
+      activePkg.holidays.push({
+        id: `hol-${Date.now().toString(36)}`,
+        name: "New Academic Recess",
+        date: new Date().toISOString().split("T")[0],
+        category: "institutional",
+        note: "Campus suspended"
+      });
+      commitSnapshot("Added holiday card");
+      renderHolidaysCards();
+      showToast("New holiday card added!");
+    };
+
+    /* -------------------------------------------------------------------------
+       7. INSTITUTION PROFILE & AFFILIATION
+       ------------------------------------------------------------------------- */
+    document.getElementById("btn-save-profile").onclick = () => {
+      const activePkg = dbFiles[activeFilePath];
+      if (!activePkg) return;
+
+      activePkg.institution.name = document.getElementById("meta-inst-name").value.trim();
+      activePkg.institution.state = document.getElementById("meta-inst-state").value;
+      activePkg.institution.type = document.getElementById("meta-inst-type").value;
+      activePkg.institution.category = document.getElementById("meta-inst-category").value.trim();
+      activePkg.institution.academicYear = document.getElementById("meta-inst-year").value.trim();
+      
+      const inherits = document.getElementById("meta-inst-inherits").value;
+      if (inherits) activePkg.institution.inheritsFrom = inherits;
+      else delete activePkg.institution.inheritsFrom;
+
+      commitSnapshot(`Saved profile: ${activePkg.institution.name}`);
+      renderAll();
+      showToast("Profile committed!");
+    };
+
+    function populateProfileInputs() {
+      const activePkg = dbFiles[activeFilePath];
+      if (!activePkg) return;
+
+      const inst = activePkg.institution || {};
+      document.getElementById("meta-inst-name").value = inst.name || '';
+      document.getElementById("meta-inst-id").value = inst.id || '';
+      document.getElementById("meta-inst-category").value = inst.category || '';
+      document.getElementById("meta-inst-year").value = inst.academicYear || '';
+      document.getElementById("meta-inst-type").value = inst.type || 'child';
+      document.getElementById("meta-inst-state").value = inst.state || 'AS';
+
+      const typeBadge = document.getElementById("label-active-type");
+      typeBadge.className = inst.type === 'parent' ? 'badge badge-parent' : 'badge badge-child';
+      typeBadge.textContent = (inst.type || 'child').toUpperCase();
+
+      const inhSel = document.getElementById("meta-inst-inherits");
+      inhSel.innerHTML = `<option value="">Autonomous / Independent (None)</option>`;
+      Object.keys(dbFiles).forEach(p => {
+        const item = dbFiles[p];
+        if (item.institution?.type === "parent") {
+          const rel = p.replace(/^db\//, '');
+          const opt = document.createElement("option");
+          opt.value = rel;
+          opt.textContent = `${item.institution.name} (${rel})`;
+          inhSel.appendChild(opt);
+        }
+      });
+      inhSel.value = inst.inheritsFrom || '';
+    }
+
+    /* -------------------------------------------------------------------------
+       8. VISUALIZATIONS: MATRIX, TIMELINE, TREE
+       ------------------------------------------------------------------------- */
+    function renderVisualizations() {
+      renderScheduleMatrix();
+      renderTimelineCalendar();
+      renderHierarchyTree();
+    }
+
+    function renderScheduleMatrix() {
+      const activePkg = dbFiles[activeFilePath];
+      const tbody = document.getElementById("tbody-matrix-schedule");
+      tbody.replaceChildren();
+
+      if (!activePkg) return;
+
+      const classes = activePkg.classes || [];
+      const batchSel = document.getElementById("matrix-batch-select");
+      const cur = batchSel.value;
+
+      const batches = Array.from(new Set(classes.map(c => c.batch).filter(Boolean)));
+      batchSel.innerHTML = `<option value="ALL">All Batches</option>`;
+      batches.forEach(b => {
+        const opt = document.createElement("option");
+        opt.value = b;
+        opt.textContent = b;
+        batchSel.appendChild(opt);
+      });
+      batchSel.value = batches.includes(cur) ? cur : "ALL";
+
+      const filtered = batchSel.value === "ALL" ? classes : classes.filter(c => c.batch === batchSel.value);
+
+      const slots = [
+        { start: "08:00", end: "10:00" },
+        { start: "10:00", end: "12:00" },
+        { start: "12:00", end: "14:00" },
+        { start: "14:00", end: "16:00" },
+        { start: "16:00", end: "18:00" }
+      ];
+
+      DAYS_CONFIG.forEach(d => {
+        const tr = document.createElement("tr");
+        const th = document.createElement("th");
+        th.textContent = d.full;
+        tr.appendChild(th);
+
+        slots.forEach(slot => {
+          const td = document.createElement("td");
+          const matches = filtered.filter(c => (c.days || []).includes(d.id) && c.startTime < slot.end && c.endTime > slot.start);
+
+          matches.forEach(item => {
+            const block = document.createElement("div");
+            block.className = "matrix-slot-block";
+            block.innerHTML = `
+              <strong>${item.name}</strong> (${item.code || ''})
+              <div style="font-size:10px; color:var(--text-muted); display:flex; justify-content:space-between; margin-top:2px;">
+                <span>${item.startTime} - ${item.endTime}</span>
+                <span class="badge badge-child" style="padding:0 4px; font-size:9px;">${item.batch}</span>
+              </div>
+            `;
+            block.onclick = () => {
+              switchTab("card-editor");
+              showToast(`Viewing ${item.name}`);
+            };
+            td.appendChild(block);
+          });
+
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTimelineCalendar() {
+      const activePkg = dbFiles[activeFilePath];
+      const container = document.getElementById("timeline-calendar-container");
+      container.replaceChildren();
+
+      if (!activePkg) return;
+
+      let allEvents = [...(activePkg.holidays || [])].map(h => ({ ...h, isInherited: false }));
+
+      // Merge parent holidays if child inherits
+      const inst = activePkg.institution || {};
+      if (inst.type === "child" && inst.inheritsFrom) {
+        const parentPath = `db/${inst.inheritsFrom.replace(/^\//, '')}`;
+        if (dbFiles[parentPath] && dbFiles[parentPath].holidays) {
+          const pBreaks = dbFiles[parentPath].holidays.map(h => ({ ...h, isInherited: true }));
+          allEvents = [...allEvents, ...pBreaks];
+        }
+      }
+
+      allEvents.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+      if (!allEvents.length) {
+        container.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-dim);">No holiday breaks recorded.</div>`;
+        return;
+      }
+
+      const groups = {};
+      allEvents.forEach(e => {
+        const monthKey = e.date ? e.date.substring(0, 7) : "Undated";
+        if (!groups[monthKey]) groups[monthKey] = [];
+        groups[monthKey].push(e);
+      });
+
+      Object.keys(groups).forEach(mKey => {
+        const mBlock = document.createElement("div");
+        mBlock.className = "timeline-month-block";
+        mBlock.innerHTML = `
+          <div class="timeline-month-label">
+            <span>📅 ${mKey}</span>
+            <span class="badge badge-child" style="font-size:9.5px;">${groups[mKey].length} Events</span>
+          </div>
+        `;
+
+        groups[mKey].forEach(ev => {
+          const item = document.createElement("div");
+          item.className = "timeline-card";
+          item.setAttribute("data-cat", ev.category || "institutional");
+          item.innerHTML = `
+            <div>
+              <div style="font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:8px;">
+                <span>${ev.name}</span>
+                ${ev.isInherited ? '<span class="badge badge-parent" style="font-size:9.5px;">Inherited Parent</span>' : '<span class="badge badge-child" style="font-size:9.5px;">College</span>'}
+                <span class="badge" style="background:var(--surface-input); font-size:9.5px;">${ev.category || 'general'}</span>
+              </div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">${ev.note || 'Instruction suspended'}</div>
+            </div>
+            <div class="font-mono" style="font-weight:700; color:var(--text-bright); font-size:13px;">
+              ${ev.date}
+            </div>
+          `;
+          mBlock.appendChild(item);
+        });
+
+        container.appendChild(mBlock);
+      });
+    }
+
+    function renderHierarchyTree() {
+      const container = document.getElementById("hierarchy-tree-container");
+      container.replaceChildren();
+
+      const instKeys = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/"));
+      const parents = [];
+
+      instKeys.forEach(p => {
+        const item = dbFiles[p];
+        if (item.institution?.type === "parent") parents.push({ path: p, pkg: item });
+      });
+
+      parents.forEach(par => {
+        const rel = par.path.replace(/^db\//, '');
+        const children = instKeys.filter(k => dbFiles[k].institution?.inheritsFrom === rel);
+
+        const node = document.createElement("div");
+        node.className = "tree-box";
+        node.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge badge-parent">PARENT BODY</span>
+              <strong style="color:var(--text-bright); font-size:14px;">${par.pkg.institution.name}</strong>
+              <span class="font-mono" style="color:var(--text-dim); font-size:11px;">(${rel})</span>
+            </div>
+            <span class="badge badge-child">${children.length} Affiliated Colleges</span>
+          </div>
+
+          <div class="tree-branch">
+            ${children.length ? children.map(cPath => {
+              const ch = dbFiles[cPath];
+              return `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 10px; background:var(--surface); border:1px solid var(--border-default); border-radius:var(--radius-sm);">
+                  <div>
+                    <strong style="color:var(--text-bright);">${ch.institution.name}</strong>
+                    <span class="font-mono" style="font-size:10.5px; color:var(--text-dim); margin-left:6px;">${cPath.replace(/^db\//, '')}</span>
+                  </div>
+                  <span class="badge badge-child">CHILD</span>
+                </div>
+              `;
+            }).join('') : '<div style="color:var(--text-dim); font-size:11px;">No affiliated colleges linked.</div>'}
+          </div>
+        `;
+        container.appendChild(node);
+      });
+
+      const autonomous = instKeys.filter(k => {
+        const item = dbFiles[k];
+        return item.institution?.type === "child" && !item.institution?.inheritsFrom;
+      });
+
+      if (autonomous.length) {
+        const autoNode = document.createElement("div");
+        autoNode.className = "tree-box";
+        autoNode.innerHTML = `
+          <div style="font-weight:700; color:var(--text-bright); margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+            <span class="badge badge-warning">AUTONOMOUS</span>
+            <span>Direct / Non-Affiliated Institutions (${autonomous.length})</span>
+          </div>
+          <div class="grid-2">
+            ${autonomous.map(p => `
+              <div style="padding:6px 10px; background:var(--surface); border:1px solid var(--border-default); border-radius:var(--radius-sm); display:flex; justify-content:space-between;">
+                <span>${dbFiles[p].institution.name}</span>
+                <span class="badge" style="background:var(--surface-input);">DIRECT</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(autoNode);
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       9. AI ASSISTANT & AUTO-PATCHER
+       ------------------------------------------------------------------------- */
+    function compileAiPrompt() {
+      const activePkg = dbFiles[activeFilePath];
+      const targetName = document.getElementById("ai-target-name").value.trim() || activePkg?.institution?.name || "Institution Name";
+      const notes = document.getElementById("ai-raw-text").value.trim();
+
+      const parents = [];
+      Object.keys(dbFiles).forEach(p => {
+        const item = dbFiles[p];
+        if (item.institution?.type === "parent") {
+          parents.push(`- "${item.institution.name}" -> inheritsFrom: "${p.replace(/^db\//, '')}"`);
+        }
+      });
+
+      const prompt = `OUTPUT STRICT SPECIFICATION:
+Return strictly valid, raw JSON without markdown syntax fences (no \`\`\`json).
+
+KNOWN PARENT BODIES IN REPOSITORY:
+${parents.length ? parents.join("\n") : "None currently mounted."}
+
+SCHEMA FORMAT:
+{
+  "institution": {
+    "id": "slug-id",
+    "name": "${targetName}",
+    "state": "AS",
+    "type": "child",
+    "inheritsFrom": "institutions/IN/AS/parent.json",
+    "category": "Collegiate / Undergraduate",
+    "academicYear": "2026-2027",
+    "term": "Odd Semester"
+  },
+  "holidays": [
+    {
+      "id": "hol-1",
+      "name": "Founders Day",
+      "date": "2026-10-18",
+      "category": "institutional",
+      "note": "Classes suspended"
+    }
+  ],
+  "classes": [
+    {
+      "id": "cls-1",
+      "code": "ENG-101",
+      "name": "Alternative English",
+      "batch": "B.A. 1st Sem",
+      "startTime": "09:15",
+      "endTime": "10:00",
+      "location": "Hall A",
+      "days": [1, 2, 3, 4, 5],
+      "date": null
+    }
+  ]
+}
+
+UNFORMATTED SOURCE DATA TO EXTRACT:
+${notes || "No raw text provided."}`;
+
+      document.getElementById("ai-compiled-output").value = prompt;
+    }
+
+    function applyAiPayload() {
+      const raw = document.getElementById("ai-payload-box").value.trim();
       if (!raw) {
-        alert("Please paste the AI JSON output first.");
+        showToast("Paste the AI JSON output first", "error");
         return;
       }
 
@@ -1250,12 +2425,12 @@ ${notes}`;
       try {
         parsed = JSON.parse(clean);
       } catch (err) {
-        alert("JSON Parse Error: " + err.message);
+        showToast("JSON Parse Error: " + err.message, "error");
         return;
       }
 
       if (!parsed.institution || !parsed.institution.id || !parsed.institution.state) {
-        alert("Invalid format: Root object must include 'institution' with 'id' and 'state'.");
+        showToast("JSON must include 'institution' with 'id' and 'state'", "error");
         return;
       }
 
@@ -1263,425 +2438,108 @@ ${notes}`;
       const slug = parsed.institution.id.toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const targetPath = `db/institutions/IN/${stateCode}/${slug}.json`;
 
-      const normalizedClasses = (parsed.classes || []).map((c, i) => ({
-        id: c.id || `cls-${slug}-${i+1}`,
-        code: String(c.code || "").trim(),
-        name: String(c.name || "Lecture").trim(),
-        department: String(c.department || "").trim(),
-        batch: String(c.batch || "General").trim(),
-        startTime: c.startTime,
-        endTime: c.endTime,
-        location: String(c.location || "").trim(),
-        days: Array.isArray(c.days) ? c.days : [],
-        date: c.date || null
-      }));
-
-      const normalizedHolidays = (parsed.holidays || []).map((h, i) => ({
-        id: h.id || `hol-${slug}-${i+1}`,
-        name: String(h.name || "Holiday").trim(),
-        date: h.date,
-        category: ["national", "state", "academic", "cultural", "institutional"].includes(h.category) ? h.category : "institutional",
-        note: String(h.note || "").trim()
-      }));
-
       dbFiles[targetPath] = {
         institution: parsed.institution,
-        holidays: normalizedHolidays,
-        classes: normalizedClasses
+        holidays: parsed.holidays || [],
+        classes: parsed.classes || []
       };
 
-      rebuildRegistry();
-
-      const log = document.getElementById("dry-run-log");
-      log.textContent = `[SUCCESS] Mutated: ${targetPath}\nEntity Type: ${parsed.institution.type || 'child'}\nAdded/Updated ${normalizedClasses.length} classes and ${normalizedHolidays.length} holidays.\ndb/registry.json auto-synchronized.`;
-      document.getElementById("dry-run-preview").classList.remove("hidden");
-      document.querySelector('.step-indicator-btn[data-step="3"]').classList.add("completed");
+      activeFilePath = targetPath;
+      commitSnapshot(`AI Ingested: ${parsed.institution.name}`);
+      renderAll();
+      switchTab("card-editor");
+      showToast(`Ingested ${parsed.institution.name}!`);
     }
 
-    /* Diagnostics & Integrity Verification Engine */
-    function runIntegrityDiagnostics() {
-      const box = document.getElementById("integrity-report-box");
-      if (!box) return;
-      box.replaceChildren();
+    /* -------------------------------------------------------------------------
+       10. GENERAL RENDERING & NAVIGATION TABS
+       ------------------------------------------------------------------------- */
+    function renderAll() {
+      updateHeaderBadges();
+      populatePackageSelect();
+      populateProfileInputs();
+      renderClassesCards();
+      renderHolidaysCards();
+      renderVisualizations();
+      runIntegrityAudit();
+    }
 
-      const issues = [];
-      const instPaths = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/"));
+    function updateHeaderBadges() {
+      const count = Object.keys(dbFiles).filter(k => k.startsWith("db/institutions/IN/")).length;
+      document.getElementById("badge-pkg-count").textContent = `${count} pkgs`;
 
-      if (!instPaths.length) {
-        box.innerHTML = `<div class="diag-item warning">No institution files loaded to validate.</div>`;
+      const repoBadge = document.getElementById("badge-repo-status");
+      if (hasMountedBaseDb) {
+        repoBadge.className = "badge badge-success";
+        repoBadge.textContent = "Base Mounted";
+      } else {
+        repoBadge.className = "badge badge-warning";
+        repoBadge.textContent = "Standalone";
+      }
+    }
+
+    function populatePackageSelect() {
+      const sel = document.getElementById("select-active-package");
+      sel.replaceChildren();
+
+      const instKeys = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/")).sort();
+
+      if (!instKeys.length) {
+        sel.innerHTML = `<option value="">-- No Institutions Loaded --</option>`;
+        document.getElementById("editor-empty-state").style.display = "block";
+        document.getElementById("editor-active-container").style.display = "none";
         return;
       }
 
-      instPaths.forEach(path => {
-        const pkg = dbFiles[path];
-        const inst = pkg?.institution || {};
-        const filename = path.split("/").pop();
+      document.getElementById("editor-empty-state").style.display = "none";
+      document.getElementById("editor-active-container").style.display = "flex";
 
-        // 1. Verify inheritsFrom consistency
-        if (inst.type === "child" && inst.inheritsFrom) {
-          const parentDbPath = `db/${inst.inheritsFrom.replace(/^\//, '')}`;
-          if (!dbFiles[parentDbPath]) {
-            issues.push({
-              level: "error",
-              text: `[${filename}] Points to parent "${inst.inheritsFrom}" which does not exist in workspace.`
-            });
-          }
-        }
-
-        // 2. Warn if child has no inheritsFrom
-        if (inst.type === "child" && !inst.inheritsFrom) {
-          issues.push({
-            level: "warning",
-            text: `[${filename}] Child institution has no "inheritsFrom" link (will operate autonomously).`
-          });
-        }
-
-        // 3. Time bounds & format checks on classes
-        (pkg.classes || []).forEach((c, idx) => {
-          if (!c.batch) {
-            issues.push({ level: "warning", text: `[${filename}] Class "${c.name || idx}" is missing a "batch" group.` });
-          }
-          if (c.startTime && c.endTime && c.startTime >= c.endTime) {
-            issues.push({ level: "error", text: `[${filename}] Class "${c.name}" has invalid times (${c.startTime} >= ${c.endTime}).` });
-          }
-        });
-
-        // 4. ISO Date format checks on holidays
-        (pkg.holidays || []).forEach(h => {
-          if (!h.date || !/^\d{4}-\d{2}-\d{2}$/.test(h.date)) {
-            issues.push({ level: "error", text: `[${filename}] Holiday "${h.name}" has invalid date format "${h.date}". Must be YYYY-MM-DD.` });
-          }
-        });
+      instKeys.forEach(p => {
+        const item = dbFiles[p];
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = `${item.institution?.name || p} (${p.replace(/^db\//, '')})`;
+        sel.appendChild(opt);
       });
 
-      if (!issues.length) {
-        box.innerHTML = `<div class="diag-item clean">✅ All files pass integrity checks. Schema and links are fully verified!</div>`;
+      if (activeFilePath && dbFiles[activeFilePath]) {
+        sel.value = activeFilePath;
       } else {
-        issues.forEach(iss => {
-          const div = document.createElement("div");
-          div.className = `diag-item ${iss.level}`;
-          div.textContent = iss.text;
-          box.appendChild(div);
-        });
+        activeFilePath = instKeys[0];
+        sel.value = activeFilePath;
       }
     }
 
-    /* Granular Single-File Downloader */
-    function renderSingleFilesList() {
-      const list = document.getElementById("single-files-download-list");
-      if (!list) return;
-      list.replaceChildren();
+    function switchTab(tabId) {
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".nav-tab-btn").forEach(b => b.classList.remove("active"));
 
-      const allPaths = Object.keys(dbFiles).sort();
-      if (!allPaths.length) {
-        list.innerHTML = `<p class="muted" style="font-size:12px;">No files available to download yet.</p>`;
-        return;
-      }
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.add("active");
 
-      allPaths.forEach(path => {
-        const row = document.createElement("div");
-        row.className = "file-export-row";
+      const btn = document.querySelector(`.nav-tab-btn[data-tab="${tabId}"]`);
+      if (btn) btn.classList.add("active");
 
-        const label = document.createElement("div");
-        label.style.fontFamily = "var(--font-mono)";
-        label.style.fontSize = "12px";
-        label.textContent = `/${path}`;
-
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "btn btn-default btn-sm";
-        btn.textContent = "Download JSON";
-        btn.onclick = () => downloadSingleJsonFile(path);
-
-        row.append(label, btn);
-        list.appendChild(row);
-      });
+      if (tabId === "matrix-view") renderScheduleMatrix();
+      if (tabId === "timeline-view") renderTimelineCalendar();
+      if (tabId === "hierarchy-view") renderHierarchyTree();
     }
 
-    function downloadSingleJsonFile(filePath) {
-      const data = dbFiles[filePath];
-      if (!data) return;
-      const str = JSON.stringify(data, null, 2);
-      const blob = new Blob([str], { type: "application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = filePath.split("/").pop();
-      a.click();
+    function showToast(text, type = "success") {
+      const toast = document.getElementById("toast-msg");
+      document.getElementById("toast-text").textContent = text;
+      document.getElementById("toast-icon").textContent = type === "error" ? "⚠️" : "✓";
+      toast.style.borderColor = type === "error" ? "var(--red)" : "var(--border-strong)";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2500);
     }
 
-    function renderTable() {
-      const tbody = document.getElementById("inst-table-body");
-      tbody.replaceChildren();
-
-      const paths = Object.keys(dbFiles).filter(p => p.startsWith("db/institutions/IN/"));
-      if (!paths.length) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="8" style="text-align:center; color:var(--muted); padding:20px;">No institutions loaded yet. Use Step 2 & 3 or create one manually below.</td>`;
-        tbody.appendChild(tr);
-        return;
-      }
-
-      paths.sort().forEach(path => {
-        const item = dbFiles[path];
-        const match = path.match(/^db\/institutions\/IN\/([A-Z]{2})\/([^/]+)\.json$/);
-        const state = match ? match[1] : "--";
-        const id = item.institution?.id || "--";
-        const name = item.institution?.name || "--";
-        const type = item.institution?.type || "child";
-        const inherits = item.institution?.inheritsFrom ? item.institution.inheritsFrom.split('/').pop() : "--";
-        const classCount = (item.classes || []).length;
-        const holCount = (item.holidays || []).length;
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><span class="badge-repo">${state}</span></td>
-          <td><span class="badge-type ${type}">${type}</span></td>
-          <td><code>${id}</code></td>
-          <td><strong>${name}</strong></td>
-          <td><code style="font-size:11px;">${inherits}</code></td>
-          <td>${classCount}</td>
-          <td>${holCount}</td>
-          <td>
-            <button type="button" class="btn btn-default btn-sm edit-btn">Edit</button>
-            <button type="button" class="btn btn-danger btn-sm del-btn" style="padding:4px 8px;">Delete</button>
-          </td>
-        `;
-
-        tr.querySelector(".edit-btn").addEventListener("click", () => openEditor(path));
-        tr.querySelector(".del-btn").addEventListener("click", () => {
-          if (confirm(`Remove ${name} (${path}) from database?`)) {
-            delete dbFiles[path];
-            rebuildRegistry();
-          }
-        });
-
-        tbody.appendChild(tr);
-      });
-    }
-
-    /* Dual-Mode Visual / Raw JSON Editor */
-    function openEditor(filePath) {
-      currentEditingFile = filePath;
-      document.getElementById("inst-editor-title").textContent = `Editing: ${filePath}`;
-      document.getElementById("panel-inst-editor").classList.remove("hidden");
-
-      populateGuiEditor(dbFiles[filePath]);
-      document.getElementById("inst-raw-json").value = JSON.stringify(dbFiles[filePath], null, 2);
-      document.getElementById("panel-inst-editor").scrollIntoView({ behavior: "smooth" });
-    }
-
-    function switchEditorMode(mode) {
-      currentEditorMode = mode;
-      document.querySelectorAll(".editor-tab-btn").forEach(b => b.classList.remove("active"));
-      if (mode === "gui") {
-        document.getElementById("btn-tab-gui").classList.add("active");
-        document.getElementById("editor-gui-container").classList.remove("hidden");
-        document.getElementById("editor-raw-container").classList.add("hidden");
-        // Sync back from raw textarea if valid
-        try {
-          const parsed = JSON.parse(document.getElementById("inst-raw-json").value);
-          populateGuiEditor(parsed);
-        } catch (e) {}
-      } else {
-        document.getElementById("btn-tab-raw").classList.add("active");
-        document.getElementById("editor-gui-container").classList.add("hidden");
-        document.getElementById("editor-raw-container").classList.remove("hidden");
-        // Sync from GUI fields
-        const curr = gatherGuiEditorData();
-        document.getElementById("inst-raw-json").value = JSON.stringify(curr, null, 2);
-      }
-    }
-
-    function populateGuiEditor(pkg) {
-      const inst = pkg?.institution || {};
-      document.getElementById("gui-inst-name").value = inst.name || "";
-      document.getElementById("gui-inst-state").value = inst.state || "";
-      document.getElementById("gui-inst-cat").value = inst.category || "";
-      document.getElementById("gui-inst-type").value = inst.type || "child";
-      document.getElementById("gui-inst-inherits").value = inst.inheritsFrom || "";
-      document.getElementById("gui-inst-term").value = inst.term || "";
-
-      renderGuiHolidays(pkg?.holidays || []);
-      renderGuiClasses(pkg?.classes || []);
-    }
-
-    function renderGuiHolidays(holidays) {
-      const container = document.getElementById("gui-holidays-list");
-      container.replaceChildren();
-      document.getElementById("gui-holidays-count").textContent = holidays.length;
-
-      holidays.forEach((h, idx) => {
-        const row = document.createElement("div");
-        row.className = "form-grid-4";
-        row.style.alignItems = "center";
-        row.innerHTML = `
-          <input type="text" class="gui-hol-name" value="${h.name || ''}" placeholder="Holiday Name">
-          <input type="text" class="gui-hol-date" value="${h.date || ''}" placeholder="YYYY-MM-DD">
-          <select class="gui-hol-cat">
-            <option value="national" ${h.category === 'national' ? 'selected' : ''}>National</option>
-            <option value="state" ${h.category === 'state' ? 'selected' : ''}>State</option>
-            <option value="academic" ${h.category === 'academic' ? 'selected' : ''}>Academic</option>
-            <option value="cultural" ${h.category === 'cultural' ? 'selected' : ''}>Cultural</option>
-            <option value="institutional" ${h.category === 'institutional' ? 'selected' : ''}>Institutional</option>
-          </select>
-          <button type="button" class="btn btn-default btn-sm gui-del-hol-btn" style="color:var(--red);">✕</button>
-        `;
-        row.querySelector(".gui-del-hol-btn").onclick = () => {
-          row.remove();
-          document.getElementById("gui-holidays-count").textContent = container.children.length;
-        };
-        container.appendChild(row);
-      });
-    }
-
-    function renderGuiClasses(classes) {
-      const container = document.getElementById("gui-classes-list");
-      container.replaceChildren();
-      document.getElementById("gui-classes-count").textContent = classes.length;
-
-      classes.forEach((c, idx) => {
-        const row = document.createElement("div");
-        row.style.cssText = "display:grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 40px; gap:6px; align-items:center;";
-        row.innerHTML = `
-          <input type="text" class="gui-cls-name" value="${c.name || ''}" placeholder="Class / Subject">
-          <input type="text" class="gui-cls-batch" value="${c.batch || 'General'}" placeholder="Batch (e.g. HS-1)">
-          <input type="text" class="gui-cls-start" value="${c.startTime || '09:00'}" placeholder="09:00">
-          <input type="text" class="gui-cls-end" value="${c.endTime || '10:00'}" placeholder="10:00">
-          <input type="text" class="gui-cls-days" value="${(c.days || []).join(',')}" placeholder="Days (e.g. 1,3,5)">
-          <button type="button" class="btn btn-default btn-sm gui-del-cls-btn" style="color:var(--red);">✕</button>
-        `;
-        row.querySelector(".gui-del-cls-btn").onclick = () => {
-          row.remove();
-          document.getElementById("gui-classes-count").textContent = container.children.length;
-        };
-        container.appendChild(row);
-      });
-    }
-
-    function gatherGuiEditorData() {
-      const base = dbFiles[currentEditingFile] || { institution: {}, holidays: [], classes: [] };
-      const inst = {
-        id: base.institution.id,
-        name: document.getElementById("gui-inst-name").value.trim(),
-        state: document.getElementById("gui-inst-state").value.trim().toUpperCase(),
-        type: document.getElementById("gui-inst-type").value,
-        category: document.getElementById("gui-inst-cat").value.trim(),
-        academicYear: base.institution.academicYear || "2026-2027",
-        term: document.getElementById("gui-inst-term").value.trim()
-      };
-
-      const inherits = document.getElementById("gui-inst-inherits").value.trim();
-      if (inst.type === "child" && inherits) {
-        inst.inheritsFrom = inherits;
-      } else {
-        delete inst.inheritsFrom;
-      }
-
-      // Gather holidays
-      const holRows = document.querySelectorAll("#gui-holidays-list > div");
-      const holidays = Array.from(holRows).map((r, i) => ({
-        id: `hol-${inst.id}-${i+1}`,
-        name: r.querySelector(".gui-hol-name").value.trim(),
-        date: r.querySelector(".gui-hol-date").value.trim(),
-        category: r.querySelector(".gui-hol-cat").value,
-        note: "Classes suspended"
-      })).filter(h => h.name && h.date);
-
-      // Gather classes
-      const clsRows = document.querySelectorAll("#gui-classes-list > div");
-      const classes = Array.from(clsRows).map((r, i) => {
-        const rawDays = r.querySelector(".gui-cls-days").value.split(",").map(s => Number(s.trim())).filter(n => !isNaN(n));
-        return {
-          id: `cls-${inst.id}-${i+1}`,
-          name: r.querySelector(".gui-cls-name").value.trim(),
-          batch: r.querySelector(".gui-cls-batch").value.trim() || "General",
-          startTime: r.querySelector(".gui-cls-start").value.trim(),
-          endTime: r.querySelector(".gui-cls-end").value.trim(),
-          days: rawDays,
-          location: "Campus",
-          date: null
-        };
-      }).filter(c => c.name);
-
-      return { institution: inst, holidays, classes };
-    }
-
-    document.getElementById("btn-gui-add-holiday").onclick = () => {
-      const container = document.getElementById("gui-holidays-list");
-      const row = document.createElement("div");
-      row.className = "form-grid-4";
-      row.style.alignItems = "center";
-      row.innerHTML = `
-        <input type="text" class="gui-hol-name" placeholder="Holiday Title">
-        <input type="text" class="gui-hol-date" placeholder="YYYY-MM-DD">
-        <select class="gui-hol-cat">
-          <option value="national">National</option>
-          <option value="state">State</option>
-          <option value="academic">Academic</option>
-          <option value="cultural">Cultural</option>
-          <option value="institutional" selected>Institutional</option>
-        </select>
-        <button type="button" class="btn btn-default btn-sm gui-del-hol-btn" style="color:var(--red);">✕</button>
-      `;
-      row.querySelector(".gui-del-hol-btn").onclick = () => {
-        row.remove();
-        document.getElementById("gui-holidays-count").textContent = container.children.length;
-      };
-      container.appendChild(row);
-      document.getElementById("gui-holidays-count").textContent = container.children.length;
-    };
-
-    document.getElementById("btn-gui-add-class").onclick = () => {
-      const container = document.getElementById("gui-classes-list");
-      const row = document.createElement("div");
-      row.style.cssText = "display:grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 40px; gap:6px; align-items:center;";
-      row.innerHTML = `
-        <input type="text" class="gui-cls-name" placeholder="Subject Name">
-        <input type="text" class="gui-cls-batch" value="General" placeholder="Batch (e.g. HS-1)">
-        <input type="text" class="gui-cls-start" value="09:00" placeholder="09:00">
-        <input type="text" class="gui-cls-end" value="10:00" placeholder="10:00">
-        <input type="text" class="gui-cls-days" value="1" placeholder="Days (e.g. 1,3)">
-        <button type="button" class="btn btn-default btn-sm gui-del-cls-btn" style="color:var(--red);">✕</button>
-      `;
-      row.querySelector(".gui-del-cls-btn").onclick = () => {
-        row.remove();
-        document.getElementById("gui-classes-count").textContent = container.children.length;
-      };
-      container.appendChild(row);
-      document.getElementById("gui-classes-count").textContent = container.children.length;
-    };
-
-    document.getElementById("btn-save-inst-unified").addEventListener("click", () => {
-      try {
-        let finalData;
-        if (currentEditorMode === "gui") {
-          finalData = gatherGuiEditorData();
-        } else {
-          finalData = JSON.parse(document.getElementById("inst-raw-json").value);
-        }
-        dbFiles[currentEditingFile] = finalData;
-        rebuildRegistry();
-        alert("Package successfully saved and registry synchronized!");
-      } catch (err) {
-        alert("Save Error: " + err.message);
-      }
-    });
-
-    document.getElementById("btn-close-inst-editor").addEventListener("click", () => {
-      document.getElementById("panel-inst-editor").classList.add("hidden");
-    });
-
-    document.getElementById("btn-run-diagnostics").addEventListener("click", () => {
-      runIntegrityDiagnostics();
-      alert("Integrity re-check completed!");
-    });
-
-    /* Archive & ZIP Helpers */
-    async function executeZipExport() {
+    /* -------------------------------------------------------------------------
+       11. ZIP EXPORT & VERIFIED SAMPLE DATASET
+       ------------------------------------------------------------------------- */
+    async function executeZipDownload() {
       const zip = new JSZip();
-      if (!dbFiles["db/registry.json"]) {
-        rebuildRegistry();
-      }
+      rebuildRegistry();
 
       Object.keys(dbFiles).forEach(path => {
         zip.file(path, JSON.stringify(dbFiles[path], null, 2) + "\n");
@@ -1692,29 +2550,153 @@ ${notes}`;
       a.href = URL.createObjectURL(blob);
       a.download = `classline-db-${new Date().toISOString().split("T")[0]}.zip`;
       a.click();
+      showToast("db.zip archive downloaded successfully!");
     }
 
-    function handleExportRequest() {
+    function handleExportBundle() {
       if (!hasMountedBaseDb) {
         document.getElementById("modal-danger-export").showModal();
       } else {
-        executeZipExport();
+        executeZipDownload();
       }
     }
 
-    document.getElementById("btn-cancel-danger-export").addEventListener("click", () => {
-      document.getElementById("modal-danger-export").close();
-      goToStep(1);
+    function loadSampleDataset() {
+      dbFiles = {
+        "db/institutions/IN/AS/gauhati-university.json": {
+          institution: {
+            id: "gauhati-university",
+            name: "Gauhati University",
+            state: "AS",
+            type: "parent",
+            category: "State University",
+            academicYear: "2026-2027",
+            term: "Odd Semester"
+          },
+          holidays: [
+            { id: "hol-gu-1", name: "Magh Bihu", date: "2026-01-14", category: "cultural", note: "State Holiday" },
+            { id: "hol-gu-2", name: "Republic Day", date: "2026-01-26", category: "national", note: "National Holiday" },
+            { id: "hol-gu-3", name: "Dol Jatra (Holi)", date: "2026-03-04", category: "cultural", note: "University Closed" },
+            { id: "hol-gu-4", name: "Rongali Bihu Break", date: "2026-04-14", category: "state", note: "Spring Recess" }
+          ],
+          classes: []
+        },
+        "db/institutions/IN/AS/bilasipara-college.json": {
+          institution: {
+            id: "bilasipara-college",
+            name: "Bilasipara College",
+            state: "AS",
+            type: "child",
+            inheritsFrom: "institutions/IN/AS/gauhati-university.json",
+            category: "Collegiate / Undergraduate",
+            academicYear: "2026-2027",
+            term: "Odd Semester"
+          },
+          holidays: [
+            { id: "hol-bc-1", name: "College Freshers Social", date: "2026-09-18", category: "institutional", note: "Instruction Suspended" },
+            { id: "hol-bc-2", name: "Foundation Day", date: "2026-11-03", category: "institutional", note: "Celebrations" }
+          ],
+          classes: [
+            { id: "cls-1", code: "ENG-101", name: "Alternative English", batch: "HS-1", startTime: "09:15", endTime: "10:00", days: [1, 2, 3, 4, 5], location: "Hall A", date: null },
+            { id: "cls-2", code: "POL-102", name: "Political Science", batch: "HS-1", startTime: "10:00", endTime: "10:45", days: [1, 3, 5], location: "Room 12", date: null },
+            { id: "cls-3", code: "EDU-103", name: "Education", batch: "HS-1", startTime: "10:45", endTime: "11:30", days: [2, 4, 6], location: "Room 14", date: null },
+            { id: "cls-4", code: "ASM-201", name: "Major Assamese", batch: "B.A. 1st Sem", startTime: "11:30", endTime: "12:15", days: [1, 2, 3, 4, 5], location: "Seminar Room", date: null },
+            { id: "cls-5", code: "ECO-202", name: "Economics", batch: "B.A. 1st Sem", startTime: "12:45", endTime: "13:30", days: [1, 2, 3, 4, 5], location: "Hall B", date: null }
+          ]
+        }
+      };
+
+      hasMountedBaseDb = true;
+      activeFilePath = "db/institutions/IN/AS/bilasipara-college.json";
+      commitSnapshot("Loaded Demo Indian University & College Dataset");
+      renderAll();
+      showToast("Sample dataset loaded!");
+    }
+
+    /* -------------------------------------------------------------------------
+       12. EVENT LISTENERS & SETUP
+       ------------------------------------------------------------------------- */
+    window.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key === "y" || (e.key === "z" && e.shiftKey))) {
+        e.preventDefault();
+        redo();
+      }
     });
 
-    document.getElementById("btn-confirm-danger-export").addEventListener("click", () => {
-      document.getElementById("modal-danger-export").close();
-      executeZipExport();
+    document.querySelectorAll(".nav-tab-btn").forEach(btn => {
+      btn.onclick = () => switchTab(btn.dataset.tab);
     });
 
-    document.getElementById("btn-mount-folder").addEventListener("click", () => document.getElementById("input-dir").click());
-    document.getElementById("btn-mount-zip").addEventListener("click", () => document.getElementById("input-zip").click());
+    document.getElementById("matrix-batch-select").onchange = renderScheduleMatrix;
 
+    document.getElementById("select-active-package").onchange = (e) => {
+      activeFilePath = e.target.value;
+      activeBatchFilter = "ALL";
+      renderAll();
+    };
+
+    document.getElementById("btn-undo").onclick = undo;
+    document.getElementById("btn-redo").onclick = redo;
+    document.getElementById("btn-open-history").onclick = () => document.getElementById("modal-history").showModal();
+    document.getElementById("btn-open-batch-gen").onclick = () => document.getElementById("modal-batch-gen").showModal();
+    document.getElementById("btn-modal-new-package").onclick = () => document.getElementById("modal-new-package").showModal();
+    document.getElementById("btn-demo").onclick = loadSampleDataset;
+    document.getElementById("btn-export-bundle").onclick = handleExportBundle;
+    document.getElementById("btn-danger-confirm-download").onclick = () => {
+      document.getElementById("modal-danger-export").close();
+      executeZipDownload();
+    };
+
+    document.getElementById("btn-clear-workspace").onclick = () => {
+      if (confirm("Reset to clean workspace? All active memory and history will be cleared.")) {
+        dbFiles = {};
+        hasMountedBaseDb = false;
+        activeFilePath = null;
+        historyStack.length = 0;
+        historyPointer = -1;
+        commitSnapshot("Initialized Blank Workspace");
+        renderAll();
+        showToast("Workspace reset to blank state");
+      }
+    };
+
+    document.getElementById("btn-download-active-json").onclick = () => {
+      const activePkg = dbFiles[activeFilePath];
+      if (!activePkg) return;
+      const blob = new Blob([JSON.stringify(activePkg, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = activeFilePath.split("/").pop();
+      a.click();
+    };
+
+    document.getElementById("btn-compile-ai-prompt").onclick = compileAiPrompt;
+    document.getElementById("btn-copy-ai-prompt").onclick = () => {
+      const box = document.getElementById("ai-compiled-output");
+      box.select();
+      document.execCommand("copy");
+      showToast("Prompt copied to clipboard!");
+    };
+    document.getElementById("btn-clear-ai-box").onclick = () => {
+      document.getElementById("ai-payload-box").value = "";
+    };
+    document.getElementById("btn-apply-ai-payload").onclick = applyAiPayload;
+    document.getElementById("btn-rerun-diagnostics").onclick = () => {
+      runIntegrityAudit();
+      showToast("Integrity verified!");
+    };
+    document.getElementById("btn-copy-registry-text").onclick = () => {
+      const r = document.getElementById("raw-registry-box");
+      r.select();
+      document.execCommand("copy");
+      showToast("registry.json copied!");
+    };
+
+    // Mount Local Folder via webkitdirectory
     document.getElementById("input-dir").addEventListener("change", async (e) => {
       const files = Array.from(e.target.files).filter(f => f.name.endsWith(".json"));
       if (!files.length) return;
@@ -1727,105 +2709,91 @@ ${notes}`;
           if (!path.startsWith("db/")) path = "db/" + path;
           dbFiles[path] = JSON.parse(text);
         } catch (err) {
-          console.error("Parse fail: " + file.name, err);
+          console.error("Parse fail", file.name, err);
         }
       }
       hasMountedBaseDb = true;
-      rebuildRegistry();
-      alert(`Mounted base database with ${Object.keys(dbFiles).length} JSON files. Safe patch mode active!`);
+      activeFilePath = Object.keys(dbFiles).filter(k => k.startsWith("db/institutions/IN/"))[0] || null;
+      commitSnapshot(`Mounted local directory (${files.length} JSON files)`);
+      renderAll();
+      showToast(`Mounted ${files.length} files from db/`);
     });
 
+    // Mount ZIP Archive via JSZip
     document.getElementById("input-zip").addEventListener("change", async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const zip = await JSZip.loadAsync(file);
       dbFiles = {};
 
-      for (const [relativePath, zipEntry] of Object.entries(zip.files)) {
-        if (!zipEntry.dir && relativePath.endsWith(".json")) {
-          const text = await zipEntry.async("text");
+      for (const [relativePath, entry] of Object.entries(zip.files)) {
+        if (!entry.dir && relativePath.endsWith(".json")) {
+          const text = await entry.async("text");
           try {
             let path = relativePath;
             if (!path.startsWith("db/")) path = "db/" + path;
             dbFiles[path] = JSON.parse(text);
           } catch (err) {
-            console.error("Parse fail: " + relativePath, err);
+            console.error("Parse fail", relativePath, err);
           }
         }
       }
       hasMountedBaseDb = true;
-      rebuildRegistry();
-      alert(`Mounted base database with ${Object.keys(dbFiles).length} files from archive. Safe patch mode active!`);
+      activeFilePath = Object.keys(dbFiles).filter(k => k.startsWith("db/institutions/IN/"))[0] || null;
+      commitSnapshot(`Mounted ZIP archive (${Object.keys(dbFiles).length} files)`);
+      renderAll();
+      showToast("Mounted backup zip archive!");
     });
 
-    document.getElementById("btn-reset-db").addEventListener("click", () => {
-      if (confirm("Reset to clean empty workspace?")) {
-        dbFiles = {};
-        hasMountedBaseDb = false;
-        rebuildRegistry();
-      }
-    });
-
-    document.getElementById("btn-build-prompt").addEventListener("click", buildPrompt);
-    document.getElementById("btn-copy-prompt").addEventListener("click", () => {
-      const val = document.getElementById("ai-compiled-prompt").value;
-      if (!val) return;
-      navigator.clipboard.writeText(val);
-      alert("Prompt copied to clipboard.");
-    });
-    document.getElementById("btn-share-prompt").addEventListener("click", () => {
-      const val = document.getElementById("ai-compiled-prompt").value;
-      if (navigator.share && val) navigator.share({ title: "Classline DB Prompt", text: val });
-    });
-    document.getElementById("btn-dry-run").addEventListener("click", applyAiMutation);
-    document.getElementById("btn-clear-payload").addEventListener("click", () => {
-      document.getElementById("ai-response-payload").value = "";
-    });
-    document.getElementById("btn-global-export").addEventListener("click", handleExportRequest);
-    document.getElementById("btn-export-all-step4").addEventListener("click", handleExportRequest);
-
-    document.getElementById("btn-add-inst-modal").addEventListener("click", () => {
-      document.getElementById("modal-new-inst").showModal();
-    });
-
-    document.getElementById("form-new-inst").addEventListener("submit", (e) => {
+    // Create New Institution Package
+    document.getElementById("form-new-package").addEventListener("submit", (e) => {
       e.preventDefault();
-      const state = document.getElementById("new-inst-state").value;
-      const type = document.getElementById("new-inst-type").value;
-      const parentFile = document.getElementById("new-inst-parent").value;
-      const id = document.getElementById("new-inst-id").value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
-      const name = document.getElementById("new-inst-name").value.trim();
-      const cat = document.getElementById("new-inst-cat").value.trim();
+      const state = document.getElementById("npkg-state").value;
+      const type = document.getElementById("npkg-type").value;
+      const name = document.getElementById("npkg-name").value.trim();
+      const id = document.getElementById("npkg-id").value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const path = `db/institutions/IN/${state}/${id}.json`;
 
-      const instMeta = {
-        id,
-        name,
-        state,
-        type,
-        category: cat,
-        academicYear: "2026-2027",
-        term: "Current"
-      };
-
-      if (type === "child" && parentFile) {
-        instMeta.inheritsFrom = parentFile;
-      }
-
       dbFiles[path] = {
-        institution: instMeta,
+        institution: {
+          id: id,
+          name: name,
+          state: state,
+          type: type,
+          category: type === "parent" ? "Board / University" : "Affiliated College",
+          academicYear: "2026-2027",
+          term: "Annual"
+        },
         holidays: [],
         classes: []
       };
 
-      rebuildRegistry();
-      document.getElementById("modal-new-inst").close();
-      openEditor(path);
+      activeFilePath = path;
+      commitSnapshot(`Created Package: ${name}`);
+      document.getElementById("modal-new-package").close();
+      renderAll();
+      showToast(`Created package for ${name}`);
     });
 
-    initRegionSelects();
-    buildPrompt();
-    rebuildRegistry();
+    function initSubdivisions() {
+      const selects = [document.getElementById("meta-inst-state"), document.getElementById("npkg-state")];
+      selects.forEach(sel => {
+        sel.replaceChildren();
+        INDIA_SUBDIVISIONS.forEach(sub => {
+          const opt = document.createElement("option");
+          opt.value = sub.code;
+          opt.textContent = `${sub.name} (${sub.code})`;
+          sel.appendChild(opt);
+        });
+      });
+      document.getElementById("meta-inst-state").value = "AS";
+      document.getElementById("npkg-state").value = "AS";
+    }
+
+    // Startup Initialization
+    initSubdivisions();
+    loadSampleDataset();
+    compileAiPrompt();
   </script>
 </body>
 </html>
