@@ -1,127 +1,1717 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101010">
-  <meta
-    name="description"
-    content="A simple, offline-friendly class routine planner with calendar and holiday management."
-  >
-
-  <title>Classline — Class Routine Planner</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f6f4">
+  <meta name="description" content="A clean, student-friendly academic timetable and routine planner with holiday calendar updates and smart assistant support.">
+  <title>Classline — Academic Routine Planner</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <script src="js/database.js" defer></script>
-  <script src="js/theme.js" defer></script>
-  <script src="js/calendar.js" defer></script>
-  <script src="js/routine.js" defer></script>
-  <script src="js/ai-assistant.js" defer></script>
-  <script src="js/backup.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f7f5;
+      --surface: #ffffff;
+      --surface-soft: #f1f1ed;
+      --surface-muted: #e7e7e2;
+      --text: #181816;
+      --muted: #6e6e69;
+      --border: #e3e3dc;
+      --border-focus: #181816;
+      --accent: #181816;
+      --accent-text: #ffffff;
+      --accent-hover: #2e2e2c;
+      --green: #25783f;
+      --green-soft: #ebf5ee;
+      --green-border: #c6e6cf;
+      --red: #c23333;
+      --red-soft: #fdeeee;
+      --red-border: #f8c8c8;
+
+      /* Standardized Holiday Category Colors */
+      --cat-national: #b91c1c;
+      --cat-national-bg: #fee2e2;
+      --cat-national-border: #fca5a5;
+
+      --cat-state: #0d9488;
+      --cat-state-bg: #ccfbf1;
+      --cat-state-border: #99f6e4;
+
+      --cat-academic: #2563eb;
+      --cat-academic-bg: #dbeafe;
+      --cat-academic-border: #93c5fd;
+
+      --cat-cultural: #d97706;
+      --cat-cultural-bg: #fef3c7;
+      --cat-cultural-border: #fde68a;
+
+      --cat-institutional: #4f46e5;
+      --cat-institutional-bg: #e0e7ff;
+      --cat-institutional-border: #c7d2fe;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 18px 45px rgba(0, 0, 0, 0.08);
+      --nav-height: 64px;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #121212;
+      --surface: #1a1a1a;
+      --surface-soft: #242424;
+      --surface-muted: #2f2f2f;
+      --text: #f4f4f0;
+      --muted: #a0a098;
+      --border: #323230;
+      --border-focus: #f0f0eb;
+      --accent: #f4f4f0;
+      --accent-text: #121212;
+      --accent-hover: #e2e2dd;
+      --green: #52c47a;
+      --green-soft: #172d1f;
+      --green-border: #234731;
+      --red: #f87171;
+      --red-soft: #381c1c;
+      --red-border: #5c2424;
+
+      --cat-national: #fca5a5;
+      --cat-national-bg: #3b1717;
+      --cat-national-border: #7f1d1d;
+
+      --cat-state: #5eead4;
+      --cat-state-bg: #113835;
+      --cat-state-border: #134e4a;
+
+      --cat-academic: #93c5fd;
+      --cat-academic-bg: #172a4d;
+      --cat-academic-border: #1e40af;
+
+      --cat-cultural: #fcd34d;
+      --cat-cultural-bg: #3f2814;
+      --cat-cultural-border: #78350f;
+
+      --cat-institutional: #c7d2fe;
+      --cat-institutional-bg: #1e224d;
+      --cat-institutional-border: #3730a3;
+
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.2);
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 18px 45px rgba(0, 0, 0, 0.5);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      min-width: 320px;
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+      font-size: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 180ms ease, color 180ms ease;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted);
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+      background: none;
+      touch-action: manipulation;
+    }
+
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--border-focus);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--muted);
+      opacity: 0.75;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: clamp(22px, 3.2vw, 30px);
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: clamp(18px, 2.4vw, 24px);
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    p {
+      color: var(--muted);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .small {
+      font-size: 11px;
+    }
+
+    .eyebrow {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* App Shell */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Desktop Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 250px;
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px 20px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      transition: transform 200ms ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      background: var(--accent);
+      color: var(--accent-text);
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .brand-period {
+      color: var(--muted);
+    }
+
+    .sidebar-label {
+      margin: 32px 10px 10px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 1.2px;
+    }
+
+    .side-navigation {
+      display: grid;
+      gap: 5px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: left;
+      transition: all 140ms ease;
+    }
+
+    .nav-item:hover {
+      background: var(--surface-soft);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: var(--surface-soft);
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .nav-symbol {
+      display: inline-grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .nav-symbol svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+    }
+
+    .sidebar-bottom {
+      display: grid;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .storage-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+      box-shadow: 0 0 0 2px var(--green-soft);
+    }
+
+    /* Main Area */
+    .main-area {
+      flex: 1 1 0%;
+      min-width: 0;
+      margin-left: 250px;
+      padding: 0 clamp(16px, 3.5vw, 48px) calc(100px + env(safe-area-inset-bottom, 20px));
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sticky Topbar Header */
+    .topbar {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0 calc(clamp(16px, 3.5vw, 48px) * -1) 24px;
+      padding: 16px clamp(16px, 3.5vw, 48px);
+      background: var(--bg);
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      transition: background-color 180ms ease, border-color 180ms ease;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* Buttons */
+    .primary-button, .secondary-button, .icon-button, .text-button, .danger-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 140ms ease;
+      user-select: none;
+    }
+
+    .primary-button {
+      background: var(--accent);
+      color: var(--accent-text);
+      border: 1px solid transparent;
+    }
+    .primary-button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .secondary-button {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .secondary-button:hover {
+      background: var(--surface-soft);
+      border-color: var(--border-focus);
+      transform: translateY(-1px);
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      min-height: 38px;
+      padding: 0;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .icon-button:hover {
+      background: var(--surface-soft);
+      border-color: var(--border-focus);
+    }
+    .icon-button svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2;
+    }
+
+    .text-button {
+      background: transparent;
+      color: var(--text);
+      padding: 6px 10px;
+    }
+    .text-button:hover {
+      color: var(--muted);
+    }
+
+    .small-button {
+      padding: 6px 12px;
+      font-size: 12px;
+      min-height: 30px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .small-button:hover {
+      background: var(--surface-soft);
+    }
+
+    .danger-button {
+      color: var(--red) !important;
+      border-color: var(--red-border) !important;
+    }
+    .danger-button:hover {
+      background: var(--red-soft) !important;
+    }
+
+    /* Views */
+    .view {
+      display: none;
+      animation: fadeIn 180ms ease forwards;
+      scroll-margin-top: 90px;
+      width: 100%;
+    }
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Panels */
+    .welcome-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .week-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .calendar-card, .panel {
+      margin-bottom: 24px;
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      width: 100%;
+    }
+
+    .calendar-heading, .panel-heading, .section-heading, .dialog-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .section-intro {
+      margin-bottom: 24px;
+    }
+
+    /* Informational & Status Callouts */
+    .info-callout {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .info-callout svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .info-callout.warning {
+      background: var(--red-soft);
+      border-color: var(--red-border);
+      color: var(--text);
+    }
+    .info-callout.warning svg {
+      color: var(--red);
+    }
+    .info-callout.notice {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1e3a8a;
+    }
+    :root[data-theme="dark"] .info-callout.notice {
+      background: #172554;
+      border-color: #1e40af;
+      color: #bfdbfe;
+    }
+    .info-callout.notice svg {
+      color: #2563eb;
+    }
+
+    /* Category Badges */
+    .badge-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border: 1px solid transparent;
+      line-height: 1;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge-category::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .badge-category.national {
+      color: var(--cat-national);
+      background: var(--cat-national-bg);
+      border-color: var(--cat-national-border);
+    }
+    .badge-category.state {
+      color: var(--cat-state);
+      background: var(--cat-state-bg);
+      border-color: var(--cat-state-border);
+    }
+    .badge-category.academic {
+      color: var(--cat-academic);
+      background: var(--cat-academic-bg);
+      border-color: var(--cat-academic-border);
+    }
+    .badge-category.cultural {
+      color: var(--cat-cultural);
+      background: var(--cat-cultural-bg);
+      border-color: var(--cat-cultural-border);
+    }
+    .badge-category.institutional {
+      color: var(--cat-institutional);
+      background: var(--cat-institutional-bg);
+      border-color: var(--cat-institutional-border);
+    }
+
+    .badge-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 700;
+      background: var(--surface-muted);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      padding: 4px 2px 10px 2px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      width: 100%;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 130ms ease;
+    }
+    .filter-chip:hover {
+      background: var(--surface-soft);
+      color: var(--text);
+    }
+    .filter-chip.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+    .filter-chip .count-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      color: var(--muted);
+    }
+    .filter-chip.active .count-pill {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--accent-text);
+    }
+
+    /* Week Grid */
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+    }
+
+    .day-cell {
+      min-height: 105px;
+      padding: 10px 4px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 130ms ease;
+      cursor: pointer;
+      min-width: 0;
+    }
+    .day-cell:hover {
+      background: var(--surface-soft);
+      border-color: var(--border-focus);
+    }
+    .day-cell.selected {
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 1.5px var(--accent);
+      background: var(--surface-soft);
+    }
+
+    .day-name {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .day-number {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .day-cell.today .day-number {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .cell-indicators {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: auto;
+      min-height: 18px;
+      padding: 2px 4px;
+      border-radius: 999px;
+      max-width: 100%;
+    }
+    .cell-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: inline-block;
+      box-shadow: 0 0 0 1px var(--surface);
+    }
+    .cell-dot.class-dot {
+      background: var(--green);
+    }
+    .cell-dot.holiday-dot {
+      background: var(--red);
+    }
+    .cell-dot-count {
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--muted);
+    }
+    .cell-dot-count.green {
+      color: var(--green);
+    }
+    .cell-dot-count.red {
+      color: var(--red);
+    }
+
+    /* Month Grid */
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+      width: 100%;
+    }
+
+    .month-weekday {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 6px 0;
+    }
+
+    .month-day {
+      min-height: 62px;
+      padding: 6px 8px 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      transition: all 130ms ease;
+      min-width: 0;
+    }
+    .month-day:hover {
+      background: var(--surface-soft);
+    }
+    .month-day.empty {
+      background: transparent;
+      border-color: transparent;
+      pointer-events: none;
+    }
+    .month-day.selected {
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 1.5px var(--accent);
+    }
+    .month-day.today {
+      background: var(--surface-soft);
+      font-weight: 700;
+    }
+
+    .month-day-number {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .month-indicators {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+      min-height: 10px;
+    }
+
+    /* Legend */
+    .calendar-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+    .calendar-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .legend-dot.class-dot { background: var(--green); }
+    .legend-dot.holiday-dot { background: var(--red); }
+    .legend-dot.today-dot { background: var(--accent); }
+
+    /* Class and Holiday Cards */
+    .class-list {
+      display: grid;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .class-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      transition: border-color 150ms ease;
+      width: 100%;
+      overflow: hidden;
+    }
+    .class-card:hover {
+      border-color: var(--border-focus);
+    }
+
+    .class-time {
+      flex-shrink: 0;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      min-width: 90px;
+    }
+
+    .class-time-line {
+      width: 4px;
+      align-self: stretch;
+      min-height: 38px;
+      border-radius: 4px;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    .class-details {
+      flex: 1 1 0%;
+      min-width: 0;
+    }
+    .class-details-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .class-details h3 {
+      font-size: 15px;
+      font-weight: 700;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      white-space: normal;
+      margin: 0;
+    }
+    .class-details p {
+      font-size: 12px;
+      color: var(--muted);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      white-space: normal;
+      margin: 0;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .empty-state {
+      padding: 38px 20px;
+      text-align: center;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+    .empty-state strong {
+      display: block;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .empty-state p {
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    /* Timetable Assistant */
+    .assistant-panel {
+      max-width: 820px;
+      position: relative;
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 750;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .button-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .full-width {
+      width: 100%;
+      margin-top: 18px;
+    }
+
+    .status-message {
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 20px;
+      padding: 6px 0;
+    }
+    .status-message.error {
+      color: var(--red);
+    }
+    .status-message.success {
+      color: var(--green);
+    }
+
+    /* Import Review Box */
+    .import-review {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      animation: fadeIn 180ms ease forwards;
+    }
+    .import-review h3 {
+      margin-bottom: 8px;
+    }
+
+    .import-options {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .import-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 130ms ease;
+    }
+    .import-option:hover {
+      border-color: var(--border-focus);
+    }
+    .import-option input[type="radio"] {
+      width: auto;
+      margin-top: 3px;
+      accent-color: var(--accent);
+    }
+    .import-option span {
+      display: grid;
+      gap: 3px;
+    }
+    .import-option strong {
+      font-size: 13px;
+      color: var(--text);
+    }
+    .import-option small {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .import-summary {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .import-summary-pill {
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--surface-muted);
+      display: inline-block;
+      margin: 0 2px;
+    }
+
+    /* Settings Screen Layout */
+    .settings-grid {
+      display: grid;
+      gap: 20px;
+      max-width: 860px;
+    }
+
+    .settings-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .settings-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-card-title-group h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-card-title-group p {
+      font-size: 12px;
+      margin: 0;
+    }
+
+    .settings-block {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: border-color 140ms ease;
+    }
+
+    .settings-block:hover {
+      border-color: var(--border-focus);
+    }
+
+    .settings-block-info {
+      flex: 1 1 0%;
+      min-width: 0;
+    }
+
+    .settings-block-info strong {
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
+    .settings-block-info p {
+      font-size: 11.5px;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    /* Switch Component */
+    .switch-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .switch-input {
+      position: relative;
+      appearance: none;
+      -webkit-appearance: none;
+      width: 44px;
+      height: 24px;
+      background: var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      outline: none;
+      border: none;
+      padding: 0;
+      transition: background-color 160ms ease;
+    }
+    .switch-input::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      transition: transform 160ms ease;
+    }
+    .switch-input:checked {
+      background: var(--accent);
+    }
+    .switch-input:checked::before {
+      transform: translateX(20px);
+    }
+
+    /* Region Selector Row */
+    .state-picker-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px 16px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .state-picker-row label {
+      margin: 0;
+      font-size: 10.5px;
+    }
+
+    /* Stats Overview Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .stat-tile {
+      padding: 14px 12px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+    .stat-label {
+      font-size: 10.5px;
+      font-weight: 650;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+    }
+
+    /* Reset Timetable Card */
+    .danger-card {
+      border-color: var(--red-border);
+      background: color-mix(in srgb, var(--surface) 96%, var(--red-soft));
+    }
+    .danger-card .settings-card-header {
+      border-bottom-color: var(--red-border);
+    }
+
+    /* Weekday Picker */
+    .weekday-picker {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .weekday-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+    .weekday-chip input {
+      width: auto;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+    .weekday-chip:hover {
+      background: var(--surface-soft);
+    }
+
+    /* Dialog (Modal) */
+    .app-dialog {
+      width: min(520px, calc(100vw - 32px));
+      max-height: min(88vh, 750px);
+      padding: 26px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow-lg);
+      margin: auto;
+      overflow-y: auto;
+    }
+    .app-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    /* Footer */
+    .app-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* Mobile Bottom Navigation Tab Bar */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 60;
+      background: var(--surface);
+      background: color-mix(in srgb, var(--surface) 96%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+      width: 100%;
+    }
+    .mobile-nav-inner {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      max-width: 520px;
+      margin: 0 auto;
+      gap: 2px;
+    }
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 6px 2px;
+      border-radius: var(--radius-sm);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      transition: all 120ms ease;
+      touch-action: manipulation;
+    }
+    .mobile-nav-item svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2;
+    }
+    .mobile-nav-item.active {
+      color: var(--accent);
+      font-weight: 750;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 90;
+      max-width: min(420px, calc(100vw - 32px));
+      padding: 12px 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transform: translateY(14px);
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .toast.error-toast {
+      border-color: var(--red-border);
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 210px;
+      }
+      .main-area {
+        margin-left: 210px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .sidebar {
+        display: none;
+      }
+      .main-area {
+        margin-left: 0;
+        padding-left: 14px;
+        padding-right: 14px;
+        padding-bottom: calc(110px + env(safe-area-inset-bottom, 20px));
+        width: 100%;
+      }
+      .topbar {
+        margin: 0 -14px 20px;
+        padding: 12px 14px;
+      }
+      .mobile-nav {
+        display: block;
+      }
+      .welcome-row {
+        align-items: flex-start;
+      }
+      .week-controls {
+        align-self: flex-start;
+      }
+      .calendar-card, .panel, .settings-card {
+        padding: 16px 14px;
+        border-radius: var(--radius-md);
+      }
+      .class-card {
+        flex-wrap: wrap;
+        gap: 10px 12px;
+        padding: 14px 14px;
+      }
+      .class-time {
+        font-size: 12px;
+        min-width: 80px;
+      }
+      .class-details {
+        min-width: 120px;
+        flex: 1 1 calc(100% - 110px);
+      }
+      .card-actions {
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 8px;
+        border-top: 1px dashed var(--border);
+        margin-top: 4px;
+      }
+      .day-cell {
+        min-height: 85px;
+        padding: 6px 2px 4px;
+      }
+      .day-name {
+        font-size: 9px;
+      }
+      .day-number {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        margin-bottom: 2px;
+      }
+      .cell-indicators {
+        gap: 3px;
+        min-height: 14px;
+      }
+      .cell-dot {
+        width: 6px;
+        height: 6px;
+      }
+      .cell-dot-count {
+        font-size: 9px;
+      }
+      .month-day {
+        min-height: 48px;
+        padding: 4px;
+      }
+      .month-day-number {
+        font-size: 10px;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .weekday-picker {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .stat-number {
+        font-size: 18px;
+      }
+      .stat-label {
+        font-size: 9px;
+      }
+      .toast {
+        right: 16px;
+        left: 16px;
+        bottom: calc(var(--nav-height) + 16px);
+        max-width: calc(100vw - 32px);
+      }
+    }
+  </style>
 </head>
-
 <body>
+
+  <!-- Clean Embedded SVG Sprite Definitions -->
+  <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+    </symbol>
+    <symbol id="icon-routine" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </symbol>
+    <symbol id="icon-holiday" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+    </symbol>
+    <symbol id="icon-ai" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </symbol>
+    <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </symbol>
+    <symbol id="icon-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </symbol>
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </symbol>
+    <symbol id="icon-sync" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <polyline points="23 4 23 10 17 10"></polyline>
+      <polyline points="1 20 1 14 7 14"></polyline>
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+    </symbol>
+  </svg>
+
   <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar" id="sidebar" aria-label="Desktop navigation">
       <a class="brand" href="#" aria-label="Classline home">
         <span class="brand-mark">C</span>
         <span>classline<span class="brand-period">.</span></span>
       </a>
 
-      <div class="sidebar-label">WORKSPACE</div>
+      <div class="sidebar-label">ACADEMIC WORKSPACE</div>
 
       <nav class="side-navigation" aria-label="Main navigation">
         <button class="nav-item active" data-view="calendar">
-          <span class="nav-symbol">▦</span>
+          <span class="nav-symbol">
+            <svg><use href="#icon-calendar"/></svg>
+          </span>
           Calendar
         </button>
-
         <button class="nav-item" data-view="routine">
-          <span class="nav-symbol">≡</span>
+          <span class="nav-symbol">
+            <svg><use href="#icon-routine"/></svg>
+          </span>
           My routine
         </button>
-
         <button class="nav-item" data-view="holidays">
-          <span class="nav-symbol">◇</span>
+          <span class="nav-symbol">
+            <svg><use href="#icon-holiday"/></svg>
+          </span>
           Holidays
         </button>
-
         <button class="nav-item" data-view="assistant">
-          <span class="nav-symbol">✳</span>
-          AI assistant
+          <span class="nav-symbol">
+            <svg><use href="#icon-ai"/></svg>
+          </span>
+          Timetable assistant
         </button>
       </nav>
 
       <div class="sidebar-bottom">
         <div class="storage-indicator">
           <span class="status-dot"></span>
-          <span>Saved on this device</span>
+          <span>Saved securely on this device</span>
         </div>
-
         <button class="nav-item" data-view="settings">
-          <span class="nav-symbol">⚙</span>
+          <span class="nav-symbol">
+            <svg><use href="#icon-settings"/></svg>
+          </span>
           Settings
         </button>
       </div>
     </aside>
 
-    <main class="main-area">
+    <!-- Main Content Area -->
+    <main class="main-area" id="main-content">
+      <!-- Sticky Topbar Header -->
       <header class="topbar">
         <div>
-          <div class="eyebrow" id="today-label">YOUR ACADEMIC SPACE</div>
+          <span class="eyebrow" id="today-label">ACADEMIC SCHEDULE</span>
           <h1 id="page-title">Calendar</h1>
         </div>
-
         <div class="topbar-actions">
-          <button
-            class="icon-button"
-            id="theme-toggle"
-            type="button"
-            aria-label="Toggle theme"
-            title="Toggle theme"
-          >◐</button>
-
+          <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch reading theme" title="Switch reading theme">
+            <svg id="theme-icon"><use href="#icon-moon"/></svg>
+          </button>
           <button class="primary-button" id="quick-add" type="button">
-            <span>+</span> Add class
+            <svg style="width:16px;height:16px;stroke-width:2.5;"><use href="#icon-plus"/></svg>
+            <span>Add class</span>
           </button>
         </div>
       </header>
 
+      <!-- View: Calendar -->
       <section class="view active" id="view-calendar">
         <div class="welcome-row">
           <div>
-            <h2>Your week, organised.</h2>
-            <p>See what you have to attend and plan around holidays.</p>
+            <h2>Your week, organized.</h2>
+            <p>View your classes, see upcoming days off, and stay ahead of your schedule.</p>
           </div>
-
           <div class="week-controls">
-            <button class="icon-button" id="previous-week" aria-label="Previous week">←</button>
+            <button class="icon-button" id="previous-week" aria-label="Previous period">
+              <svg><use href="#icon-chevron-left"/></svg>
+            </button>
             <button class="secondary-button" id="today-button">Today</button>
-            <button class="icon-button" id="next-week" aria-label="Next week">→</button>
+            <button class="icon-button" id="next-week" aria-label="Next period">
+              <svg><use href="#icon-chevron-right"/></svg>
+            </button>
           </div>
         </div>
 
         <div class="calendar-card">
           <div class="calendar-heading">
             <div>
-              <span class="eyebrow">YOUR SCHEDULE</span>
+              <span class="eyebrow">TIMETABLE OVERVIEW</span>
               <h3 id="week-heading">This week</h3>
             </div>
-
             <button class="secondary-button" id="month-toggle">Month view</button>
           </div>
 
           <div class="week-grid" id="week-grid"></div>
-
           <div class="month-grid hidden" id="month-grid"></div>
 
           <div class="calendar-legend">
-            <span><i class="legend-dot class-dot"></i> Classes</span>
-            <span><i class="legend-dot holiday-dot"></i> Holiday</span>
+            <span><i class="legend-dot class-dot"></i> Scheduled class</span>
+            <span><i class="legend-dot holiday-dot"></i> Holiday or closure</span>
             <span><i class="legend-dot today-dot"></i> Today</span>
           </div>
         </div>
@@ -131,106 +1721,147 @@
             <span class="eyebrow">SELECTED DAY</span>
             <h2 id="selected-date-heading">Today's classes</h2>
           </div>
-
           <button class="text-button" id="add-holiday-from-calendar">
-            + Mark holiday
+            + Mark as holiday
           </button>
         </div>
 
         <div id="selected-day-content" class="class-list"></div>
       </section>
 
+      <!-- View: My Routine -->
       <section class="view" id="view-routine">
         <div class="section-intro">
-          <span class="eyebrow">YOUR TIMETABLE</span>
+          <span class="eyebrow">REGULAR CLASSES</span>
           <h2>My routine</h2>
-          <p>Manage recurring classes and individual sessions.</p>
+          <p>Organize recurring weekly lectures and special one-time academic sessions.</p>
         </div>
 
         <div class="panel">
           <div class="panel-heading">
             <div>
-              <h3>Recurring classes</h3>
-              <p>Classes that repeat on selected weekdays.</p>
+              <h3>All classes</h3>
+              <p>Classes repeat automatically every week unless paused by a scheduled holiday.</p>
             </div>
-
-            <button class="primary-button" id="routine-add-class">+ Add class</button>
+            <button class="primary-button" id="routine-add-class">
+              <svg style="width:16px;height:16px;stroke-width:2.5;"><use href="#icon-plus"/></svg>
+              Add class
+            </button>
           </div>
 
           <div id="routine-list" class="class-list"></div>
         </div>
       </section>
 
+      <!-- View: Holidays -->
       <section class="view" id="view-holidays">
         <div class="section-intro">
-          <span class="eyebrow">ACADEMIC CALENDAR</span>
-          <h2>Holidays & closures</h2>
-          <p>Add holidays that should prevent recurring classes from appearing.</p>
+          <span class="eyebrow">OFFICIAL ACADEMIC CALENDAR</span>
+          <h2>Holidays & college closures</h2>
+          <p>Recurring lectures are automatically paused on marked holiday dates.</p>
+        </div>
+
+        <div class="info-callout">
+          <svg><use href="#icon-info"/></svg>
+          <div>
+            <strong>Standard Holiday Categories:</strong>
+            <span class="muted">
+              Use <strong>National</strong> for central gazetted holidays, <strong>State</strong> for regional state holidays, <strong>Academic</strong> for exams and semester breaks, <strong>Cultural</strong> for festivals, and <strong>Institutional</strong> for campus-specific closures.
+            </span>
+          </div>
         </div>
 
         <div class="panel">
           <div class="panel-heading">
             <div>
-              <h3>Holiday list</h3>
-              <p>Holidays you have entered manually.</p>
+              <h3>Scheduled closures</h3>
+              <p>Holidays across all categories that pause scheduled lectures.</p>
             </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="secondary-button" id="holiday-recycle-btn" type="button" title="View and restore deleted holidays">
+                <svg style="width:16px;height:16px;stroke-width:2;"><use href="#icon-routine"/></svg>
+                <span>Recover (<span id="trash-count">0</span>)</span>
+              </button>
+              <button class="primary-button" id="add-holiday">
+                <svg style="width:16px;height:16px;stroke-width:2.5;"><use href="#icon-plus"/></svg>
+                Add holiday
+              </button>
+            </div>
+          </div>
 
-            <button class="primary-button" id="add-holiday">+ Add holiday</button>
+          <!-- Category Filter Bar: Horizontal Touch Scrolling -->
+          <div class="filter-bar" id="holiday-filter-bar">
+            <button type="button" class="filter-chip active" data-filter="all">
+              All <span class="count-pill" id="count-all">0</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="national">
+              National <span class="count-pill" id="count-national">0</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="state">
+              State <span class="count-pill" id="count-state">0</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="academic">
+              Academic <span class="count-pill" id="count-academic">0</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="cultural">
+              Cultural <span class="count-pill" id="count-cultural">0</span>
+            </button>
+            <button type="button" class="filter-chip" data-filter="institutional">
+              Institutional <span class="count-pill" id="count-institutional">0</span>
+            </button>
           </div>
 
           <div id="holiday-list" class="class-list"></div>
         </div>
       </section>
 
+      <!-- View: Timetable Assistant -->
       <section class="view" id="view-assistant">
         <div class="section-intro">
-          <span class="eyebrow">ASSISTED PLANNING</span>
-          <h2>Build your routine with AI</h2>
-          <p>Describe your classes, generate a prompt, and bring the structured result back here.</p>
+          <span class="eyebrow">SMART PLANNING</span>
+          <h2>Timetable assistant</h2>
+          <p>Describe your timetable in natural English, generate an assistant prompt, and bring the structured routine into your calendar.</p>
         </div>
 
         <div class="panel assistant-panel">
-          <div class="step-number">01</div>
-          <h3>Describe your timetable</h3>
+          <div class="step-badge">01</div>
+          <h3>Describe your class routine</h3>
           <p class="muted">
-            Explain your subjects, class times, weekdays, semester dates,
-            holidays and any scheduling rules.
+            Mention your subjects, class times, weekdays, semester dates, and any planned breaks.
           </p>
 
-          <label for="routine-description">Your description</label>
+          <label for="routine-description">Routine description</label>
           <textarea
             id="routine-description"
-            rows="7"
-            placeholder="Example: I attend college Monday to Friday. Political Science is on Monday at 10:00 AM..."
+            rows="6"
+            placeholder="Example: I attend college Monday to Friday. Computer Networks is on Monday and Wednesday from 09:30 to 11:00 in Room 204..."
           ></textarea>
 
           <div class="form-row">
             <div class="form-field">
-              <label for="academic-start">Academic period starts</label>
+              <label for="academic-start">Semester starts</label>
               <input id="academic-start" type="date">
             </div>
-
             <div class="form-field">
-              <label for="academic-end">Academic period ends</label>
+              <label for="academic-end">Semester ends</label>
               <input id="academic-end" type="date">
             </div>
           </div>
 
           <button class="primary-button full-width" id="generate-prompt">
-            Generate AI prompt →
+            Generate assistant prompt
           </button>
         </div>
 
-        <div class="panel assistant-panel">
-          <div class="step-number">02</div>
-          <h3>Use the prompt with your AI assistant</h3>
+        <div class="panel assistant-panel" id="panel-step-2">
+          <div class="step-badge">02</div>
+          <h3>Copy assistant prompt</h3>
           <p class="muted">
-            Copy the generated prompt and paste it into an AI assistant.
-            Ask it to return only the JSON object described in the prompt.
+            Copy this prompt and paste it into ChatGPT, Claude, or Gemini. The prompt instructs the assistant to organize your routine into a clean schedule format.
           </p>
 
-          <textarea id="generated-prompt" rows="8" readonly
-            placeholder="Your generated prompt will appear here."></textarea>
+          <label for="generated-prompt">Generated prompt</label>
+          <textarea id="generated-prompt" rows="8" readonly placeholder="Your generated prompt will appear here once ready..."></textarea>
 
           <div class="button-row">
             <button class="secondary-button" id="copy-prompt">Copy prompt</button>
@@ -238,113 +1869,277 @@
           </div>
         </div>
 
-        <div class="panel assistant-panel">
-          <div class="step-number">03</div>
-          <h3>Import the generated routine</h3>
+        <div class="panel assistant-panel" id="panel-step-3">
+          <div class="step-badge">03</div>
+          <h3>Import routine timetable</h3>
           <p class="muted">
-            Paste the JSON returned by your AI assistant. Nothing will be
-            applied until you review and confirm it.
+            Paste the schedule returned by your assistant. You can review all classes and choose how to add them before saving.
           </p>
 
-          <label for="routine-json">Routine JSON</label>
-          <textarea id="routine-json" rows="8"
-            placeholder='Paste the JSON object here, including its opening and closing braces.'></textarea>
+          <label for="routine-json">Routine text / data</label>
+          <textarea id="routine-json" rows="8" placeholder='Paste your assistant&#39;s response here...'></textarea>
 
           <div class="button-row">
-            <button class="secondary-button" id="read-clipboard">Read clipboard</button>
-            <button class="primary-button" id="validate-routine">Validate & review</button>
+            <button class="secondary-button" id="read-clipboard">Paste from clipboard</button>
+            <button class="primary-button" id="validate-routine">Review & Add to Schedule</button>
           </div>
 
           <p id="assistant-status" class="status-message" role="status"></p>
+
+          <!-- Review & Import Choice Box -->
           <div id="import-preview"></div>
         </div>
       </section>
 
+      <!-- View: Settings (Production Grade & Academic Tone) -->
       <section class="view" id="view-settings">
         <div class="section-intro">
-          <span class="eyebrow">PREFERENCES</span>
-          <h2>Settings & backups</h2>
-          <p>Control your appearance and manage your local data.</p>
+          <span class="eyebrow">PREFERENCES & AUTOMATION</span>
+          <h2>Settings</h2>
+          <p>Manage your academic region, holiday calendar updates, reading appearance, and timetable backups.</p>
         </div>
 
-        <div class="panel">
-          <div class="panel-heading">
-            <div>
-              <h3>Appearance</h3>
-              <p>Choose a comfortable reading theme.</p>
+        <div class="settings-grid">
+          <!-- Card 1: Overview & Metrics -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title-group">
+                <h3>
+                  <span>Overview & Schedule Metrics</span>
+                </h3>
+                <p>Summary of your locally stored schedule and active entries.</p>
+              </div>
+              <span class="badge-source">On Device</span>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-tile">
+                <div class="stat-number" id="stats-class-count">0</div>
+                <div class="stat-label">Classes</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-number" id="stats-holiday-count">0</div>
+                <div class="stat-label">Holidays</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-number" id="stats-trash-count">0</div>
+                <div class="stat-label">In Trash</div>
+              </div>
             </div>
           </div>
 
-          <div class="settings-row">
-            <div>
-              <strong>Colour theme</strong>
-              <p class="muted">Switch between light and dark modes.</p>
+          <!-- Card 2: Official Indian Holidays & Closures -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title-group">
+                <h3>
+                  <span>🇮🇳 Official Indian Holidays & Closures</span>
+                </h3>
+                <p>Automatically receive updates and prevent class conflicts for gazetted national holidays and state-specific festival closures.</p>
+              </div>
+              <span class="badge-source" id="sync-status-indicator">Calendar up to date</span>
             </div>
-            <button class="secondary-button" id="settings-theme-toggle">Toggle theme</button>
-          </div>
-        </div>
 
-        <div class="panel">
-          <div class="panel-heading">
-            <div>
-              <h3>Your data</h3>
-              <p>Your timetable is stored in this browser.</p>
+            <!-- State / UT Selector -->
+            <div class="state-picker-row">
+              <label for="sync-state-select">Your State or Union Territory</label>
+              <select id="sync-state-select">
+                <!-- Populated via JS with 28 States & 8 Union Territories -->
+              </select>
+            </div>
+
+            <!-- Notice Banner when state data is not published yet -->
+            <div id="sync-notice-banner" class="info-callout notice hidden" style="margin: 0;">
+              <svg><use href="#icon-info"/></svg>
+              <div style="flex: 1;">
+                <strong>Schedule Status:</strong>
+                <p id="sync-notice-text" style="color: inherit; margin: 2px 0 0;">
+                  Holiday schedule not yet published for this state for this academic year.
+                </p>
+              </div>
+            </div>
+
+            <!-- Error Banner on Service Unreachable -->
+            <div id="sync-error-banner" class="info-callout warning hidden" style="margin: 0;">
+              <svg><use href="#icon-info"/></svg>
+              <div style="flex: 1;">
+                <strong>Connection Notice:</strong>
+                <p id="sync-error-text" style="color: inherit; margin: 2px 0 8px;">
+                  Unable to connect to holiday calendar service. Please check your internet connection.
+                </p>
+                <button type="button" class="small-button" id="sync-retry-btn" style="border-color: var(--red);">
+                  Try again
+                </button>
+              </div>
+            </div>
+
+            <!-- Central Gazetted Toggle Block -->
+            <div class="settings-block">
+              <div class="settings-block-info">
+                <strong>
+                  <span class="badge-category national">National</span>
+                  National gazetted holidays
+                </strong>
+                <p class="muted">
+                  Includes nationwide compulsory holidays (Republic Day, Independence Day, Gandhi Jayanti, Diwali, Eid, Christmas, etc.). Turning off removes national holiday dates from your schedule.
+                </p>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="sync-toggle-national">
+              </label>
+            </div>
+
+            <!-- State / UT Toggle Block -->
+            <div class="settings-block">
+              <div class="settings-block-info">
+                <strong>
+                  <span class="badge-category state">State</span>
+                  State & regional public holidays
+                </strong>
+                <p class="muted" id="state-toggle-description">
+                  Includes regional public holidays for your selected State or Union Territory. Turning off removes regional holiday dates from your schedule.
+                </p>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="sync-toggle-state">
+              </label>
+            </div>
+
+            <!-- Sync Footer Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px;">
+              <div class="small muted" id="sync-stats-text">
+                0 official holidays active in your calendar.
+              </div>
+              <button type="button" class="secondary-button" id="manual-sync-btn" style="min-height: 32px; padding: 4px 12px; font-size: 11px;">
+                <svg style="width:14px;height:14px;"><use href="#icon-sync"/></svg>
+                Check for updates
+              </button>
             </div>
           </div>
 
-          <div class="button-row">
-            <button class="primary-button" id="export-data">Export backup</button>
-            <button class="secondary-button" id="import-data-button">Restore backup</button>
-            <input id="import-data-file" type="file" accept=".json,application/json" hidden>
+          <!-- Card 3: Appearance Preferences -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title-group">
+                <h3>
+                  <span>Appearance & Theme</span>
+                </h3>
+                <p>Customize the reading theme and screen contrast for day or night studying.</p>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div class="settings-block-info">
+                <strong>Reading Theme</strong>
+                <p class="muted">Switch between a clean daylight theme and a comfortable dark mode for low-light study sessions.</p>
+              </div>
+              <button class="secondary-button" id="settings-theme-toggle">
+                Toggle theme
+              </button>
+            </div>
           </div>
 
-          <p class="muted small">
-            Export a backup regularly. Clearing browser storage or changing
-            browsers may remove access to locally stored data.
-          </p>
+          <!-- Card 4: Backup & Data Management -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title-group">
+                <h3>
+                  <span>Data Backup & Transfer</span>
+                </h3>
+                <p>Save a copy of your timetable to keep as a safe backup or move your schedule to another device.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="primary-button" id="export-data">
+                Save timetable backup
+              </button>
+              <button class="secondary-button" id="import-data-button">
+                Restore timetable file
+              </button>
+              <input id="import-data-file" type="file" accept=".json,application/json" hidden>
+            </div>
+            <p class="muted small" style="margin: 0;">
+              Your timetable is stored directly in this web browser. Saving regular backups ensures you never lose your class schedule if browser history is cleared.
+            </p>
+          </div>
+
+          <!-- Card 5: Clear Routine & Holidays -->
+          <div class="settings-card danger-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title-group">
+                <h3 style="color: var(--red);">
+                  <span>Reset Timetable</span>
+                </h3>
+                <p>Start over with an empty schedule.</p>
+              </div>
+            </div>
+
+            <div class="settings-block" style="background: var(--surface);">
+              <div class="settings-block-info">
+                <strong style="color: var(--red);">Clear timetable and holidays</strong>
+                <p class="muted">
+                  Remove all scheduled classes, holidays, and recovery history to reset your planner to a fresh blank slate.
+                </p>
+              </div>
+              <button type="button" class="danger-button secondary-button" id="clear-all-data-btn">
+                Clear all timetable data
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
       <footer class="app-footer">
-        <span>Classline</span>
-        <span>Simple planning. Fewer surprises.</span>
+        <span>Classline Academic Planner</span>
+        <span>Offline-friendly • Official Indian Holiday Updates</span>
       </footer>
     </main>
   </div>
 
-  <nav class="mobile-nav" aria-label="Mobile navigation">
-    <button class="mobile-nav-item active" data-view="calendar">
-      <span>▦</span><small>Calendar</small>
-    </button>
-    <button class="mobile-nav-item" data-view="routine">
-      <span>≡</span><small>Routine</small>
-    </button>
-    <button class="mobile-nav-item" data-view="holidays">
-      <span>◇</span><small>Holidays</small>
-    </button>
-    <button class="mobile-nav-item" data-view="assistant">
-      <span>✳</span><small>AI</small>
-    </button>
-    <button class="mobile-nav-item" data-view="settings">
-      <span>⚙</span><small>Settings</small>
-    </button>
+  <!-- Bottom Navigation Tab Bar for Mobile -->
+  <nav class="mobile-nav" aria-label="Mobile Navigation">
+    <div class="mobile-nav-inner">
+      <button class="mobile-nav-item active" data-view="calendar">
+        <svg><use href="#icon-calendar"/></svg>
+        <span>Calendar</span>
+      </button>
+      <button class="mobile-nav-item" data-view="routine">
+        <svg><use href="#icon-routine"/></svg>
+        <span>Routine</span>
+      </button>
+      <button class="mobile-nav-item" data-view="holidays">
+        <svg><use href="#icon-holiday"/></svg>
+        <span>Holidays</span>
+      </button>
+      <button class="mobile-nav-item" data-view="assistant">
+        <svg><use href="#icon-ai"/></svg>
+        <span>Assistant</span>
+      </button>
+      <button class="mobile-nav-item" data-view="settings">
+        <svg><use href="#icon-settings"/></svg>
+        <span>Settings</span>
+      </button>
+    </div>
   </nav>
 
+  <!-- Add / Edit Class Modal -->
   <dialog id="class-dialog" class="app-dialog">
     <form id="class-form" method="dialog">
       <div class="dialog-heading">
         <div>
-          <span class="eyebrow">TIMETABLE EDITOR</span>
+          <span class="eyebrow">CLASS EDITOR</span>
           <h2 id="class-dialog-title">Add a class</h2>
         </div>
-        <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
+        <button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">
+          <svg><use href="#icon-close"/></svg>
+        </button>
       </div>
 
       <input id="class-id" type="hidden">
 
-      <label for="class-name">Subject / class name</label>
-      <input id="class-name" name="name" maxlength="100" required
-        placeholder="e.g. Comparative Politics">
+      <label for="class-name">Subject / class title</label>
+      <input id="class-name" name="name" maxlength="100" required placeholder="e.g. Distributed Systems">
 
       <div class="form-row">
         <div class="form-field">
@@ -357,61 +2152,2268 @@
         </div>
       </div>
 
-      <label for="class-location">Room / location (optional)</label>
-      <input id="class-location" maxlength="100" placeholder="e.g. Room 12">
+      <label for="class-location">Room / lecture hall (optional)</label>
+      <input id="class-location" maxlength="100" placeholder="e.g. Hall 4B, Science Complex">
 
-      <label>Repeats on</label>
+      <label>Recurring weekdays</label>
       <div class="weekday-picker" id="weekday-picker">
-        <label><input type="checkbox" value="1"> Mon</label>
-        <label><input type="checkbox" value="2"> Tue</label>
-        <label><input type="checkbox" value="3"> Wed</label>
-        <label><input type="checkbox" value="4"> Thu</label>
-        <label><input type="checkbox" value="5"> Fri</label>
-        <label><input type="checkbox" value="6"> Sat</label>
-        <label><input type="checkbox" value="0"> Sun</label>
+        <label class="weekday-chip"><input type="checkbox" value="1"> Mon</label>
+        <label class="weekday-chip"><input type="checkbox" value="2"> Tue</label>
+        <label class="weekday-chip"><input type="checkbox" value="3"> Wed</label>
+        <label class="weekday-chip"><input type="checkbox" value="4"> Thu</label>
+        <label class="weekday-chip"><input type="checkbox" value="5"> Fri</label>
+        <label class="weekday-chip"><input type="checkbox" value="6"> Sat</label>
+        <label class="weekday-chip"><input type="checkbox" value="0"> Sun</label>
       </div>
 
-      <label for="class-date">One-time date (optional)</label>
+      <label for="class-date">Specific date (optional)</label>
       <input id="class-date" type="date">
-      <p class="muted small">
-        Leave the date empty for a recurring class. Choose a date for a
-        one-time session.
+      <p class="muted small" style="margin-top: 4px;">
+        Leave the date empty for regular weekly classes. Choose a specific date for a single test or guest lecture.
       </p>
 
-      <div class="button-row dialog-actions">
+      <div class="button-row" style="justify-content: flex-end; margin-top: 24px;">
         <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
         <button type="submit" class="primary-button">Save class</button>
       </div>
     </form>
   </dialog>
 
+  <!-- Add / Edit Holiday Modal with Categories -->
   <dialog id="holiday-dialog" class="app-dialog">
     <form id="holiday-form" method="dialog">
       <div class="dialog-heading">
         <div>
           <span class="eyebrow">ACADEMIC CALENDAR</span>
-          <h2>Add a holiday</h2>
+          <h2 id="holiday-dialog-title">Add holiday or closure</h2>
         </div>
-        <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
+        <button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">
+          <svg><use href="#icon-close"/></svg>
+        </button>
       </div>
 
-      <label for="holiday-name">Holiday name</label>
-      <input id="holiday-name" required maxlength="100" placeholder="e.g. College foundation day">
+      <input id="holiday-id" type="hidden">
 
-      <label for="holiday-date">Date</label>
-      <input id="holiday-date" type="date" required>
+      <label for="holiday-name">Holiday title</label>
+      <input id="holiday-name" required maxlength="100" placeholder="e.g. University Founders Day">
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="holiday-date">Date</label>
+          <input id="holiday-date" type="date" required>
+        </div>
+        <div class="form-field">
+          <label for="holiday-category">Category</label>
+          <select id="holiday-category" required>
+            <option value="national">National Gazetted</option>
+            <option value="state">State / Regional</option>
+            <option value="academic">Academic Recess</option>
+            <option value="cultural">Cultural & Festival</option>
+            <option value="institutional" selected>Institutional Closure</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+        <span class="small muted">Tag preview:</span>
+        <span id="holiday-category-preview" class="badge-category institutional">Institutional</span>
+      </div>
 
       <label for="holiday-note">Note (optional)</label>
-      <textarea id="holiday-note" rows="3" maxlength="500"
-        placeholder="Any useful details"></textarea>
+      <textarea id="holiday-note" rows="3" maxlength="300" placeholder="e.g. Campus closed; library open until 2 PM"></textarea>
 
-      <div class="button-row dialog-actions">
+      <div class="button-row" style="justify-content: flex-end; margin-top: 24px;">
         <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
         <button type="submit" class="primary-button">Save holiday</button>
       </div>
     </form>
   </dialog>
 
+  <!-- Holiday Recovery & Recycle Bin Dialog -->
+  <dialog id="holiday-recovery-dialog" class="app-dialog">
+    <div class="dialog-heading">
+      <div>
+        <span class="eyebrow">HOLIDAY RESTORATION</span>
+        <h2>Recover holidays</h2>
+      </div>
+      <button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">
+        <svg><use href="#icon-close"/></svg>
+      </button>
+    </div>
+    <p class="muted" style="margin-bottom: 16px;">
+      Restore recently deleted holidays or add standard academic term break placeholders to your schedule.
+    </p>
+
+    <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 style="font-size: 14px;">Recently Deleted Holidays</h3>
+      <button type="button" class="text-button" id="clear-holiday-trash" style="font-size: 12px; color: var(--red);">
+        Empty trash
+      </button>
+    </div>
+
+    <div id="holiday-trash-list" class="class-list" style="max-height: 280px; overflow-y: auto; margin-bottom: 20px;"></div>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+      <h3 style="font-size: 14px; margin-bottom: 6px;">Academic Recess Placeholders</h3>
+      <p class="muted small" style="margin-bottom: 12px;">
+        Add standard semester mid-term break and winter vacation dates to your calendar.
+      </p>
+      <button type="button" class="secondary-button" id="recover-default-holidays-btn">
+        Add Standard Academic Breaks
+      </button>
+    </div>
+
+    <div class="button-row" style="justify-content: flex-end; margin-top: 20px;">
+      <button type="button" class="secondary-button" data-close-dialog>Close</button>
+    </div>
+  </dialog>
+
+  <!-- First-time Setup & Region Selection Dialog -->
+  <dialog id="onboarding-dialog" class="app-dialog" style="max-width: 500px;">
+    <div class="dialog-heading">
+      <div>
+        <span class="eyebrow">GET STARTED</span>
+        <h2>Welcome to Classline</h2>
+      </div>
+    </div>
+    <p class="muted" style="margin-bottom: 16px; font-size: 13px; line-height: 1.5;">
+      Select your State or Union Territory in India to automatically include regional holidays and official government closures in your schedule.
+    </p>
+
+    <form id="onboarding-form" method="dialog">
+      <div style="padding: 12px 14px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase;">Country</span>
+        <strong style="font-size: 13px; display: flex; align-items: center; gap: 6px;">
+          <span>🇮🇳</span> India
+        </strong>
+      </div>
+
+      <label for="onboarding-state-select">Your State or Union Territory</label>
+      <select id="onboarding-state-select" required style="margin-bottom: 16px;">
+        <!-- Populated via JS with 28 States & 8 Union Territories -->
+      </select>
+
+      <div style="display: grid; gap: 10px; margin-bottom: 20px;">
+        <label class="weekday-chip" style="margin: 0; padding: 10px 12px;">
+          <input type="checkbox" id="onboarding-sync-national" checked>
+          <span>
+            <strong>National gazetted holidays</strong>
+            <small style="display: block; color: var(--muted); font-size: 11px;">Compulsory national holidays across India</small>
+          </span>
+        </label>
+        <label class="weekday-chip" style="margin: 0; padding: 10px 12px;">
+          <input type="checkbox" id="onboarding-sync-state" checked>
+          <span>
+            <strong>State & regional public holidays</strong>
+            <small style="display: block; color: var(--muted); font-size: 11px;">Regional festival and public holidays for your chosen state</small>
+          </span>
+        </label>
+      </div>
+
+      <div class="button-row" style="justify-content: flex-end; gap: 8px;">
+        <button type="button" class="secondary-button" id="onboarding-skip-btn">Set up later</button>
+        <button type="submit" class="primary-button" id="onboarding-submit-btn">Save and update calendar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Clean Academic Confirmation Dialog -->
+  <dialog id="confirm-dialog" class="app-dialog">
+    <div class="dialog-heading">
+      <div>
+        <span class="eyebrow" id="confirm-badge">PLEASE CONFIRM</span>
+        <h2 id="confirm-title">Are you sure?</h2>
+      </div>
+    </div>
+    <p id="confirm-message" style="margin: 12px 0 20px; line-height: 1.5; color: var(--text);"></p>
+    <div class="button-row" style="justify-content: flex-end;">
+      <button type="button" class="secondary-button" id="confirm-cancel-btn">Cancel</button>
+      <button type="button" class="primary-button" id="confirm-ok-btn">Confirm</button>
+    </div>
+  </dialog>
+
+  <!-- Toast Element -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Application Logic -->
+  <script>
+    "use strict";
+
+    /* ==========================================================================
+       ALL 28 STATES & 8 UNION TERRITORIES OF INDIA
+       ========================================================================== */
+    const INDIA_SUBDIVISIONS = {
+      states: [
+        { code: "AP", name: "Andhra Pradesh" },
+        { code: "AR", name: "Arunachal Pradesh" },
+        { code: "AS", name: "Assam" },
+        { code: "BR", name: "Bihar" },
+        { code: "CG", name: "Chhattisgarh" },
+        { code: "GA", name: "Goa" },
+        { code: "GJ", name: "Gujarat" },
+        { code: "HR", name: "Haryana" },
+        { code: "HP", name: "Himachal Pradesh" },
+        { code: "JH", name: "Jharkhand" },
+        { code: "KA", name: "Karnataka" },
+        { code: "KL", name: "Kerala" },
+        { code: "MP", name: "Madhya Pradesh" },
+        { code: "MH", name: "Maharashtra" },
+        { code: "MN", name: "Manipur" },
+        { code: "ML", name: "Meghalaya" },
+        { code: "MZ", name: "Mizoram" },
+        { code: "NL", name: "Nagaland" },
+        { code: "OD", name: "Odisha" },
+        { code: "PB", name: "Punjab" },
+        { code: "RJ", name: "Rajasthan" },
+        { code: "SK", name: "Sikkim" },
+        { code: "TN", name: "Tamil Nadu" },
+        { code: "TS", name: "Telangana" },
+        { code: "TR", name: "Tripura" },
+        { code: "UP", name: "Uttar Pradesh" },
+        { code: "UK", name: "Uttarakhand" },
+        { code: "WB", name: "West Bengal" }
+      ],
+      unionTerritories: [
+        { code: "AN", name: "Andaman & Nicobar Islands" },
+        { code: "CH", name: "Chandigarh" },
+        { code: "DN", name: "Dadra & Nagar Haveli and Daman & Diu" },
+        { code: "DL", name: "Delhi (NCT)" },
+        { code: "JK", name: "Jammu & Kashmir" },
+        { code: "LA", name: "Ladakh" },
+        { code: "LD", name: "Lakshadweep" },
+        { code: "PY", name: "Puducherry" }
+      ]
+    };
+
+    const ALL_INDIA_REGIONS = [...INDIA_SUBDIVISIONS.states, ...INDIA_SUBDIVISIONS.unionTerritories];
+
+    /* ==========================================================================
+       STORAGE & DATABASE MODULE
+       ========================================================================== */
+    const ClasslineDB = (() => {
+      const STORAGE_KEY = "classline_state_prod_v1";
+
+      function createInitialState() {
+        return {
+          version: 12,
+          classes: [],
+          holidays: [],
+          deletedHolidays: [],
+          preferences: {
+            theme: "light",
+            setupCompleted: false,
+            syncSubdivision: "DL", // Default: Delhi
+            syncNational: true,
+            syncState: true,
+            lastSyncTimestamp: null
+          }
+        };
+      }
+
+      function load() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed.classes) && Array.isArray(parsed.holidays)) {
+              if (!Array.isArray(parsed.deletedHolidays)) parsed.deletedHolidays = [];
+              if (!parsed.preferences) parsed.preferences = {};
+              if (parsed.preferences.setupCompleted === undefined) parsed.preferences.setupCompleted = false;
+              if (parsed.preferences.syncNational === undefined) parsed.preferences.syncNational = true;
+              if (parsed.preferences.syncState === undefined) parsed.preferences.syncState = true;
+              if (!parsed.preferences.syncSubdivision) parsed.preferences.syncSubdivision = "DL";
+              parsed.holidays.forEach(h => {
+                if (!h.category) h.category = "institutional";
+                if (!h.source) h.source = "manual";
+              });
+              return parsed;
+            }
+          }
+        } catch (e) {
+          console.warn("Storage notice:", e);
+        }
+        const initial = createInitialState();
+        save(initial);
+        return initial;
+      }
+
+      function save(state) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+          console.error("Storage save notice:", e);
+        }
+        return state;
+      }
+
+      return {
+        load,
+        save,
+        createInitialState
+      };
+    })();
+
+    /* ==========================================================================
+       THEME MODULE
+       ========================================================================== */
+    const ClasslineTheme = (() => {
+      const root = document.documentElement;
+
+      function getTheme() {
+        return root.getAttribute("data-theme") || "light";
+      }
+
+      function apply(theme) {
+        const selected = theme === "dark" ? "dark" : "light";
+        root.setAttribute("data-theme", selected);
+
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.content = selected === "dark" ? "#121212" : "#f7f7f5";
+        }
+
+        const iconUse = document.querySelector("#theme-icon use");
+        if (iconUse) {
+          iconUse.setAttribute("href", selected === "dark" ? "#icon-sun" : "#icon-moon");
+        }
+        return selected;
+      }
+
+      function toggle() {
+        return apply(getTheme() === "dark" ? "light" : "dark");
+      }
+
+      return {
+        getTheme,
+        apply,
+        toggle
+      };
+    })();
+
+    /* ==========================================================================
+       OFFICIAL INDIAN HOLIDAY CALENDAR SYNC
+       Base: https://calendar-api-d7a8.onrender.com/v1/holidays
+       ========================================================================== */
+    const ClasslineHolidaySync = (() => {
+      const API_BASE = "https://calendar-api-d7a8.onrender.com/v1/holidays";
+
+      async function fetchLiveCentralHolidays(year) {
+        const urls = [
+          `${API_BASE}?country=IN&year=${year}&region=CENTRAL`,
+          `${API_BASE}?country=IN&year=${year}`
+        ];
+
+        let lastError = null;
+
+        for (const url of urls) {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 9500);
+
+          try {
+            const res = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeout);
+
+            if (res.status === 404) continue;
+            if (!res.ok) {
+              throw new Error(`Holiday calendar service returned status ${res.status}`);
+            }
+
+            const json = await res.json();
+            const list = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : (Array.isArray(json.holidays) ? json.holidays : []));
+
+            if (Array.isArray(list) && list.length > 0) {
+              return list.map(item => ({
+                name: item.name || item.holiday_name || item.title || "Gazetted Holiday",
+                date: item.date || item.holiday_date,
+                category: "national",
+                note: item.description || item.note || "Central Government Gazetted Holiday"
+              })).filter(h => h.date && /^\d{4}-\d{2}-\d{2}$/.test(h.date));
+            }
+          } catch (err) {
+            clearTimeout(timeout);
+            lastError = err;
+          }
+        }
+
+        if (lastError) throw lastError;
+        return [];
+      }
+
+      async function fetchLiveStateHolidays(regionCode, year) {
+        const url = `${API_BASE}?country=IN&year=${year}&region=${encodeURIComponent(regionCode)}`;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 9500);
+
+        try {
+          const res = await fetch(url, { signal: controller.signal });
+          clearTimeout(timeout);
+
+          if (res.status === 404) {
+            return { status: "not_available", holidays: [] };
+          }
+
+          if (!res.ok) {
+            throw new Error(`State holiday calendar service returned status ${res.status}`);
+          }
+
+          const json = await res.json();
+          const list = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : (Array.isArray(json.holidays) ? json.holidays : []));
+
+          if (!list || list.length === 0) {
+            return { status: "not_available", holidays: [] };
+          }
+
+          const regionObj = ALL_INDIA_REGIONS.find(r => r.code === regionCode);
+          const regionName = regionObj ? regionObj.name : regionCode;
+
+          const formatted = list.map(item => ({
+            name: item.name || item.holiday_name || item.title || "State Holiday",
+            date: item.date || item.holiday_date,
+            category: "state",
+            note: item.description || item.note || `Official Public Holiday (${regionName})`
+          })).filter(h => h.date && /^\d{4}-\d{2}-\d{2}$/.test(h.date));
+
+          if (formatted.length === 0) {
+            return { status: "not_available", holidays: [] };
+          }
+
+          return { status: "ok", holidays: formatted };
+        } catch (err) {
+          clearTimeout(timeout);
+          throw err;
+        }
+      }
+
+      return {
+        fetchLiveCentralHolidays,
+        fetchLiveStateHolidays
+      };
+    })();
+
+    /* ==========================================================================
+       ROUTINE ENGINE
+       ========================================================================== */
+    const ClasslineRoutine = (() => {
+      let state;
+      let activeCategoryFilter = "all";
+
+      function setState(s) {
+        state = s;
+      }
+
+      function getState() {
+        return state;
+      }
+
+      function setFilter(filter) {
+        activeCategoryFilter = filter;
+        renderHolidayList();
+      }
+
+      function getHoliday(dateStr) {
+        return state.holidays.find(h => h.date === dateStr) || null;
+      }
+
+      function getClassesForDate(dateStr) {
+        if (getHoliday(dateStr)) {
+          return [];
+        }
+        const [y, m, d] = dateStr.split("-").map(Number);
+        const dayOfWeek = new Date(y, m - 1, d).getDay();
+
+        return [...state.classes]
+          .filter(c => {
+            if (c.date) {
+              return c.date === dateStr;
+            }
+            return Array.isArray(c.days) && c.days.includes(dayOfWeek);
+          })
+          .sort((a, b) => a.startTime.localeCompare(b.startTime) || a.name.localeCompare(b.name));
+      }
+
+      function renderRoutineList() {
+        const container = document.getElementById("routine-list");
+        container.replaceChildren();
+
+        const sorted = [...state.classes].sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+        if (!sorted.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.innerHTML = `
+            <strong>Your routine is ready for classes</strong>
+            <p>Add your recurring weekly lectures or specific exam sessions.</p>
+            <button type="button" class="primary-button" id="routine-empty-add-btn">
+              + Add your first class
+            </button>
+          `;
+          container.append(empty);
+          empty.querySelector("#routine-empty-add-btn").addEventListener("click", () => {
+            ClasslineApp.openClassDialog();
+          });
+          return;
+        }
+
+        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        sorted.forEach(item => {
+          const card = document.createElement("article");
+          card.className = "class-card";
+
+          const daysBadge = item.date 
+            ? `Specific date: ${item.date}` 
+            : (item.days || []).map(d => weekdays[d]).join(", ");
+
+          card.innerHTML = `
+            <div class="class-time">${item.startTime} – ${item.endTime}</div>
+            <div class="class-time-line"></div>
+            <div class="class-details">
+              <h3>${escapeHtml(item.name)}</h3>
+              <p>${item.location ? `📍 ${escapeHtml(item.location)} • ` : ""}${daysBadge}</p>
+            </div>
+            <div class="card-actions">
+              <button type="button" class="small-button edit-btn">Edit</button>
+              <button type="button" class="small-button danger-button del-btn">Delete</button>
+            </div>
+          `;
+
+          card.querySelector(".edit-btn").addEventListener("click", () => {
+            ClasslineApp.openClassDialog(item);
+          });
+
+          card.querySelector(".del-btn").addEventListener("click", () => {
+            ClasslineApp.confirmDialog({
+              title: `Delete Class`,
+              message: `Are you sure you want to remove "${item.name}" from your routine?`,
+              onConfirm: () => {
+                state.classes = state.classes.filter(c => c.id !== item.id);
+                ClasslineApp.persist();
+                ClasslineApp.renderAll();
+                ClasslineApp.toast("Class removed from routine.");
+              }
+            });
+          });
+
+          container.append(card);
+        });
+      }
+
+      function getCategoryLabel(cat) {
+        switch (cat) {
+          case "national": return "National";
+          case "state": return "State";
+          case "academic": return "Academic";
+          case "cultural": return "Cultural";
+          default: return "Institutional";
+        }
+      }
+
+      function updateCategoryCounts() {
+        const allCount = state.holidays.length;
+        const nationalCount = state.holidays.filter(h => h.category === "national").length;
+        const stateCount = state.holidays.filter(h => h.category === "state").length;
+        const academicCount = state.holidays.filter(h => h.category === "academic").length;
+        const culturalCount = state.holidays.filter(h => h.category === "cultural").length;
+        const institutionalCount = state.holidays.filter(h => h.category === "institutional").length;
+
+        const setTxt = (id, count) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = count;
+        };
+
+        setTxt("count-all", allCount);
+        setTxt("count-national", nationalCount);
+        setTxt("count-state", stateCount);
+        setTxt("count-academic", academicCount);
+        setTxt("count-cultural", culturalCount);
+        setTxt("count-institutional", institutionalCount);
+      }
+
+      function renderHolidayList() {
+        const container = document.getElementById("holiday-list");
+        container.replaceChildren();
+
+        updateCategoryCounts();
+
+        let holidays = [...state.holidays];
+        if (activeCategoryFilter !== "all") {
+          holidays = holidays.filter(h => h.category === activeCategoryFilter);
+        }
+        holidays.sort((a, b) => a.date.localeCompare(b.date));
+
+        if (!holidays.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.innerHTML = `
+            <strong>No holidays in this view</strong>
+            <p>${activeCategoryFilter === "all" ? "Classes will continue as scheduled. You can add custom college closures, update Indian holidays in Settings, or restore deleted dates." : "No holidays found matching category '" + getCategoryLabel(activeCategoryFilter) + "'."}</p>
+            <div style="display:flex; justify-content:center; gap:8px;">
+              <button type="button" class="secondary-button" id="quick-recover-holiday-btn">
+                Open Trash / Recovery
+              </button>
+            </div>
+          `;
+          container.append(empty);
+
+          empty.querySelector("#quick-recover-holiday-btn").addEventListener("click", () => {
+            ClasslineApp.openHolidayRecoveryDialog();
+          });
+          ClasslineApp.updateTrashCount();
+          return;
+        }
+
+        holidays.forEach(item => {
+          const card = document.createElement("article");
+          card.className = "class-card";
+          const cat = item.category || "institutional";
+          const isSynced = (item.source || "").startsWith("api-sync");
+          const sourceBadge = isSynced 
+            ? `<span class="badge-source">Official</span>` 
+            : `<span class="badge-source">Custom</span>`;
+
+          card.innerHTML = `
+            <div class="class-time">${item.date}</div>
+            <div class="class-time-line" style="background: var(--cat-${cat}, var(--red));"></div>
+            <div class="class-details">
+              <div class="class-details-header">
+                <h3>${escapeHtml(item.name)}</h3>
+                <span class="badge-category ${cat}">${getCategoryLabel(cat)}</span>
+                ${sourceBadge}
+              </div>
+              <p>${item.note ? escapeHtml(item.note) : "College closure • Classes paused"}</p>
+            </div>
+            <div class="card-actions">
+              <button type="button" class="small-button edit-btn">Edit</button>
+              <button type="button" class="small-button danger-button del-btn">Delete</button>
+            </div>
+          `;
+
+          card.querySelector(".edit-btn").addEventListener("click", () => {
+            ClasslineApp.openHolidayDialog(item);
+          });
+
+          card.querySelector(".del-btn").addEventListener("click", () => {
+            ClasslineApp.confirmDialog({
+              title: `Delete Holiday`,
+              message: `Remove "${item.name}" on ${item.date}? You can restore it from the recovery bin anytime.`,
+              onConfirm: () => {
+                if (!Array.isArray(state.deletedHolidays)) state.deletedHolidays = [];
+                state.deletedHolidays.unshift({
+                  ...item,
+                  deletedAt: new Date().toISOString()
+                });
+                state.holidays = state.holidays.filter(h => h.id !== item.id);
+                ClasslineApp.persist();
+                ClasslineApp.renderAll();
+                ClasslineApp.toast(`Holiday moved to trash.`, {
+                  actionText: "Undo",
+                  onAction: () => ClasslineApp.restoreHoliday(item.id)
+                });
+              }
+            });
+          });
+
+          container.append(card);
+        });
+
+        ClasslineApp.updateTrashCount();
+      }
+
+      function escapeHtml(str) {
+        return String(str || "").replace(/[&<>"']/g, c => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[c]);
+      }
+
+      return {
+        setState,
+        getState,
+        setFilter,
+        getHoliday,
+        getClassesForDate,
+        renderRoutineList,
+        renderHolidayList,
+        getCategoryLabel,
+        escapeHtml
+      };
+    })();
+
+    /* ==========================================================================
+       CALENDAR CONTROLLER
+       ========================================================================== */
+    const ClasslineCalendar = (() => {
+      const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      let currentDate = new Date();
+      let selectedDate = toISODate(new Date());
+      let isMonthMode = false;
+
+      function toISODate(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      function fromISODate(iso) {
+        const [y, m, d] = iso.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      function addDays(date, amt) {
+        const d = new Date(date);
+        d.setDate(d.getDate() + amt);
+        return d;
+      }
+
+      function startOfWeek(date) {
+        const d = new Date(date);
+        d.setHours(12, 0, 0, 0);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        d.setDate(diff);
+        return d;
+      }
+
+      function renderWeek() {
+        const grid = document.getElementById("week-grid");
+        grid.replaceChildren();
+
+        const start = startOfWeek(currentDate);
+        const end = addDays(start, 6);
+
+        const startText = start.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+        const endText = end.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+        document.getElementById("week-heading").textContent = `${startText} – ${endText}`;
+
+        for (let i = 0; i < 7; i++) {
+          const dayDate = addDays(start, i);
+          const iso = toISODate(dayDate);
+          const classes = ClasslineRoutine.getClassesForDate(iso);
+          const holiday = ClasslineRoutine.getHoliday(iso);
+          const isToday = iso === toISODate(new Date());
+          const isSelected = iso === selectedDate;
+
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `day-cell${isSelected ? " selected" : ""}${isToday ? " today" : ""}`;
+
+          let indicatorHtml = "";
+          if (holiday) {
+            const cat = holiday.category || "institutional";
+            indicatorHtml = `
+              <div class="cell-indicators" title="${holiday.name}">
+                <span class="cell-dot holiday-dot" style="background: var(--cat-${cat}, var(--red));"></span>
+                <span class="cell-dot-count red">${ClasslineRoutine.getCategoryLabel(cat)}</span>
+              </div>
+            `;
+          } else if (classes.length) {
+            indicatorHtml = `
+              <div class="cell-indicators" title="${classes.length} class(es)">
+                <span class="cell-dot class-dot"></span>
+                <span class="cell-dot-count green">${classes.length}</span>
+              </div>
+            `;
+          } else {
+            indicatorHtml = `
+              <div class="cell-indicators">
+                <span class="cell-dot-count" style="opacity:0.5;">—</span>
+              </div>
+            `;
+          }
+
+          button.innerHTML = `
+            <span class="day-name">${WEEKDAYS[dayDate.getDay()]}</span>
+            <span class="day-number">${dayDate.getDate()}</span>
+            ${indicatorHtml}
+          `;
+
+          button.addEventListener("click", () => {
+            selectedDate = iso;
+            currentDate = fromISODate(iso);
+            render();
+          });
+
+          grid.append(button);
+        }
+      }
+
+      function renderMonth() {
+        const grid = document.getElementById("month-grid");
+        grid.replaceChildren();
+
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        document.getElementById("week-heading").textContent = 
+          currentDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+
+        WEEKDAYS.forEach(day => {
+          const header = document.createElement("div");
+          header.className = "month-weekday";
+          header.textContent = day;
+          grid.append(header);
+        });
+
+        const firstWeekday = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstWeekday; i++) {
+          const empty = document.createElement("div");
+          empty.className = "month-day empty";
+          grid.append(empty);
+        }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dayDate = new Date(year, month, d);
+          const iso = toISODate(dayDate);
+          const classes = ClasslineRoutine.getClassesForDate(iso);
+          const holiday = ClasslineRoutine.getHoliday(iso);
+          const isToday = iso === toISODate(new Date());
+          const isSelected = iso === selectedDate;
+
+          const cell = document.createElement("button");
+          cell.type = "button";
+          cell.className = `month-day${isSelected ? " selected" : ""}${isToday ? " today" : ""}`;
+
+          let dotsHtml = "";
+          if (holiday) {
+            const cat = holiday.category || "institutional";
+            dotsHtml = `
+              <div class="month-indicators" title="${holiday.name}">
+                <span class="cell-dot holiday-dot" style="background: var(--cat-${cat}, var(--red));"></span>
+              </div>
+            `;
+          } else if (classes.length) {
+            const dotCount = Math.min(classes.length, 3);
+            let dots = "";
+            for (let k = 0; k < dotCount; k++) {
+              dots += `<span class="cell-dot class-dot"></span>`;
+            }
+            dotsHtml = `
+              <div class="month-indicators" title="${classes.length} class(es)">
+                ${dots}
+              </div>
+            `;
+          } else {
+            dotsHtml = `<div class="month-indicators"></div>`;
+          }
+
+          cell.innerHTML = `
+            <span class="month-day-number">${d}</span>
+            ${dotsHtml}
+          `;
+
+          cell.addEventListener("click", () => {
+            selectedDate = iso;
+            currentDate = fromISODate(iso);
+            render();
+          });
+
+          grid.append(cell);
+        }
+      }
+
+      function renderSelectedDay() {
+        const container = document.getElementById("selected-day-content");
+        const heading = document.getElementById("selected-date-heading");
+        const dateObj = fromISODate(selectedDate);
+
+        heading.textContent = dateObj.toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        });
+
+        container.replaceChildren();
+
+        const holiday = ClasslineRoutine.getHoliday(selectedDate);
+        const classes = ClasslineRoutine.getClassesForDate(selectedDate);
+
+        if (holiday) {
+          const cat = holiday.category || "institutional";
+          const box = document.createElement("div");
+          box.className = "empty-state";
+          box.style.borderColor = `var(--cat-${cat}-border)`;
+          box.style.background = `var(--cat-${cat}-bg)`;
+          box.innerHTML = `
+            <div style="margin-bottom: 8px;">
+              <span class="badge-category ${cat}">${ClasslineRoutine.getCategoryLabel(cat)} Holiday</span>
+            </div>
+            <strong style="color: var(--cat-${cat}); font-size: 16px;">${ClasslineRoutine.escapeHtml(holiday.name)}</strong>
+            <p style="color: var(--text); margin-top: 4px;">${holiday.note ? ClasslineRoutine.escapeHtml(holiday.note) : "Regular classes are suspended today for this holiday."}</p>
+          `;
+          container.append(box);
+          return;
+        }
+
+        if (!classes.length) {
+          const box = document.createElement("div");
+          box.className = "empty-state";
+          box.innerHTML = `
+            <strong>No classes scheduled for today</strong>
+            <p>Your calendar is clear. Enjoy the free time or add a class session.</p>
+            <button type="button" class="secondary-button" id="day-add-class-btn">+ Add class for this date</button>
+          `;
+          container.append(box);
+          box.querySelector("#day-add-class-btn").addEventListener("click", () => {
+            ClasslineApp.openClassDialog({ date: selectedDate });
+          });
+          return;
+        }
+
+        classes.forEach(item => {
+          const card = document.createElement("article");
+          card.className = "class-card";
+
+          card.innerHTML = `
+            <div class="class-time">${item.startTime} – ${item.endTime}</div>
+            <div class="class-time-line"></div>
+            <div class="class-details">
+              <h3>${ClasslineRoutine.escapeHtml(item.name)}</h3>
+              <p>${item.location ? `📍 ${ClasslineRoutine.escapeHtml(item.location)}` : "Regular lecture"}</p>
+            </div>
+            <div class="card-actions">
+              <button type="button" class="small-button edit-btn">Edit</button>
+            </div>
+          `;
+
+          card.querySelector(".edit-btn").addEventListener("click", () => {
+            ClasslineApp.openClassDialog(item);
+          });
+
+          container.append(card);
+        });
+      }
+
+      function render() {
+        if (isMonthMode) {
+          renderMonth();
+          document.getElementById("week-grid").classList.add("hidden");
+          document.getElementById("month-grid").classList.remove("hidden");
+          document.getElementById("month-toggle").textContent = "Week view";
+        } else {
+          renderWeek();
+          document.getElementById("week-grid").classList.remove("hidden");
+          document.getElementById("month-grid").classList.add("hidden");
+          document.getElementById("month-toggle").textContent = "Month view";
+        }
+        renderSelectedDay();
+      }
+
+      function previous() {
+        currentDate = addDays(currentDate, isMonthMode ? -30 : -7);
+        render();
+      }
+
+      function next() {
+        currentDate = addDays(currentDate, isMonthMode ? 30 : 7);
+        render();
+      }
+
+      function today() {
+        currentDate = new Date();
+        selectedDate = toISODate(currentDate);
+        render();
+      }
+
+      function toggleMode() {
+        isMonthMode = !isMonthMode;
+        render();
+      }
+
+      function getSelectedDate() {
+        return selectedDate;
+      }
+
+      return {
+        render,
+        previous,
+        next,
+        today,
+        toggleMode,
+        getSelectedDate,
+        toISODate,
+        fromISODate
+      };
+    })();
+
+    /* ==========================================================================
+       TIMETABLE ASSISTANT MODULE (Student & Educator Focused)
+       ========================================================================== */
+    const ClasslineAI = (() => {
+      let pendingData = null;
+
+      function createPrompt() {
+        const desc = document.getElementById("routine-description").value.trim();
+        const start = document.getElementById("academic-start").value;
+        const end = document.getElementById("academic-end").value;
+
+        if (!desc) {
+          throw new Error("Please describe your class routine and subjects in Step 1 first.");
+        }
+        if (start && end && start > end) {
+          throw new Error("The semester start date must occur before the end date.");
+        }
+
+        return `You are helping organize a student's academic class timetable. Convert the schedule description below into a clean schedule data object matching this structure.
+Return ONLY valid JSON format without markdown codeblocks (\`\`\`json), markdown fences, extra notes, or explanations.
+
+ROUTINE DESCRIPTION:
+${desc}
+
+SEMESTER DATES:
+Start date: ${start || "Not specified"}
+End date: ${end || "Not specified"}
+
+DATA STRUCTURE:
+{
+  "classes": [
+    {
+      "name": "Course Title",
+      "startTime": "HH:MM",
+      "endTime": "HH:MM",
+      "location": "Optional Hall or Room",
+      "days": [1, 3],
+      "date": null
+    }
+  ],
+  "holidays": [
+    {
+      "name": "Holiday Title",
+      "date": "YYYY-MM-DD",
+      "category": "national" | "state" | "academic" | "cultural" | "institutional",
+      "note": "Optional details"
+    }
+  ]
+}
+
+RULES:
+1. Use 24-hour time format (e.g. "09:00", "14:30").
+2. Weekday numbers: Sunday=0, Monday=1, Tuesday=2, Wednesday=3, Thursday=4, Friday=5, Saturday=6.
+3. For recurring weekly classes, specify the days array and set "date" to null.
+4. For one-time events, set "days" to [] and provide "date" as "YYYY-MM-DD".
+5. Categorize holidays as:
+   - "national" (Compulsory national gazetted holidays)
+   - "state" (Regional state festival and public holidays)
+   - "academic" (Exam prep, term breaks, reading recesses)
+   - "cultural" (Cultural observances and festivals)
+   - "institutional" (College founders day, campus-specific closures)
+6. Output raw data only.`;
+      }
+
+      function validateTime(str) {
+        return typeof str === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(str);
+      }
+
+      function validateDate(str) {
+        return typeof str === "string" && /^\d{4}-\d{2}-\d{2}$/.test(str) && !isNaN(Date.parse(str));
+      }
+
+      function validateAndParse(raw) {
+        let clean = raw.trim();
+        if (clean.startsWith("```")) {
+          clean = clean.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "").trim();
+        }
+
+        let parsed;
+        try {
+          parsed = JSON.parse(clean);
+        } catch (e) {
+          throw new Error("Unable to read routine data. Please ensure the assistant's response is copied completely.");
+        }
+
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+          throw new Error("The schedule data should contain a list of classes and holidays.");
+        }
+
+        if (!Array.isArray(parsed.classes) || !Array.isArray(parsed.holidays)) {
+          throw new Error("The schedule response needs both 'classes' and 'holidays' lists.");
+        }
+
+        const validClasses = parsed.classes.map((c, i) => {
+          if (!c.name || typeof c.name !== "string") {
+            throw new Error(`Class #${i + 1} needs a valid subject title.`);
+          }
+          if (!validateTime(c.startTime) || !validateTime(c.endTime)) {
+            throw new Error(`Class "${c.name}" has invalid class times (use 24-hour HH:MM).`);
+          }
+          if (c.startTime >= c.endTime) {
+            throw new Error(`Class "${c.name}" ends before or at the time it starts.`);
+          }
+          const days = Array.isArray(c.days) ? c.days.filter(d => Number.isInteger(d) && d >= 0 && d <= 6) : [];
+          const date = c.date && validateDate(c.date) ? c.date : null;
+
+          if (!date && !days.length) {
+            throw new Error(`Class "${c.name}" needs repeating weekdays or a specific date.`);
+          }
+
+          return {
+            id: `cls-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+            name: c.name.trim(),
+            startTime: c.startTime,
+            endTime: c.endTime,
+            location: (c.location || "").trim(),
+            days,
+            date
+          };
+        });
+
+        const validHolidays = parsed.holidays.map((h, i) => {
+          if (!h.name || typeof h.name !== "string") {
+            throw new Error(`Holiday #${i + 1} needs a title.`);
+          }
+          if (!validateDate(h.date)) {
+            throw new Error(`Holiday "${h.name}" has an invalid date (use YYYY-MM-DD).`);
+          }
+          const validCategories = ["national", "state", "academic", "cultural", "institutional"];
+          const cat = validCategories.includes(h.category) ? h.category : "institutional";
+
+          return {
+            id: `hol-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+            name: h.name.trim(),
+            date: h.date,
+            category: cat,
+            source: "manual",
+            note: (h.note || "").trim()
+          };
+        });
+
+        return { classes: validClasses, holidays: validHolidays };
+      }
+
+      function computeDiff(incoming) {
+        const state = ClasslineRoutine.getState();
+
+        const isDuplicateClass = (cand) => {
+          return state.classes.some(curr => {
+            const sameName = curr.name.trim().toLowerCase() === cand.name.trim().toLowerCase();
+            const sameTime = curr.startTime === cand.startTime && curr.endTime === cand.endTime;
+            const sameDate = (curr.date || null) === (cand.date || null);
+            const currDays = (curr.days || []).slice().sort().join(",");
+            const candDays = (cand.days || []).slice().sort().join(",");
+            return sameName && sameTime && sameDate && currDays === candDays;
+          });
+        };
+
+        const isDuplicateHoliday = (cand) => {
+          return state.holidays.some(curr => curr.date === cand.date);
+        };
+
+        let classesToAdd = 0, classesToSkip = 0;
+        incoming.classes.forEach(c => {
+          if (isDuplicateClass(c)) classesToSkip++;
+          else classesToAdd++;
+        });
+
+        let holidaysToAdd = 0, holidaysToSkip = 0;
+        incoming.holidays.forEach(h => {
+          if (isDuplicateHoliday(h)) holidaysToSkip++;
+          else holidaysToAdd++;
+        });
+
+        return {
+          currentClassCount: state.classes.length,
+          currentHolidayCount: state.holidays.length,
+          incomingClassCount: incoming.classes.length,
+          incomingHolidayCount: incoming.holidays.length,
+          classesToAdd,
+          classesToSkip,
+          holidaysToAdd,
+          holidaysToSkip
+        };
+      }
+
+      function renderPreview(data) {
+        const container = document.getElementById("import-preview");
+        container.replaceChildren();
+
+        const diff = computeDiff(data);
+
+        const card = document.createElement("div");
+        card.className = "import-review";
+
+        card.innerHTML = `
+          <h3>Review timetable schedule</h3>
+          <p class="muted">
+            Choose how to incorporate these entries into your planner. <strong>Add to existing schedule</strong> is selected by default to protect your current classes.
+          </p>
+
+          <div class="import-options">
+            <label class="import-option" id="opt-merge-label">
+              <input type="radio" name="import-mode" value="merge" checked id="radio-merge">
+              <span>
+                <strong>Add to existing schedule (Keep current classes)</strong>
+                <small>Preserves your existing schedule. Adds new classes and automatically skips identical duplicates.</small>
+              </span>
+            </label>
+
+            <label class="import-option" id="opt-replace-label">
+              <input type="radio" name="import-mode" value="replace" id="radio-replace">
+              <span>
+                <strong>Replace current schedule (Start fresh)</strong>
+                <small>Clears all existing classes and holidays, replacing them entirely with this incoming routine.</small>
+              </span>
+            </label>
+          </div>
+
+          <div class="import-summary" id="import-summary-box"></div>
+
+          <div class="button-row" style="margin-top: 20px;">
+            <button type="button" class="primary-button" id="confirm-import-btn">
+              Add to Schedule
+            </button>
+            <button type="button" class="secondary-button" id="cancel-import-btn">Cancel</button>
+          </div>
+        `;
+
+        container.append(card);
+
+        const radioMerge = card.querySelector("#radio-merge");
+        const radioReplace = card.querySelector("#radio-replace");
+        const summaryBox = card.querySelector("#import-summary-box");
+        const confirmBtn = card.querySelector("#confirm-import-btn");
+
+        function updateSummary() {
+          if (radioMerge.checked) {
+            summaryBox.innerHTML = `
+              <strong>Schedule Plan:</strong> Will add <span class="import-summary-pill">${diff.classesToAdd}</span> new classes and <span class="import-summary-pill">${diff.holidaysToAdd}</span> holidays.<br>
+              Will preserve existing entries, skipping <span class="import-summary-pill">${diff.classesToSkip}</span> duplicate classes and <span class="import-summary-pill">${diff.holidaysToSkip}</span> already recorded holidays.
+            `;
+            confirmBtn.textContent = "Add to Schedule";
+          } else {
+            summaryBox.innerHTML = `
+              <strong style="color: var(--red);">Reset Plan:</strong> All <span class="import-summary-pill">${diff.currentClassCount}</span> existing classes and <span class="import-summary-pill">${diff.currentHolidayCount}</span> holidays will be replaced.<br>
+              They will be updated with <span class="import-summary-pill">${diff.incomingClassCount}</span> new classes and <span class="import-summary-pill">${diff.incomingHolidayCount}</span> incoming holidays.
+            `;
+            confirmBtn.textContent = "Replace and Start Fresh";
+          }
+        }
+
+        radioMerge.addEventListener("change", updateSummary);
+        radioReplace.addEventListener("change", updateSummary);
+        updateSummary();
+
+        card.querySelector("#cancel-import-btn").addEventListener("click", () => {
+          pendingData = null;
+          container.replaceChildren();
+          showStatus("Import cancelled.");
+        });
+
+        confirmBtn.addEventListener("click", () => {
+          const mode = radioReplace.checked ? "replace" : "merge";
+
+          if (mode === "replace") {
+            ClasslineApp.confirmDialog({
+              title: "Replace Entire Schedule?",
+              message: `This will clear all ${diff.currentClassCount} current classes and ${diff.currentHolidayCount} holidays, starting fresh with the new timetable. Do you want to continue?`,
+              onConfirm: () => executeImport(data, "replace")
+            });
+          } else {
+            executeImport(data, "merge");
+          }
+        });
+
+        card.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function executeImport(data, mode) {
+        const state = ClasslineRoutine.getState();
+        let addedC = 0, addedH = 0;
+
+        if (mode === "replace") {
+          state.classes = [...data.classes];
+          state.holidays = [...data.holidays];
+          addedC = data.classes.length;
+          addedH = data.holidays.length;
+        } else {
+          const isDuplicateClass = (cand) => {
+            return state.classes.some(curr => {
+              const sameName = curr.name.trim().toLowerCase() === cand.name.trim().toLowerCase();
+              const sameTime = curr.startTime === cand.startTime && curr.endTime === cand.endTime;
+              const sameDate = (curr.date || null) === (cand.date || null);
+              const currDays = (curr.days || []).slice().sort().join(",");
+              const candDays = (cand.days || []).slice().sort().join(",");
+              return sameName && sameTime && sameDate && currDays === candDays;
+            });
+          };
+
+          const isDuplicateHoliday = (cand) => {
+            return state.holidays.some(curr => curr.date === cand.date);
+          };
+
+          data.classes.forEach(c => {
+            if (!isDuplicateClass(c)) {
+              state.classes.push(c);
+              addedC++;
+            }
+          });
+
+          data.holidays.forEach(h => {
+            if (!isDuplicateHoliday(h)) {
+              state.holidays.push(h);
+              addedH++;
+            }
+          });
+        }
+
+        ClasslineApp.persist();
+        ClasslineApp.renderAll();
+
+        document.getElementById("import-preview").replaceChildren();
+        document.getElementById("routine-description").value = "";
+        document.getElementById("generated-prompt").value = "";
+        document.getElementById("routine-json").value = "";
+
+        showStatus(
+          mode === "merge"
+            ? `Schedule updated: added ${addedC} classes and ${addedH} holidays.`
+            : `Schedule replaced: loaded ${addedC} classes and ${addedH} holidays.`,
+          "success"
+        );
+
+        ClasslineApp.toast(mode === "merge" ? "Routine added to schedule!" : "Schedule updated!");
+        ClasslineApp.navigate("calendar");
+      }
+
+      function showStatus(msg, type = "") {
+        const el = document.getElementById("assistant-status");
+        el.textContent = msg;
+        el.className = `status-message ${type}`.trim();
+      }
+
+      function copyTextFallback(text) {
+        const t = document.createElement("textarea");
+        t.value = text;
+        t.style.position = "fixed";
+        t.style.opacity = "0";
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand("copy");
+        document.body.removeChild(t);
+      }
+
+      return {
+        generatePrompt: () => {
+          try {
+            const prompt = createPrompt();
+            document.getElementById("generated-prompt").value = prompt;
+            showStatus("Prompt ready! Copy or share it with your AI assistant.", "success");
+            const step2 = document.getElementById("panel-step-2");
+            step2.scrollIntoView({ behavior: "smooth", block: "start" });
+          } catch (e) {
+            showStatus(e.message, "error");
+          }
+        },
+        copyPrompt: async () => {
+          const prompt = document.getElementById("generated-prompt").value;
+          if (!prompt) {
+            showStatus("Please generate an assistant prompt first.", "error");
+            return;
+          }
+          copyTextFallback(prompt);
+          showStatus("Prompt copied to clipboard!", "success");
+          ClasslineApp.toast("Prompt copied!");
+        },
+        sharePrompt: async () => {
+          const prompt = document.getElementById("generated-prompt").value;
+          if (!prompt) {
+            showStatus("Please generate an assistant prompt first.", "error");
+            return;
+          }
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: "Classline Timetable Prompt",
+                text: prompt
+              });
+              return;
+            } catch (err) {
+              if (err.name === "AbortError") return;
+            }
+          }
+          copyTextFallback(prompt);
+          showStatus("Sharing unavailable; prompt copied instead.", "success");
+        },
+        readClipboard: async () => {
+          try {
+            if (!navigator.clipboard?.readText) {
+              throw new Error("Clipboard reading is unavailable in this browser. Please paste the response manually.");
+            }
+            const text = await navigator.clipboard.readText();
+            if (!text.trim()) {
+              throw new Error("Clipboard is empty.");
+            }
+            document.getElementById("routine-json").value = text;
+            showStatus("Pasted from clipboard! Click 'Review & Add to Schedule'.", "success");
+          } catch (e) {
+            showStatus(e.message || "Please paste your assistant's response manually.", "error");
+          }
+        },
+        validate: () => {
+          try {
+            const raw = document.getElementById("routine-json").value;
+            if (!raw.trim()) {
+              throw new Error("Please paste your assistant's response first.");
+            }
+            pendingData = validateAndParse(raw);
+            renderPreview(pendingData);
+            showStatus("Routine verified! Review the schedule details below.", "success");
+          } catch (e) {
+            pendingData = null;
+            document.getElementById("import-preview").replaceChildren();
+            showStatus(e.message, "error");
+          }
+        }
+      };
+    })();
+
+    /* ==========================================================================
+       MAIN APP CONTROLLER
+       ========================================================================== */
+    const ClasslineApp = (() => {
+      let state;
+
+      const titles = {
+        calendar: "Calendar",
+        routine: "My routine",
+        holidays: "Holidays",
+        assistant: "Timetable assistant",
+        settings: "Settings"
+      };
+
+      function toast(message, options = null) {
+        const el = document.getElementById("toast");
+        el.replaceChildren();
+
+        const isError = options && options.isError;
+        if (isError) {
+          el.classList.add("error-toast");
+        } else {
+          el.classList.remove("error-toast");
+        }
+
+        const textSpan = document.createElement("span");
+        textSpan.textContent = message;
+        el.appendChild(textSpan);
+
+        if (options && options.onAction) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = options.actionText || "Undo";
+          btn.style.marginLeft = "12px";
+          btn.style.padding = "2px 8px";
+          btn.style.borderRadius = "4px";
+          btn.style.fontWeight = "700";
+          btn.style.fontSize = "12px";
+          btn.style.background = isError ? "var(--red)" : "var(--accent)";
+          btn.style.color = isError ? "#ffffff" : "var(--accent-text)";
+          btn.addEventListener("click", () => {
+            el.classList.remove("visible");
+            options.onAction();
+          });
+          el.appendChild(btn);
+        }
+
+        el.classList.add("visible");
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => {
+          el.classList.remove("visible");
+        }, isError ? 5500 : 3400);
+      }
+
+      function updateTrashCount() {
+        const countSpan = document.getElementById("trash-count");
+        if (countSpan) {
+          const trash = state && Array.isArray(state.deletedHolidays) ? state.deletedHolidays : [];
+          countSpan.textContent = trash.length;
+        }
+        updateSettingsOverview();
+      }
+
+      function restoreHoliday(holidayId) {
+        if (!state || !Array.isArray(state.deletedHolidays)) return;
+        const targetIndex = state.deletedHolidays.findIndex(h => h.id === holidayId);
+        if (targetIndex === -1) return;
+
+        const holiday = state.deletedHolidays[targetIndex];
+
+        const exists = state.holidays.some(h => h.date === holiday.date);
+        if (exists) {
+          toast(`Cannot restore: Another holiday is already scheduled on ${holiday.date}.`, { isError: true });
+          return;
+        }
+
+        state.deletedHolidays.splice(targetIndex, 1);
+        const { deletedAt, ...restored } = holiday;
+        state.holidays.push(restored);
+        persist();
+        renderAll();
+        renderHolidayTrashList();
+        toast(`Holiday "${restored.name}" restored.`);
+      }
+
+      function renderHolidayTrashList() {
+        const trashContainer = document.getElementById("holiday-trash-list");
+        if (!trashContainer) return;
+        trashContainer.replaceChildren();
+
+        const trash = Array.isArray(state.deletedHolidays) ? state.deletedHolidays : [];
+        if (!trash.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.style.padding = "20px";
+          empty.innerHTML = `
+            <strong>Trash is empty</strong>
+            <p style="margin-bottom:0;">No recently deleted holidays found.</p>
+          `;
+          trashContainer.append(empty);
+          return;
+        }
+
+        trash.forEach(item => {
+          const card = document.createElement("article");
+          card.className = "class-card";
+          card.style.padding = "10px 14px";
+          const cat = item.category || "institutional";
+
+          card.innerHTML = `
+            <div class="class-time">${item.date}</div>
+            <div class="class-time-line" style="background: var(--muted);"></div>
+            <div class="class-details">
+              <div class="class-details-header">
+                <h3 style="font-size: 13px;">${ClasslineRoutine.escapeHtml(item.name)}</h3>
+                <span class="badge-category ${cat}">${ClasslineRoutine.getCategoryLabel(cat)}</span>
+              </div>
+              <p style="font-size: 11px;">${item.note ? ClasslineRoutine.escapeHtml(item.note) : "Deleted holiday"}</p>
+            </div>
+            <div class="card-actions">
+              <button type="button" class="small-button restore-btn" style="background: var(--surface-soft);">Restore</button>
+            </div>
+          `;
+
+          card.querySelector(".restore-btn").addEventListener("click", () => {
+            restoreHoliday(item.id);
+          });
+
+          trashContainer.append(card);
+        });
+      }
+
+      function openHolidayRecoveryDialog() {
+        renderHolidayTrashList();
+        updateTrashCount();
+        document.getElementById("holiday-recovery-dialog").showModal();
+      }
+
+      function restoreDefaultAcademicHolidays() {
+        confirmDialog({
+          title: "Add Academic Break Placeholders?",
+          message: "This will add standard mid-term and winter semester break dates to your schedule without altering existing classes.",
+          onConfirm: () => {
+            const currentYear = new Date().getFullYear();
+            const defaults = [
+              {
+                name: "Semester Mid-Term Break",
+                date: `${currentYear}-03-24`,
+                category: "academic",
+                source: "manual",
+                note: "Campus administrative offices open; classes suspended."
+              },
+              {
+                name: "Winter Academic Recess",
+                date: `${currentYear}-12-26`,
+                category: "academic",
+                source: "manual",
+                note: "End of semester examination and vacation period."
+              }
+            ];
+            let recovered = 0;
+            defaults.forEach(def => {
+              if (!state.holidays.some(h => h.date === def.date)) {
+                state.holidays.push({ 
+                  ...def, 
+                  id: `def-hol-${Date.now()}-${Math.random().toString(36).substr(2, 5)}` 
+                });
+                recovered++;
+              }
+            });
+            persist();
+            renderAll();
+            document.getElementById("holiday-recovery-dialog").close();
+            toast(`Added ${recovered} academic break placeholder(s).`);
+          }
+        });
+      }
+
+      function confirmDialog({ title = "Confirm", message, onConfirm }) {
+        const dlg = document.getElementById("confirm-dialog");
+        document.getElementById("confirm-title").textContent = title;
+        document.getElementById("confirm-message").textContent = message;
+
+        const cancelBtn = document.getElementById("confirm-cancel-btn");
+        const okBtn = document.getElementById("confirm-ok-btn");
+
+        const cleanup = () => {
+          cancelBtn.onclick = null;
+          okBtn.onclick = null;
+          dlg.close();
+        };
+
+        cancelBtn.onclick = cleanup;
+        okBtn.onclick = () => {
+          cleanup();
+          if (onConfirm) onConfirm();
+        };
+
+        dlg.showModal();
+      }
+
+      function persist() {
+        ClasslineDB.save(state);
+      }
+
+      function navigate(viewName) {
+        if (!titles[viewName]) return;
+
+        document.querySelectorAll(".view").forEach(el => {
+          el.classList.toggle("active", el.id === `view-${viewName}`);
+        });
+
+        document.querySelectorAll("[data-view]").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.view === viewName);
+        });
+
+        document.getElementById("page-title").textContent = titles[viewName];
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function renderAll() {
+        ClasslineRoutine.setState(state);
+        ClasslineCalendar.render();
+        ClasslineRoutine.renderRoutineList();
+        ClasslineRoutine.renderHolidayList();
+        renderSyncSettings();
+        updateSettingsOverview();
+      }
+
+      function openClassDialog(item = {}) {
+        const form = document.getElementById("class-form");
+        form.reset();
+
+        document.getElementById("class-id").value = item.id || "";
+        document.getElementById("class-dialog-title").textContent = item.id ? "Edit class" : "Add a class";
+        document.getElementById("class-name").value = item.name || "";
+        document.getElementById("class-start").value = item.startTime || "09:00";
+        document.getElementById("class-end").value = item.endTime || "10:30";
+        document.getElementById("class-location").value = item.location || "";
+        document.getElementById("class-date").value = item.date || "";
+
+        const days = Array.isArray(item.days) ? item.days : [];
+        document.querySelectorAll("#weekday-picker input").forEach(input => {
+          input.checked = days.includes(Number(input.value));
+        });
+
+        document.getElementById("class-dialog").showModal();
+      }
+
+      function updateCategoryPreview(category) {
+        const preview = document.getElementById("holiday-category-preview");
+        preview.className = `badge-category ${category}`;
+        preview.textContent = ClasslineRoutine.getCategoryLabel(category);
+      }
+
+      function openHolidayDialog(itemOrDate = null) {
+        const form = document.getElementById("holiday-form");
+        form.reset();
+
+        const isItem = itemOrDate && typeof itemOrDate === "object";
+        const initialDate = typeof itemOrDate === "string" ? itemOrDate : (isItem ? itemOrDate.date : ClasslineCalendar.getSelectedDate());
+
+        document.getElementById("holiday-dialog-title").textContent = isItem ? "Edit holiday" : "Add holiday or closure";
+        document.getElementById("holiday-id").value = isItem ? itemOrDate.id : "";
+        document.getElementById("holiday-name").value = isItem ? itemOrDate.name : "";
+        document.getElementById("holiday-date").value = initialDate;
+        
+        const cat = isItem ? (itemOrDate.category || "institutional") : "institutional";
+        document.getElementById("holiday-category").value = cat;
+        updateCategoryPreview(cat);
+
+        document.getElementById("holiday-note").value = isItem ? (itemOrDate.note || "") : "";
+        document.getElementById("holiday-dialog").showModal();
+      }
+
+      function handleClassSubmit(e) {
+        e.preventDefault();
+        const id = document.getElementById("class-id").value;
+        const name = document.getElementById("class-name").value.trim();
+        const startTime = document.getElementById("class-start").value;
+        const endTime = document.getElementById("class-end").value;
+        const location = document.getElementById("class-location").value.trim();
+        const date = document.getElementById("class-date").value || null;
+
+        const days = Array.from(document.querySelectorAll("#weekday-picker input:checked"))
+          .map(input => Number(input.value));
+
+        if (startTime >= endTime) {
+          toast("Class start time must be earlier than the end time.", { isError: true });
+          return;
+        }
+
+        if (date && days.length) {
+          toast("For one-time classes, please clear the repeating weekdays.", { isError: true });
+          return;
+        }
+
+        if (!date && !days.length) {
+          toast("Please choose recurring weekdays or enter a specific date.", { isError: true });
+          return;
+        }
+
+        const classItem = {
+          id: id || `class-${Date.now()}`,
+          name,
+          startTime,
+          endTime,
+          location,
+          days,
+          date
+        };
+
+        const existingIdx = state.classes.findIndex(c => c.id === id);
+        if (existingIdx >= 0) {
+          state.classes[existingIdx] = classItem;
+        } else {
+          state.classes.push(classItem);
+        }
+
+        persist();
+        renderAll();
+        document.getElementById("class-dialog").close();
+        toast(id ? "Class updated." : "Class added to routine.");
+      }
+
+      function handleHolidaySubmit(e) {
+        e.preventDefault();
+        const id = document.getElementById("holiday-id").value;
+        const name = document.getElementById("holiday-name").value.trim();
+        const date = document.getElementById("holiday-date").value;
+        const category = document.getElementById("holiday-category").value;
+        const note = document.getElementById("holiday-note").value.trim();
+
+        const collision = state.holidays.some(h => h.date === date && h.id !== id);
+        if (collision) {
+          toast("A holiday is already marked on that date.", { isError: true });
+          return;
+        }
+
+        if (id) {
+          const idx = state.holidays.findIndex(h => h.id === id);
+          if (idx >= 0) {
+            state.holidays[idx] = {
+              ...state.holidays[idx],
+              name,
+              date,
+              category,
+              note
+            };
+          }
+        } else {
+          state.holidays.push({
+            id: `hol-${Date.now()}`,
+            name,
+            date,
+            category,
+            source: "manual",
+            note
+          });
+        }
+
+        persist();
+        renderAll();
+        document.getElementById("holiday-dialog").close();
+        toast(id ? "Holiday updated." : "Holiday saved to calendar.");
+      }
+
+      /* Unified Indian Holiday Calendar Updates */
+      async function executeHolidaySync() {
+        const subdivision = state.preferences.syncSubdivision || "DL";
+        const syncNational = state.preferences.syncNational;
+        const syncState = state.preferences.syncState;
+        const indicator = document.getElementById("sync-status-indicator");
+        const errorBanner = document.getElementById("sync-error-banner");
+        const noticeBanner = document.getElementById("sync-notice-banner");
+
+        errorBanner.classList.add("hidden");
+        noticeBanner.classList.add("hidden");
+
+        if (!syncNational && !syncState) {
+          state.holidays = state.holidays.filter(h => !(h.source || "").startsWith("api-sync"));
+          persist();
+          renderAll();
+          indicator.textContent = "Disabled";
+          indicator.style.color = "var(--muted)";
+          toast("Official holiday updates removed.");
+          return;
+        }
+
+        if (!syncNational) {
+          state.holidays = state.holidays.filter(h => h.source !== "api-sync-national");
+        }
+        if (!syncState) {
+          state.holidays = state.holidays.filter(h => h.source !== "api-sync-state");
+        }
+
+        indicator.textContent = "Checking for updates...";
+        indicator.style.color = "var(--text)";
+
+        const currentYear = new Date().getFullYear();
+        let addedNational = 0;
+        let addedState = 0;
+        let stateNoticeMsg = null;
+
+        try {
+          if (syncNational) {
+            const rawNatList = await ClasslineHolidaySync.fetchLiveCentralHolidays(currentYear);
+            state.holidays = state.holidays.filter(h => h.source !== "api-sync-national");
+
+            rawNatList.forEach(item => {
+              const alreadyExists = state.holidays.some(h => h.date === item.date);
+              if (!alreadyExists) {
+                state.holidays.push({
+                  id: `sync-nat-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+                  name: item.name,
+                  date: item.date,
+                  category: "national",
+                  source: "api-sync-national",
+                  note: item.note || "Central Government Gazetted Holiday"
+                });
+                addedNational++;
+              }
+            });
+          }
+
+          if (syncState) {
+            const stateRes = await ClasslineHolidaySync.fetchLiveStateHolidays(subdivision, currentYear);
+            state.holidays = state.holidays.filter(h => h.source !== "api-sync-state");
+
+            const regionObj = ALL_INDIA_REGIONS.find(r => r.code === subdivision);
+            const regionName = regionObj ? regionObj.name : subdivision;
+
+            if (stateRes.status === "not_available") {
+              stateNoticeMsg = `Holiday schedule not yet published for ${regionName} for this academic year.`;
+              noticeBanner.classList.remove("hidden");
+              document.getElementById("sync-notice-text").textContent = stateNoticeMsg;
+            } else if (stateRes.holidays && stateRes.holidays.length > 0) {
+              stateRes.holidays.forEach(item => {
+                const alreadyExists = state.holidays.some(h => h.date === item.date);
+                if (!alreadyExists) {
+                  state.holidays.push({
+                    id: `sync-st-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+                    name: item.name,
+                    date: item.date,
+                    category: "state",
+                    source: "api-sync-state",
+                    note: item.note || `Official Public Holiday (${regionName})`
+                  });
+                  addedState++;
+                }
+              });
+            }
+          }
+
+          state.preferences.lastSyncTimestamp = new Date().toISOString();
+          persist();
+          renderAll();
+
+          indicator.textContent = "Calendar up to date";
+          indicator.style.color = "var(--green)";
+
+          if (stateNoticeMsg) {
+            toast(stateNoticeMsg);
+          } else {
+            const summaryParts = [];
+            if (syncNational) summaryParts.push(`${addedNational} national gazetted`);
+            if (syncState) summaryParts.push(`${addedState} state`);
+            toast(`Calendar updated with ${summaryParts.join(" and ")} holiday(s).`);
+          }
+        } catch (err) {
+          console.error("Holiday update notice:", err);
+          indicator.textContent = "Update unavailable";
+          indicator.style.color = "var(--red)";
+          errorBanner.classList.remove("hidden");
+          document.getElementById("sync-error-text").textContent = 
+            "Unable to connect to holiday calendar service. Please check your internet connection.";
+
+          toast(
+            "Unable to connect to holiday calendar service. Please check your internet connection.",
+            { isError: true }
+          );
+        }
+      }
+
+      function populateIndiaSubdivisions() {
+        const selects = [
+          document.getElementById("sync-state-select"),
+          document.getElementById("onboarding-state-select")
+        ];
+
+        selects.forEach(select => {
+          if (!select) return;
+          select.replaceChildren();
+
+          const statesGroup = document.createElement("optgroup");
+          statesGroup.label = "States (28)";
+          INDIA_SUBDIVISIONS.states.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.code;
+            opt.textContent = s.name;
+            statesGroup.appendChild(opt);
+          });
+          select.appendChild(statesGroup);
+
+          const utGroup = document.createElement("optgroup");
+          utGroup.label = "Union Territories (8)";
+          INDIA_SUBDIVISIONS.unionTerritories.forEach(ut => {
+            const opt = document.createElement("option");
+            opt.value = ut.code;
+            opt.textContent = ut.name;
+            utGroup.appendChild(opt);
+          });
+          select.appendChild(utGroup);
+
+          const currentSub = state.preferences.syncSubdivision || "DL";
+          select.value = currentSub;
+        });
+
+        updateStateToggleDescription(state.preferences.syncSubdivision || "DL");
+      }
+
+      function checkFirstTimeOnboarding() {
+        if (!state.preferences || !state.preferences.setupCompleted) {
+          populateIndiaSubdivisions();
+          const dlg = document.getElementById("onboarding-dialog");
+          if (dlg) {
+            dlg.showModal();
+          }
+        }
+      }
+
+      function handleOnboardingComplete(skip = false) {
+        const dlg = document.getElementById("onboarding-dialog");
+        if (dlg) dlg.close();
+
+        if (skip) {
+          state.preferences.setupCompleted = true;
+          persist();
+          toast("Setup skipped. You can configure holidays anytime in Settings.");
+          return;
+        }
+
+        const stateSelect = document.getElementById("onboarding-state-select");
+        const syncNat = document.getElementById("onboarding-sync-national").checked;
+        const syncSt = document.getElementById("onboarding-sync-state").checked;
+
+        state.preferences.setupCompleted = true;
+        state.preferences.syncSubdivision = stateSelect.value;
+        state.preferences.syncNational = syncNat;
+        state.preferences.syncState = syncSt;
+
+        persist();
+        renderSyncSettings();
+        executeHolidaySync();
+      }
+
+      function updateStateToggleDescription(code) {
+        const desc = document.getElementById("state-toggle-description");
+        const regionObj = ALL_INDIA_REGIONS.find(r => r.code === code);
+        const name = regionObj ? regionObj.name : code;
+        if (desc) {
+          desc.textContent = `Includes regional public holidays for ${name}. Turning off removes regional holiday dates from your schedule.`;
+        }
+      }
+
+      function updateSettingsOverview() {
+        const classEl = document.getElementById("stats-class-count");
+        const holEl = document.getElementById("stats-holiday-count");
+        const trashEl = document.getElementById("stats-trash-count");
+
+        if (classEl) classEl.textContent = state.classes.length;
+        if (holEl) holEl.textContent = state.holidays.length;
+        if (trashEl) trashEl.textContent = (state.deletedHolidays || []).length;
+      }
+
+      function renderSyncSettings() {
+        const prefs = state.preferences;
+        populateIndiaSubdivisions();
+
+        document.getElementById("sync-toggle-national").checked = !!prefs.syncNational;
+        document.getElementById("sync-toggle-state").checked = !!prefs.syncState;
+
+        const syncedCount = state.holidays.filter(h => (h.source || "").startsWith("api-sync")).length;
+        const statsEl = document.getElementById("sync-stats-text");
+        if (statsEl) {
+          const timeStr = prefs.lastSyncTimestamp 
+            ? new Date(prefs.lastSyncTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : "Never";
+          statsEl.textContent = `${syncedCount} official holidays active in your calendar. (Last checked: ${timeStr})`;
+        }
+      }
+
+      function exportData() {
+        const date = new Date().toISOString().slice(0, 10);
+        const dataStr = JSON.stringify(state, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `classline-timetable-${date}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast("Timetable backup saved to your downloads.");
+      }
+
+      function importBackupFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const parsed = JSON.parse(e.target.result);
+            if (!Array.isArray(parsed.classes) || !Array.isArray(parsed.holidays)) {
+              throw new Error("The selected file does not match Classline's timetable format.");
+            }
+            confirmDialog({
+              title: "Restore Timetable Backup?",
+              message: `This will update your planner with ${parsed.classes.length} classes and ${parsed.holidays.length} holidays from the backup file.`,
+              onConfirm: () => {
+                state = {
+                  version: 12,
+                  classes: parsed.classes,
+                  holidays: parsed.holidays,
+                  deletedHolidays: parsed.deletedHolidays || [],
+                  preferences: parsed.preferences || { 
+                    theme: "light", 
+                    syncNational: false, 
+                    syncState: false, 
+                    syncSubdivision: "DL"
+                  }
+                };
+                persist();
+                ClasslineTheme.apply(state.preferences.theme);
+                renderAll();
+                toast("Timetable successfully restored.");
+              }
+            });
+          } catch (err) {
+            toast(err.message || "Failed to read timetable file.", { isError: true });
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function clearAllRoutineAndHolidays() {
+        confirmDialog({
+          title: "Clear Timetable & Holidays?",
+          message: "Are you sure you want to clear your current classes and holidays? This will reset your timetable to a clean slate.",
+          onConfirm: () => {
+            state.classes = [];
+            state.holidays = [];
+            state.deletedHolidays = [];
+            state.preferences.syncNational = false;
+            state.preferences.syncState = false;
+            persist();
+            renderAll();
+            toast("All timetable classes and holidays cleared.");
+          }
+        });
+      }
+
+      function bindEvents() {
+        document.querySelectorAll("[data-view]").forEach(btn => {
+          btn.addEventListener("click", () => navigate(btn.dataset.view));
+        });
+
+        document.querySelectorAll("[data-close-dialog]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            btn.closest("dialog").close();
+          });
+        });
+
+        document.getElementById("quick-add").addEventListener("click", () => {
+          openClassDialog({ date: ClasslineCalendar.getSelectedDate() });
+        });
+        document.getElementById("routine-add-class").addEventListener("click", () => {
+          openClassDialog();
+        });
+
+        document.getElementById("previous-week").addEventListener("click", ClasslineCalendar.previous);
+        document.getElementById("next-week").addEventListener("click", ClasslineCalendar.next);
+        document.getElementById("today-button").addEventListener("click", ClasslineCalendar.today);
+        document.getElementById("month-toggle").addEventListener("click", ClasslineCalendar.toggleMode);
+
+        document.getElementById("add-holiday").addEventListener("click", () => openHolidayDialog());
+        document.getElementById("add-holiday-from-calendar").addEventListener("click", () => {
+          openHolidayDialog(ClasslineCalendar.getSelectedDate());
+        });
+        document.getElementById("holiday-recycle-btn").addEventListener("click", openHolidayRecoveryDialog);
+        document.getElementById("recover-default-holidays-btn").addEventListener("click", restoreDefaultAcademicHolidays);
+        document.getElementById("clear-holiday-trash").addEventListener("click", () => {
+          if (!state.deletedHolidays || !state.deletedHolidays.length) {
+            toast("Trash is already empty.");
+            return;
+          }
+          confirmDialog({
+            title: "Empty Trash?",
+            message: "Permanently remove all deleted holidays from the recovery list?",
+            onConfirm: () => {
+              state.deletedHolidays = [];
+              persist();
+              updateTrashCount();
+              renderHolidayTrashList();
+              toast("Holiday trash cleared.");
+            }
+          });
+        });
+
+        document.querySelectorAll("#holiday-filter-bar .filter-chip").forEach(chip => {
+          chip.addEventListener("click", () => {
+            document.querySelectorAll("#holiday-filter-bar .filter-chip").forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            ClasslineRoutine.setFilter(chip.dataset.filter);
+          });
+        });
+
+        document.getElementById("holiday-category").addEventListener("change", (e) => {
+          updateCategoryPreview(e.target.value);
+        });
+
+        document.getElementById("sync-state-select").addEventListener("change", (e) => {
+          state.preferences.syncSubdivision = e.target.value;
+          updateStateToggleDescription(e.target.value);
+          persist();
+          if (state.preferences.syncState) {
+            executeHolidaySync();
+          }
+        });
+
+        document.getElementById("sync-toggle-national").addEventListener("change", (e) => {
+          state.preferences.syncNational = e.target.checked;
+          persist();
+          executeHolidaySync();
+        });
+
+        document.getElementById("sync-toggle-state").addEventListener("change", (e) => {
+          state.preferences.syncState = e.target.checked;
+          persist();
+          executeHolidaySync();
+        });
+
+        document.getElementById("manual-sync-btn").addEventListener("click", () => {
+          executeHolidaySync();
+        });
+
+        document.getElementById("sync-retry-btn").addEventListener("click", () => {
+          executeHolidaySync();
+        });
+
+        const onboardingForm = document.getElementById("onboarding-form");
+        if (onboardingForm) {
+          onboardingForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            handleOnboardingComplete(false);
+          });
+        }
+        const skipBtn = document.getElementById("onboarding-skip-btn");
+        if (skipBtn) {
+          skipBtn.addEventListener("click", () => {
+            handleOnboardingComplete(true);
+          });
+        }
+
+        document.getElementById("class-form").addEventListener("submit", handleClassSubmit);
+        document.getElementById("holiday-form").addEventListener("submit", handleHolidaySubmit);
+
+        const toggleTheme = () => {
+          const t = ClasslineTheme.toggle();
+          state.preferences.theme = t;
+          persist();
+          toast(`${t === "dark" ? "Dark" : "Light"} theme active.`);
+        };
+        document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+        document.getElementById("settings-theme-toggle").addEventListener("click", toggleTheme);
+
+        document.getElementById("generate-prompt").addEventListener("click", ClasslineAI.generatePrompt);
+        document.getElementById("copy-prompt").addEventListener("click", ClasslineAI.copyPrompt);
+        document.getElementById("share-prompt").addEventListener("click", ClasslineAI.sharePrompt);
+        document.getElementById("read-clipboard").addEventListener("click", ClasslineAI.readClipboard);
+        document.getElementById("validate-routine").addEventListener("click", ClasslineAI.validate);
+
+        document.getElementById("export-data").addEventListener("click", exportData);
+        document.getElementById("import-data-button").addEventListener("click", () => {
+          document.getElementById("import-data-file").click();
+        });
+        document.getElementById("import-data-file").addEventListener("change", (e) => {
+          importBackupFile(e.target.files[0]);
+          e.target.value = "";
+        });
+        document.getElementById("clear-all-data-btn").addEventListener("click", clearAllRoutineAndHolidays);
+      }
+
+      function init() {
+        state = ClasslineDB.load();
+        ClasslineRoutine.setState(state);
+        ClasslineTheme.apply(state.preferences?.theme || "light");
+
+        const today = new Date();
+        document.getElementById("today-label").textContent = today.toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "short",
+          day: "numeric"
+        }).toUpperCase();
+
+        bindEvents();
+        renderAll();
+
+        if (!state.preferences?.setupCompleted) {
+          checkFirstTimeOnboarding();
+        } else if (state.preferences.syncNational || state.preferences.syncState) {
+          executeHolidaySync().catch(err => {
+            console.warn("Background holiday check deferred:", err);
+          });
+        }
+      }
+
+      return {
+        init,
+        persist,
+        renderAll,
+        toast,
+        navigate,
+        confirmDialog,
+        openClassDialog,
+        openHolidayDialog,
+        openHolidayRecoveryDialog,
+        restoreHoliday,
+        updateTrashCount
+      };
+    })();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      ClasslineApp.init();
+    });
+    
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+      navigator.serviceWorker.register("./sw.js").catch(error => {
+        console.warn("Service worker registration failed.", error);
+      });
+    }
+  </script>
 </body>
 </html>

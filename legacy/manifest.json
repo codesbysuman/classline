@@ -1,0 +1,18 @@
+{
+  "name": "Classline — Class Routine Planner",
+  "short_name": "Classline",
+  "description": "A responsive academic timetable and holiday planner.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f5f3",
+  "theme_color": "#101010",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

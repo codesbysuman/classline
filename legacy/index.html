@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101010">
+  <meta
+    name="description"
+    content="A simple, offline-friendly class routine planner with calendar and holiday management."
+  >
+
+  <title>Classline — Class Routine Planner</title>
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script src="js/database.js" defer></script>
+  <script src="js/theme.js" defer></script>
+  <script src="js/calendar.js" defer></script>
+  <script src="js/routine.js" defer></script>
+  <script src="js/ai-assistant.js" defer></script>
+  <script src="js/backup.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="Classline home">
+        <span class="brand-mark">C</span>
+        <span>classline<span class="brand-period">.</span></span>
+      </a>
+
+      <div class="sidebar-label">WORKSPACE</div>
+
+      <nav class="side-navigation" aria-label="Main navigation">
+        <button class="nav-item active" data-view="calendar">
+          <span class="nav-symbol">▦</span>
+          Calendar
+        </button>
+
+        <button class="nav-item" data-view="routine">
+          <span class="nav-symbol">≡</span>
+          My routine
+        </button>
+
+        <button class="nav-item" data-view="holidays">
+          <span class="nav-symbol">◇</span>
+          Holidays
+        </button>
+
+        <button class="nav-item" data-view="assistant">
+          <span class="nav-symbol">✳</span>
+          AI assistant
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="storage-indicator">
+          <span class="status-dot"></span>
+          <span>Saved on this device</span>
+        </div>
+
+        <button class="nav-item" data-view="settings">
+          <span class="nav-symbol">⚙</span>
+          Settings
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow" id="today-label">YOUR ACADEMIC SPACE</div>
+          <h1 id="page-title">Calendar</h1>
+        </div>
+
+        <div class="topbar-actions">
+          <button
+            class="icon-button"
+            id="theme-toggle"
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+          >◐</button>
+
+          <button class="primary-button" id="quick-add" type="button">
+            <span>+</span> Add class
+          </button>
+        </div>
+      </header>
+
+      <section class="view active" id="view-calendar">
+        <div class="welcome-row">
+          <div>
+            <h2>Your week, organised.</h2>
+            <p>See what you have to attend and plan around holidays.</p>
+          </div>
+
+          <div class="week-controls">
+            <button class="icon-button" id="previous-week" aria-label="Previous week">←</button>
+            <button class="secondary-button" id="today-button">Today</button>
+            <button class="icon-button" id="next-week" aria-label="Next week">→</button>
+          </div>
+        </div>
+
+        <div class="calendar-card">
+          <div class="calendar-heading">
+            <div>
+              <span class="eyebrow">YOUR SCHEDULE</span>
+              <h3 id="week-heading">This week</h3>
+            </div>
+
+            <button class="secondary-button" id="month-toggle">Month view</button>
+          </div>
+
+          <div class="week-grid" id="week-grid"></div>
+
+          <div class="month-grid hidden" id="month-grid"></div>
+
+          <div class="calendar-legend">
+            <span><i class="legend-dot class-dot"></i> Classes</span>
+            <span><i class="legend-dot holiday-dot"></i> Holiday</span>
+            <span><i class="legend-dot today-dot"></i> Today</span>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">SELECTED DAY</span>
+            <h2 id="selected-date-heading">Today's classes</h2>
+          </div>
+
+          <button class="text-button" id="add-holiday-from-calendar">
+            + Mark holiday
+          </button>
+        </div>
+
+        <div id="selected-day-content" class="class-list"></div>
+      </section>
+
+      <section class="view" id="view-routine">
+        <div class="section-intro">
+          <span class="eyebrow">YOUR TIMETABLE</span>
+          <h2>My routine</h2>
+          <p>Manage recurring classes and individual sessions.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Recurring classes</h3>
+              <p>Classes that repeat on selected weekdays.</p>
+            </div>
+
+            <button class="primary-button" id="routine-add-class">+ Add class</button>
+          </div>
+
+          <div id="routine-list" class="class-list"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-holidays">
+        <div class="section-intro">
+          <span class="eyebrow">ACADEMIC CALENDAR</span>
+          <h2>Holidays & closures</h2>
+          <p>Add holidays that should prevent recurring classes from appearing.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Holiday list</h3>
+              <p>Holidays you have entered manually.</p>
+            </div>
+
+            <button class="primary-button" id="add-holiday">+ Add holiday</button>
+          </div>
+
+          <div id="holiday-list" class="class-list"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-assistant">
+        <div class="section-intro">
+          <span class="eyebrow">ASSISTED PLANNING</span>
+          <h2>Build your routine with AI</h2>
+          <p>Describe your classes, generate a prompt, and bring the structured result back here.</p>
+        </div>
+
+        <div class="panel assistant-panel">
+          <div class="step-number">01</div>
+          <h3>Describe your timetable</h3>
+          <p class="muted">
+            Explain your subjects, class times, weekdays, semester dates,
+            holidays and any scheduling rules.
+          </p>
+
+          <label for="routine-description">Your description</label>
+          <textarea
+            id="routine-description"
+            rows="7"
+            placeholder="Example: I attend college Monday to Friday. Political Science is on Monday at 10:00 AM..."
+          ></textarea>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="academic-start">Academic period starts</label>
+              <input id="academic-start" type="date">
+            </div>
+
+            <div class="form-field">
+              <label for="academic-end">Academic period ends</label>
+              <input id="academic-end" type="date">
+            </div>
+          </div>
+
+          <button class="primary-button full-width" id="generate-prompt">
+            Generate AI prompt →
+          </button>
+        </div>
+
+        <div class="panel assistant-panel">
+          <div class="step-number">02</div>
+          <h3>Use the prompt with your AI assistant</h3>
+          <p class="muted">
+            Copy the generated prompt and paste it into an AI assistant.
+            Ask it to return only the JSON object described in the prompt.
+          </p>
+
+          <textarea id="generated-prompt" rows="8" readonly
+            placeholder="Your generated prompt will appear here."></textarea>
+
+          <div class="button-row">
+            <button class="secondary-button" id="copy-prompt">Copy prompt</button>
+            <button class="secondary-button" id="share-prompt">Share prompt</button>
+          </div>
+        </div>
+
+        <div class="panel assistant-panel">
+          <div class="step-number">03</div>
+          <h3>Import the generated routine</h3>
+          <p class="muted">
+            Paste the JSON returned by your AI assistant. Nothing will be
+            applied until you review and confirm it.
+          </p>
+
+          <label for="routine-json">Routine JSON</label>
+          <textarea id="routine-json" rows="8"
+            placeholder='Paste the JSON object here, including its opening and closing braces.'></textarea>
+
+          <div class="button-row">
+            <button class="secondary-button" id="read-clipboard">Read clipboard</button>
+            <button class="primary-button" id="validate-routine">Validate & review</button>
+          </div>
+
+          <p id="assistant-status" class="status-message" role="status"></p>
+          <div id="import-preview"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="section-intro">
+          <span class="eyebrow">PREFERENCES</span>
+          <h2>Settings & backups</h2>
+          <p>Control your appearance and manage your local data.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Appearance</h3>
+              <p>Choose a comfortable reading theme.</p>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <strong>Colour theme</strong>
+              <p class="muted">Switch between light and dark modes.</p>
+            </div>
+            <button class="secondary-button" id="settings-theme-toggle">Toggle theme</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Your data</h3>
+              <p>Your timetable is stored in this browser.</p>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-button" id="export-data">Export backup</button>
+            <button class="secondary-button" id="import-data-button">Restore backup</button>
+            <input id="import-data-file" type="file" accept=".json,application/json" hidden>
+          </div>
+
+          <p class="muted small">
+            Export a backup regularly. Clearing browser storage or changing
+            browsers may remove access to locally stored data.
+          </p>
+        </div>
+      </section>
+
+      <footer class="app-footer">
+        <span>Classline</span>
+        <span>Simple planning. Fewer surprises.</span>
+      </footer>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button class="mobile-nav-item active" data-view="calendar">
+      <span>▦</span><small>Calendar</small>
+    </button>
+    <button class="mobile-nav-item" data-view="routine">
+      <span>≡</span><small>Routine</small>
+    </button>
+    <button class="mobile-nav-item" data-view="holidays">
+      <span>◇</span><small>Holidays</small>
+    </button>
+    <button class="mobile-nav-item" data-view="assistant">
+      <span>✳</span><small>AI</small>
+    </button>
+    <button class="mobile-nav-item" data-view="settings">
+      <span>⚙</span><small>Settings</small>
+    </button>
+  </nav>
+
+  <dialog id="class-dialog" class="app-dialog">
+    <form id="class-form" method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">TIMETABLE EDITOR</span>
+          <h2 id="class-dialog-title">Add a class</h2>
+        </div>
+        <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
+      </div>
+
+      <input id="class-id" type="hidden">
+
+      <label for="class-name">Subject / class name</label>
+      <input id="class-name" name="name" maxlength="100" required
+        placeholder="e.g. Comparative Politics">
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="class-start">Start time</label>
+          <input id="class-start" type="time" required>
+        </div>
+        <div class="form-field">
+          <label for="class-end">End time</label>
+          <input id="class-end" type="time" required>
+        </div>
+      </div>
+
+      <label for="class-location">Room / location (optional)</label>
+      <input id="class-location" maxlength="100" placeholder="e.g. Room 12">
+
+      <label>Repeats on</label>
+      <div class="weekday-picker" id="weekday-picker">
+        <label><input type="checkbox" value="1"> Mon</label>
+        <label><input type="checkbox" value="2"> Tue</label>
+        <label><input type="checkbox" value="3"> Wed</label>
+        <label><input type="checkbox" value="4"> Thu</label>
+        <label><input type="checkbox" value="5"> Fri</label>
+        <label><input type="checkbox" value="6"> Sat</label>
+        <label><input type="checkbox" value="0"> Sun</label>
+      </div>
+
+      <label for="class-date">One-time date (optional)</label>
+      <input id="class-date" type="date">
+      <p class="muted small">
+        Leave the date empty for a recurring class. Choose a date for a
+        one-time session.
+      </p>
+
+      <div class="button-row dialog-actions">
+        <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
+        <button type="submit" class="primary-button">Save class</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="holiday-dialog" class="app-dialog">
+    <form id="holiday-form" method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">ACADEMIC CALENDAR</span>
+          <h2>Add a holiday</h2>
+        </div>
+        <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
+      </div>
+
+      <label for="holiday-name">Holiday name</label>
+      <input id="holiday-name" required maxlength="100" placeholder="e.g. College foundation day">
+
+      <label for="holiday-date">Date</label>
+      <input id="holiday-date" type="date" required>
+
+      <label for="holiday-note">Note (optional)</label>
+      <textarea id="holiday-note" rows="3" maxlength="500"
+        placeholder="Any useful details"></textarea>
+
+      <div class="button-row dialog-actions">
+        <button type="button" class="secondary-button" data-close-dialog>Cancel</button>
+        <button type="submit" class="primary-button">Save holiday</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
